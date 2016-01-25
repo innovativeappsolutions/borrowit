@@ -1,0 +1,321 @@
+<!--
+
+LICENSE:
+BSD 3-Clause License (see file "LICENSE").
+
+-->
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>BorrowIt!</title>
+
+		<meta name="description" content="Presentation of the mobile Application BorrowIt!">
+		<meta name="author" content="Innovative App Solutions">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/sky.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section data-background="img/hintergrund_titelseite.jpg">
+					<h1>BorrowIt!</h1>
+					<img src="img/logo_inapps.png" style="width:280px;border:none;" />
+					<h3>Innovative App Solutions</h3>
+					<p>
+						David Knippel, Denis Raff, Jennifer Sailer, Marc Schatten, Benedikt Sondermann, Tatjana Stanisic
+					</p>
+					<p>
+						27. Januar 2016
+					</p>
+				</section>
+
+				<section data-background="img/hintergrund_agenda.jpg">
+					<h2>Agenda</h2>
+					<ul>
+						<li>Motivation</li>
+						<li>Konzeption</li>
+						<li>Projektplanung</li>
+						<li>User-Interface-Modelle</li>
+						<li>Technologien und Tools</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Motivation</h2>
+					<ul>
+						<li>&bdquo;Internet of Everything&rdquo;</li>
+						<li class="fragment">&bdquo;Smart Neighborhood&rdquo;: Vernetzung der Nachbarschaft</li>
+						<li class="fragment">Aufbau und Erweiterung eines sozialen Netzwerks</li>
+						<li class="fragment">Nachbarschaftshilfe: leihen statt kaufen</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>BorrowIt!</h2>
+					<ul>
+						<img class="fragment" src="img/1_student.jpg" style="width:280px;" />
+						<img class="fragment" src="img/2_essen.jpg" style="width:280px;" />
+						<img class="fragment" src="img/3_musik.jpg" style="width:280px;" />
+						<img class="fragment" src="img/4_unterwegs.jpg" style="width:280px;" />
+						<img class="fragment" src="img/5_werkzeug.jpg" style="width:280px;" />
+						<img class="fragment" src="img/6_sport.jpg" style="width:280px;" />
+					</ul>
+				</section>
+
+				<section>
+					<h2>Konzeption</h2>
+					<ul>
+						<li>Mobile Anwendung zum Verleih von Sachgegenständen in der Nachbarschaft</li>
+						<li class="fragment">Distributed Market Space: Nutzer kann aus- und verleihen</li>
+						<li class="fragment">Gerätespezifische Funktionen (z. B. Push-Benachrichtigungen, Standort, Kalender)</li>
+						<li class="fragment">&bdquo;Share&rdquo;-Funktionalität (Facebook, Twitter, Google+, WhatsApp)</li>
+						<li class="fragment">Social Ranking (z. B. nach Reaktionszeit, Bewertung durch Nachbarn)</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Projektplanung</h2>
+					<ul>
+						<li>Hybrider Ansatz:<br />Scrum + Aspekte des klassischen Projektmanagements
+							<ul><li class="fragment">&bdquo;Agil&rdquo;, &bdquo;evidenzbasiert&rdquo; und &bdquo;schlank&rdquo;</li></ul>
+						</li><br />
+						<li class="fragment">Meilensteine:
+							<ul>
+								<li>Vorstellung der App-Idee (27. Januar 2016)</li>
+								<li>Analyse und Design</li>
+								<li>Implementierung und Test</li>
+								<li>Deployment</li>
+								<li>Projektabschluss und Abschlusspräsentation (1. August 2016)</li>
+							</ul>
+						</li>
+					</ul>
+				</section>
+						
+				<section>
+					<h2>Scrum-Rollen: AKV</h2>
+					<ul>
+						<li>
+							Kunde
+							<ul>
+								<li>Auftraggeber</li>
+								<li>Liefert Input und Feedback</li>
+							</ul>
+						</li><br />
+						<li class="fragment">
+							Product Owner
+							<ul>
+								<li>Sammelt Anforderungen, bildet und vermittelt Produktvision</li>
+								<li>Erstellt und verwaltet Produktbacklog</li>
+								<li>Produktverantwortlicher und Verbindung zum Kunden</li>
+							</ul>
+						</li><br />
+						<li class="fragment">
+							Entwicklerteam
+							<ul>
+								<li>Entwickelt das Produkt</li>
+								<li>Funktionsübergreifende Kompetenzen</li>
+								<li>Selbstorganisiert</li>
+								<li>Präsentation der Arbeitsergebnisse</li>
+							</ul>
+						</li>
+					</ul>
+				</section>
+				<section>
+					<h2>Scrum-Rollen: AKV</h2>
+					<ul>
+						<li>
+							Scrum Master
+							<ul>
+								<li>Teamcoaching zur Produktivitätssteigerung</li>
+								<li>Teamenabler</li>
+								<li>Kümmert sich um Blocks und Impediments</li>
+								<li>Schirmt das Team von Störungen ab</li>
+								<li>Verantwortlich für Meetings</li>
+							</ul>
+						</li><br />
+						<li class="fragment">
+							User
+							<ul>
+								<li>Sichert die Produktorientierung zum User</li>
+								<li>Liefert Feedback</li>
+							</ul>
+						</li>
+					</ul>
+				</section>
+
+				<section data-background="img/hintergrund_mockups.jpg">
+					<h2>User-Interface-Modelle</h2>
+				</section>
+
+				<section>
+					<figure class="mockupleft">
+						<img src="img/Login.png" />
+						<figcaption>Login</figcaption>
+					</figure>
+					<figure class="mockupright">
+						<img src="img/Registrierung.png" />
+						<figcaption>Registrierung</figcaption>
+					</figure>
+				</section>
+
+				<section>
+					<figure class="mockupleft">
+						<img src="img/Anfragenübersicht.png" />
+						<figcaption>Anfragenübersicht</figcaption>
+					</figure>
+					<figure class="mockupright">
+						<img src="img/Anfrage einsehen.png" />
+						<figcaption>Anfrage einsehen</figcaption>
+					</figure>
+				</section>
+
+				<section>
+					<figure class="mockupleft">
+						<img src="img/Anfrage erstellen.png" />
+						<figcaption>Anfrage erstellen</figcaption>
+					</figure>
+					<figure class="mockupright">
+						<img src="img/Anfrage erstellt.png" />
+						<figcaption>Anfrage erstellt</figcaption>
+					</figure>
+				</section>
+
+				<section>
+					<figure class="mockupcenter">
+						<img src="img/Chat direkt.png" />
+						<figcaption>Chat zu einer Anfrage</figcaption>
+					</figure>
+				</section>
+
+				<section>
+					<figure class="mockupleft">
+						<img src="img/Kontakte.png" />
+						<figcaption>Kontakte</figcaption>
+					</figure>
+					<figure class="mockupright">
+						<img src="img/Kontakt hinzufügen.png" />
+						<figcaption>Kontakt hinzufügen</figcaption>
+					</figure>
+				</section>
+
+				<section>
+					<figure class="mockupleft">
+						<img src="img/Profil (fremd).png" />
+						<figcaption>Profil</figcaption>
+					</figure>
+					<figure class="mockupleft">
+						<img src="img/Aktivitäten (fremd).png" />
+						<figcaption>Aktivitäten</figcaption>
+					</figure>
+					<figure class="mockupleft">
+						<img src="img/Anfrage einsehen (von Aktivitäten).png" />
+						<figcaption>Anfrage einsehen</figcaption>
+					</figure>
+				</section>
+
+				<section>
+					<figure class="mockupleft">
+						<img src="img/Profil (eigenes).png" />
+						<figcaption>Eigenes Profil</figcaption>
+					</figure>
+					<figure class="mockupright">
+						<img src="img/Aktivitäten.png" />
+						<figcaption>Eigene Aktivitäten</figcaption>
+					</figure>
+				</section>
+
+				<section>
+					<figure class="mockupcenter">
+						<img src="img/Einstellungen.png" />
+						<figcaption>Einstellungen</figcaption>
+					</figure>
+				</section>
+
+				<section>
+					<h2>Technologien und Tools</h2>
+					<ul>
+						<li class="fragment">Mockups: Balsamiq</li>
+						<li class="fragment">App Frontend: HTML, CSS, JavaScript, AngularJS, Cordova</li>
+						<li class="fragment">App Backend (geplant): RDF, Sesame</li>
+						<li class="fragment">Präsentation: HTML, CSS, JavaScript</li>
+						<li class="fragment">Zentrales Ablagesystem:<br /><a href="https://github.com/innovativeappsolutions/borrowit" target="_blank" title="Link zum Ablagesystem">https://github.com/innovativeappsolutions/borrowit</a></li>
+					</ul>
+				</section>
+
+				<section data-background="img/hintergrund_letzte_seite.jpg">
+					<h2>Ansprechpartner</h2>
+					<p>Haben Sie noch Fragen?</p>
+					<p>Innovative App Solutions</p>
+					<p><a href="mailto:innovativeappsolutions@web.de">innovativeappsolutions@web.de</a></p>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: false,
+				progress: true,
+				slideNumber: true,
+				history: true,
+				keyboard: true,
+				overview: true,
+				center: true,
+				touch: true,
+				loop: false,
+				rtl: false,
+				
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
