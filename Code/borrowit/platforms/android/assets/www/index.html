@@ -27,17 +27,21 @@
 <ion-pane>
   <ion-header-bar class="bar-stable">
     <h1 class="title">BorrowIt!</h1>
-    <button class="button icon-left ion-plus" data-ng-click="createToDo()">Hinzufügen</button>
   </ion-header-bar>
 
   <ion-content>
     <div>
-      <ion-checkbox data-ng-repeat="toDo in toDos"
-                    data-ng-model="toDo.done"
-                    data-ng-click="checkDone(toDo);calculateDone();">
-        <span data-ng-bind="toDo.title"></span>
-      </ion-checkbox>
-
+      <button class="button icon-left ion-plus" onclick="window.location.href='/home.html'">Home</button>
+      <button class="button icon-left ion-plus" onclick="window.location.href='/login.html'">Login</button>
+      <button class="button icon-left ion-plus" onclick="window.location.href='/registrierung.html'">Registrierung</button>
+      <button class="button icon-left ion-plus" onclick="window.location.href='/anfrage_einsehen.html'">Anfrage einsehen</button>
+      <button class="button icon-left ion-plus" onclick="window.location.href='/anfrage_erstellen.html'">Anfrage erstellen</button>
+      <button class="button icon-left ion-plus" onclick="window.location.href='/chat.html'">Chat</button>
+      <button class="button icon-left ion-plus" onclick="window.location.href='/kontakte.html'">Kontakte</button>
+      <button class="button icon-left ion-plus" onclick="window.location.href='/kontakt_hinzufuegen.html'">Kontakt hinzufügen</button>
+      <button class="button icon-left ion-plus" onclick="window.location.href='/kontakt_profil.html'">Profil eines anderen</button>
+      <button class="button icon-left ion-plus" onclick="window.location.href='/profil_anfrage.html'">Abgeschlossene Anfrage einsehen</button>
+      <button class="button icon-left ion-plus" onclick="window.location.href='/profil.html'">Eigenes Profil</button>
       <!--
                   <div class="row">
                       <div class="col col-50"> <span data-ng-bind="totalDone"></span> von <span data-ng-bind="toDos.length"></span> erledigt</div>
