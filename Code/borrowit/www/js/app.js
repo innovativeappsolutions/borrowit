@@ -20,7 +20,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova'])
   .controller("ToDoController", function($scope, $ionicPopup, $cordovaVibration){
     //Contains the amount of done toDos;
     $scope.totalDone = 0;
-    //Contains the ToDossdfsdfsdf
+    //Contains the ToDos
     $scope.toDos = [
       {
         title:"Müll rausbringen",
