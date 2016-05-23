@@ -85,5 +85,12 @@ var app = angular.module('starter', ['ionic', 'ngCordova'])
       });
     };
 
+    $scope.changePage = function(page)
+    {
+      this.nav.push(ItemDetailsPage, {
+        item: item
+      });
+    }
+
     $scope.calculateDone();
   });

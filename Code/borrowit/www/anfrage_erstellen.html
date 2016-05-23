@@ -26,18 +26,57 @@
 <body ng-app="starter" ng-controller="ToDoController">
 <ion-pane>
   <ion-header-bar class="bar-stable">
-    <h1 class="title">BorrowIt!</h1>
-    <button class="button icon-left ion-plus" data-ng-click="createToDo()">Hinzufügen</button>
+    <h1 class="title">Anfrage erstellen</h1>
   </ion-header-bar>
 
   <ion-content>
-    <div>
-      <ion-checkbox data-ng-repeat="toDo in toDos"
-                    data-ng-model="toDo.done"
-                    data-ng-click="checkDone(toDo);calculateDone();">
-        <span data-ng-bind="toDo.title"></span>
-      </ion-checkbox>
-
+    <div class="list text-center div-energized">
+      <div class="item input-label">
+        Ich suche / brauche
+      </div>
+      <label class="item item-input">
+        <input type="text" placeholder="Titel eintragen">
+      </label>
+      <label class="item item-input">
+        <input type="text" placeholder="Beschreibung">
+      </label>
+      <div class="row">
+        <div class="col">
+          Benötigt:
+        </div>
+        <div class="col">
+          <div class="item item-checkbox">
+            sofort
+            <label class="checkbox">
+              <input type="checkbox">
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-25">
+          ab:
+        </div>
+        <div class="col col-offset-25"></div>
+        <div class="col col-25">
+          bis:
+        </div>
+        <div class="col col-offset-25"></div>
+      </div>
+      <label class = "item item-input item-select">
+        <div class = "input-label">
+          Kategorie
+        </div>
+        <select>
+          <option selected>Küche und Haushalt</option>
+          <option>Lebensmittel</option>
+          <option>Sport und Freizeit</option>
+          <option>Auto und Motorrad</option>
+          <option>Wohnen und Garten</option>
+        </select>
+      </label>
+      <button class="button button-block icon ion-checkmark">
+      </button>
       <!--
                   <div class="row">
                       <div class="col col-50"> <span data-ng-bind="totalDone"></span> von <span data-ng-bind="toDos.length"></span> erledigt</div>

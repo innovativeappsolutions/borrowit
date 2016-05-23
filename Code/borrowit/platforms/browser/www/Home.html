@@ -26,18 +26,51 @@
 <body ng-app="starter" ng-controller="ToDoController">
 <ion-pane>
   <ion-header-bar class="bar-stable">
-    <h1 class="title">BorrowIt!</h1>
-    <button class="button icon-left ion-plus" data-ng-click="createToDo()">Hinzufügen</button>
+    <h1 class="title">Anfragen</h1>
   </ion-header-bar>
 
   <ion-content>
-    <div>
-      <ion-checkbox data-ng-repeat="toDo in toDos"
-                    data-ng-model="toDo.done"
-                    data-ng-click="checkDone(toDo);calculateDone();">
-        <span data-ng-bind="toDo.title"></span>
-      </ion-checkbox>
-
+    <div class="list text-center div-energized">
+      <div class="row responsive-sm">
+        <div class="col col-50">
+          <label class = "item item-input item-select item-light">
+            <div class = "input-label">
+              Sortieren nach
+            </div>
+            <select>
+              <option>Entfernung</option>
+              <option>Datum</option>
+              <option>Dauer</option>
+            </select>
+          </label>
+        </div>
+        <div class="col col-50">
+          <label class = "item item-input item-select item-light">
+            <div class = "input-label">
+              Kategorie
+            </div>
+            <select>
+              <option selected>Küche und Haushalt</option>
+              <option>Lebensmittel</option>
+              <option>Sport und Freizeit</option>
+              <option>Auto und Motorrad</option>
+              <option>Wohnen und Garten</option>
+            </select>
+          </label>
+        </div>
+      </div>
+      <div class="row responsive-sm"></div>
+      <div class="row responsive-sm"></div>
+      <div class="row responsive-sm">
+        <div class = "tabs">
+          <a class = "tab-item">
+            Fremde Anfragen
+          </a>
+          <a class = "tab-item">
+            Eigene Anfragen
+          </a>
+        </div>
+      </div>
       <!--
                   <div class="row">
                       <div class="col col-50"> <span data-ng-bind="totalDone"></span> von <span data-ng-bind="toDos.length"></span> erledigt</div>

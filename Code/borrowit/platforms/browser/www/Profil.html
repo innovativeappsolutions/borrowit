@@ -26,24 +26,24 @@
 <body ng-app="starter" ng-controller="ToDoController">
 <ion-pane>
   <ion-header-bar class="bar-stable">
-    <h1 class="title">BorrowIt!</h1>
-    <button class="button icon-left ion-plus" data-ng-click="createToDo()">Hinzufügen</button>
+    <h1 class="title">Profil</h1>
+    <!--<button class="button icon-left ion-plus" data-ng-click="createToDo()">Hinzufügen</button>-->
   </ion-header-bar>
-
   <ion-content>
-    <div>
-      <ion-checkbox data-ng-repeat="toDo in toDos"
-                    data-ng-model="toDo.done"
-                    data-ng-click="checkDone(toDo);calculateDone();">
-        <span data-ng-bind="toDo.title"></span>
-      </ion-checkbox>
+    <div class = "tabs tabs-icon-only">
+      <a class = "tab-item">
+        <i class = "icon ion-person"></i>
+      </a>
 
-      <!--
-                  <div class="row">
-                      <div class="col col-50"> <span data-ng-bind="totalDone"></span> von <span data-ng-bind="toDos.length"></span> erledigt</div>
-                  </div>
-                  -->
+      <a class = "tab-item">
+        <i class = "icon ion-ios-settings-strong"></i>
+      </a>
+
+      <a class = "tab-item">
+        <i class = "icon ion-ios-gear"></i>
+      </a>
     </div>
+
   </ion-content>
 </ion-pane>
 </body>
