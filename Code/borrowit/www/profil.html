@@ -26,25 +26,158 @@
 <body ng-app="starter" ng-controller="ToDoController">
 <ion-pane>
   <ion-header-bar class="bar-stable">
-    <h1 class="title">Profil</h1>
+    <h1 class="title">Eigenes Profil</h1>
     <!--<button class="button icon-left ion-plus" data-ng-click="createToDo()">Hinzufügen</button>-->
   </ion-header-bar>
+  <div class="bar bar-subheader">
+    <h1 class="title">Vorname Nachname</h1>
+  </div>
+
+
   <ion-content>
-    <div class = "tabs tabs-icon-only">
-      <a class = "tab-item">
-        <i class = "icon ion-person"></i>
-      </a>
 
-      <a class = "tab-item">
-        <i class = "icon ion-ios-settings-strong"></i>
-      </a>
+<br><br><br>
 
-      <a class = "tab-item">
-        <i class = "icon ion-ios-gear"></i>
-      </a>
+    <div class="list text-center div-energized">
+
+      <img src="http://www.ja-pics.net/images/full/4/677ba25ee9.gif" width="80" height="80">
+
     </div>
 
+    <div class="list text-center div-energized">
+
+      <button class="button button button-stable">
+        Profil bearbeiten
+      </button>
+
+    </div>
+    <div class="list text-center div-energized">
+    <i class="icon ion-star"></i>
+    <i class="icon ion-star"></i>
+    <i class="icon ion-star"></i>
+    <i class="icon ion-star"></i>
+    <i class="ion-ios-star-half"></i>
+</div>
+<br>
+    Einstellungen:
+
+
+
+    </div>
+
+
+      <div class="list">
+
+        <div class="item item-divider">
+         Konto:
+        </div>
+
+        <a class="item item-icon-right" href="#">
+          Profil bearbeiten
+          <i class="ion-chevron-right"></i>
+        </a>
+        <a class="item item-icon-right" href="#">
+          Passwort ändern
+          <i class="ion-chevron-right"></i>
+        </a>
+
+        <div class="item item-divider">
+          Adresse:
+        </div>
+
+        <a class="item" href="#">
+          <ion-list>
+            <ion-radio ng-model="choice" ng-value="'A'">Adresse 1</ion-radio>
+            <ion-radio ng-model="choice" ng-value="'B'">Adresse 2</ion-radio>
+            <ion-radio ng-model="choice" ng-value="'B'">Adresse 3</ion-radio>
+          </ion-list>
+        </a>
+
+        <div class="item item-divider">
+          Privatsphäre:
+        </div>
+        <a class="item item-icon-right" href="#">
+         Push-Mitteilungen
+          <i class="ion-chevron-right"></i>
+        </a>
+        <a class="item item-icon-right" href="#">
+          Datenschutz
+          <i class="ion-chevron-right"></i>
+        </a>
+        <a class="item item-toggle" href="#">
+          Privates Konto
+          <label class="toggle toggle-assertive">
+            <input type="checkbox">
+            <div class="track">
+              <div class="handle"></div>
+            </div>
+          </label>
+
+          </a>
+
+        <a class="item item-icon-right" href="#">
+          Nutzer einladen
+          <i class="ion-chevron-right"></i>
+        </a>
+        <a class="item item-icon-right" href="#">
+          Abmelden
+          <i class="ion-chevron-right"></i>
+        </a>
+        <a class="item item-icon-right" href="#" style="color:red">
+          Konto löschen
+          <i class="ion-chevron-right"></i>
+        </a>
+
+
+      </div>
+
+
+Aktivitäten:
+
+    <div class="list">
+
+      <a class="item item-icon-right" href="#">
+        Gummihammer
+        <span class="ion-chevron-right">
+        <span class="ion-chevron-right">
+      </a>
+      <a class="item item-icon-right" href="#">
+        500g Mehl zum Backen
+         <span class="ion-chevron-right">
+        <span class="ion-chevron-right">
+      </a>
+      <a class="item item-icon-left" href="#">
+        <i class="ion-chevron-left"></i>
+        <i class="ion-chevron-left"></i>
+        Fahrradpumpe für Rennrad
+      </a>
+      <a class="item item-icon-right" href="#">
+        Auflaufform
+         <span class="ion-chevron-right">
+        <span class="ion-chevron-right">
+      </a>
+
+    </div>
+    <br>
+    <br>
+    <br>
+
+
+
   </ion-content>
+
+
+  <div class = "tabs">
+    <a class = "tab-item">
+      Profil
+    </a>
+    <a class = "tab-item">
+     Anfragen
+    </a>
+    <a class = "tab-item">
+      Einstellungen
+    </a>
+  </div>
 </ion-pane>
 </body>
 </html>
