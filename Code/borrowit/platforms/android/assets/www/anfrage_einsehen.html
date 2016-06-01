@@ -26,18 +26,49 @@
 <body ng-app="starter" ng-controller="ToDoController">
 <ion-pane>
   <ion-header-bar class="bar-stable">
-    <h1 class="title">BorrowIt!</h1>
-    <button class="button icon-left ion-plus" data-ng-click="createToDo()">Hinzufügen</button>
+    <h1 class="title">Anfrage einsehen</h1>
   </ion-header-bar>
 
   <ion-content>
-    <div>
-      <ion-checkbox data-ng-repeat="toDo in toDos"
-                    data-ng-model="toDo.done"
-                    data-ng-click="checkDone(toDo);calculateDone();">
-        <span data-ng-bind="toDo.title"></span>
-      </ion-checkbox>
-
+    <div class="list text-center div-energized">
+      <div class="item item-divider">
+        Ich suche / brauche
+      </div>
+      <label class = "item item-input item-select item-light text-center">
+        <div class = "input-label">
+        <strong>Ein Waffeleisen</strong>
+      </div>
+      <div class = "input-label">
+        Ich möchte mir ein Waffeleisen ausleihen, um mit meinen Freunden Waffeln zu backen. Sehr gerne kann man sich auf eine Waffel und einen Kaffee zu uns gesellen :)
+      </div>
+      </label>
+      <div class="row">
+        <div class="col col-50 text-right">
+          Entfernung
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-50 text-right">
+          Ab wann?
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-50 text-right">
+          Bis wann?
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-50">
+          <button class="button button-block">
+            Anschreiben
+          </button>
+        </div>
+        <div class="col col-50">
+          <button class="button button-block">
+            BorrowIt!
+          </button>
+        </div>
+      </div>
       <!--
                   <div class="row">
                       <div class="col col-50"> <span data-ng-bind="totalDone"></span> von <span data-ng-bind="toDos.length"></span> erledigt</div>
@@ -45,6 +76,15 @@
                   -->
     </div>
   </ion-content>
+  <div class="bar bar-footer bar-stable">
+    <div class="row">
+      <div class="col col-15 text-center"><button class="button icon ion-home"></button></div>
+      <div class="col col-15 text-center"><button class="button icon ion-chatbubbles"></button></div>
+      <div class="col col-40 text-center"><button class="button">BorrowIt!</button></div>
+      <div class="col col-15 text-center"><button class="button icon ion-person-stalker"></button></div>
+      <div class="col col-15 text-center"><button class="button icon ion-person"></button></div>
+    </div>
+  </div>
 </ion-pane>
 </body>
 </html>

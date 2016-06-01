@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="starter">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-  <title></title>
+  <title>Ionic First Try</title>
 
   <link href="lib/ionic/css/ionic.css" rel="stylesheet">
   <link href="css/style.css" rel="stylesheet">
@@ -24,31 +24,347 @@
   <script src="js/app.js"></script>
 </head>
 <body ng-app="starter" ng-controller="ToDoController" class="platform-android platform-cordova platform-webview">
-<ion-pane>
-  <ion-header-bar class="bar-stable">
-    <h1 class="title">BorrowIt!</h1>
-  </ion-header-bar>
+  <div ng-controller="MainCtrl">
+    <ion-nav-view animation="slide-left-right"></ion-nav-view>
+  </div>
+  <script id="home.html" type="text/ng-template">
+    <ion-view>
+      <ion-header-bar class="bar-header">
+        <h1 class="title">Main Page</h1>
+      </ion-header-bar>
+      <ion-content has-header="true" padding="true">
+        <a class="button icon-right ion-chevron-right" href="#/kontakte">Go to the contacts page!</a>
+        <a class="button icon-right ion-chevron-right" href="#/login">Go to the login page!</a>
+      </ion-content>
+    </ion-view>
+  </script>
 
-  <ion-content>
-    <div>
-      <button class="button icon-left ion-plus" onclick="window.location.href='/home.html'">Home</button>
-      <button class="button icon-left ion-plus" onclick="window.location.href='/login.html'">Login</button>
-      <button class="button icon-left ion-plus" onclick="window.location.href='/registrierung.html'">Registrierung</button>
-      <button class="button icon-left ion-plus" onclick="window.location.href='/anfrage_einsehen.html'">Anfrage einsehen</button>
-      <button class="button icon-left ion-plus" onclick="window.location.href='/anfrage_erstellen.html'">Anfrage erstellen</button>
-      <button class="button icon-left ion-plus" onclick="window.location.href='/chat.html'">Chat</button>
-      <button class="button icon-left ion-plus" onclick="window.location.href='/kontakte.html'">Kontakte</button>
-      <button class="button icon-left ion-plus" onclick="window.location.href='/kontakt_hinzufuegen.html'">Kontakt hinzufügen</button>
-      <button class="button icon-left ion-plus" onclick="window.location.href='/kontakt_profil.html'">Profil eines anderen</button>
-      <button class="button icon-left ion-plus" onclick="window.location.href='/profil_anfrage.html'">Abgeschlossene Anfrage einsehen</button>
-      <button class="button icon-left ion-plus" onclick="window.location.href='/profil.html'">Eigenes Profil</button>
-      <!--
-                  <div class="row">
-                      <div class="col col-50"> <span data-ng-bind="totalDone"></span> von <span data-ng-bind="toDos.length"></span> erledigt</div>
-                  </div>
-                  -->
-    </div>
-  </ion-content>
-</ion-pane>
+  <script id="login.html" type="text/ng-template">
+    <ion-view view-title="Login">
+      <ion-nav-bar class="bar-positive">
+        <ion-nav-back-button class="button-clear">
+          <i class="ion-arrow-left-c"></i> Back
+        </ion-nav-back-button>
+      </ion-nav-bar>
+      <ion-content>
+        <div class="list text-center div-energized">
+          <img src="img/logo.png" width="25%" align="center"/>
+          <label class="item item-input">
+            <input type="text" placeholder="Benutzername">
+          </label>
+          <label class="item item-input">
+            <input type="text" placeholder="Passwort">
+          </label>
+          <button class="button button-block">
+            Anmelden
+          </button>
+          Hier kommt noch was zu FB: Siehe Tutorial: https://ccoenraets.github.io/ionic-tutorial/ionic-facebook-integration.html
+          <button class="button button-block">
+            Registrieren
+          </button>
+          <div class="button-bar">
+            <a class="button">Passwort vergessen?</a>
+            <a class="button">Hilfe</a>
+          </div>
+        </div>
+      </ion-content>
+    </ion-view>
+  </script>
+
+  <script id="anfrage_einsehen" type="text/ng-template">
+    <ion-view view-title="Anfrage Einsehen">
+      <ion-nav-bar class="bar-positive">
+        <ion-nav-back-button class="button-clear">
+          <i class="ion-arrow-left-c"></i> Back
+        </ion-nav-back-button>
+      </ion-nav-bar>
+      <ion-content>
+        <div class="list text-center div-energized">
+          <div class="item item-divider">
+            Ich suche / brauche
+          </div>
+          <label class = "item item-input item-select item-light text-center">
+            <div class = "input-label">
+              <strong>Ein Waffeleisen</strong>
+            </div>
+            <div class = "input-label">
+              Ich möchte mir ein Waffeleisen ausleihen, um mit meinen Freunden Waffeln zu backen. Sehr gerne kann man sich auf eine Waffel und einen Kaffee zu uns gesellen :)
+            </div>
+          </label>
+          <div class="row">
+            <div class="col col-50 text-right">
+              Entfernung
+            </div>
+          </div>
+          <div class="row">
+            <div class="col col-50 text-right">
+              Ab wann?
+            </div>
+          </div>
+          <div class="row">
+            <div class="col col-50 text-right">
+              Bis wann?
+            </div>
+          </div>
+          <div class="row">
+            <div class="col col-50">
+              <button class="button button-block">
+                Anschreiben
+              </button>
+            </div>
+            <div class="col col-50">
+              <button class="button button-block">
+                BorrowIt!
+              </button>
+            </div>
+          </div>
+        </div>
+      </ion-content>
+      <div class="bar bar-footer bar-stable">
+        <div class="row">
+          <div class="col col-15 text-center"><button class="button icon ion-home"></button></div>
+          <div class="col col-15 text-center"><button class="button icon ion-chatbubbles"></button></div>
+          <div class="col col-40 text-center"><button class="button">BorrowIt!</button></div>
+          <div class="col col-15 text-center"><button class="button icon ion-person-stalker"></button></div>
+          <div class="col col-15 text-center"><button class="button icon ion-person"></button></div>
+        </div>
+      </div>
+    </ion-view>
+  </script>
+
+  <script id="anfrage_erstellen" type="text/ng-template">
+    <ion-view>
+      <ion-nav-bar class="bar-positive">
+        <ion-nav-back-button class="button-clear">
+          <i class="ion-arrow-left-c"></i> Back
+        </ion-nav-back-button>
+      </ion-nav-bar>
+      <ion-content>
+        <div class="list text-center div-energized">
+          <div class="item input-label">
+            Ich suche / brauche
+          </div>
+          <label class="item item-input">
+            <input type="text" placeholder="Titel eintragen">
+          </label>
+          <label class="item item-input">
+            <input type="text" placeholder="Beschreibung">
+          </label>
+          <div class="row">
+            <div class="col">
+              Benötigt:
+            </div>
+            <div class="col">
+              <div class="item item-checkbox">
+                sofort
+                <label class="checkbox">
+                  <input type="checkbox">
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col col-25">
+              ab:
+            </div>
+            <div class="col col-offset-25"></div>
+            <div class="col col-25">
+              bis:
+            </div>
+            <div class="col col-offset-25"></div>
+          </div>
+          <label class = "item item-input item-select">
+            <div class = "input-label">
+              Kategorie
+            </div>
+            <select>
+              <option selected>Küche und Haushalt</option>
+              <option>Lebensmittel</option>
+              <option>Sport und Freizeit</option>
+              <option>Auto und Motorrad</option>
+              <option>Wohnen und Garten</option>
+            </select>
+          </label>
+          <button class="button button-block icon ion-checkmark">
+          </button>
+        </div>
+      </ion-content>
+      <div class="bar bar-footer bar-stable">
+        <div class="row">
+          <div class="col col-15 text-center"><button class="button icon ion-home"></button></div>
+          <div class="col col-15 text-center"><button class="button icon ion-chatbubbles"></button></div>
+          <div class="col col-40 text-center"><button class="button">BorrowIt!</button></div>
+          <div class="col col-15 text-center"><button class="button icon ion-person-stalker"></button></div>
+          <div class="col col-15 text-center"><button class="button icon ion-person"></button></div>
+        </div>
+      </div>
+    </ion-view>
+  </script>
+
+  <script id="profil" type="text/ng-template">
+    <ion-view>
+      <ion-nav-bar class="bar-positive">
+        <ion-nav-back-button class="button-clear">
+          <i class="ion-arrow-left-c"></i> Back
+        </ion-nav-back-button>
+      </ion-nav-bar>
+
+    </ion-view>
+  </script>
+
+  <script id="profil_anfrage" type="text/ng-template">
+    <ion-view>
+      <ion-nav-bar class="bar-positive">
+        <ion-nav-back-button class="button-clear">
+          <i class="ion-arrow-left-c"></i> Back
+        </ion-nav-back-button>
+      </ion-nav-bar>
+      <ion-content>
+      </ion-content>
+      <div class="bar bar-footer bar-stable">
+        <div class="row">
+          <div class="col col-15 text-center"><button class="button icon ion-home"></button></div>
+          <div class="col col-15 text-center"><button class="button icon ion-chatbubbles"></button></div>
+          <div class="col col-40 text-center"><button class="button">BorrowIt!</button></div>
+          <div class="col col-15 text-center"><button class="button icon ion-person-stalker"></button></div>
+          <div class="col col-15 text-center"><button class="button icon ion-person"></button></div>
+        </div>
+      </div>
+    </ion-view>
+  </script>
+
+  <script id="kontakte.html" type="text/ng-template">
+    <ion-view view-title="Kontakte">
+      <ion-nav-bar class="bar-positive">
+        <ion-nav-back-button class="button-clear">
+          <i class="ion-arrow-left-c"></i> Back
+        </ion-nav-back-button>
+      </ion-nav-bar>
+      <ion-content>
+        <div class="list text-center div-energized">
+          <a class="button icon-center ion-plus" > Kontakt hinzufügen</a>
+        </div>
+        <!--<button class="button icon-center ion-plus" data-ng-click="createKontakt()">Kontakt hinzufügen</button>-->
+        <div class="list list-inset">
+          <label class="item item-input">
+            <i class="icon ion-search placeholder-icon"></i>
+            <input type="text" placeholder="Search">
+          </label>
+        </div>
+        <div class="list">
+          <a class="item item-avatar" href="#">
+            <img src="cover.jpg">
+            <h2>Jennifer Sailer</h2>
+            <p>Hausnummer 9</p>
+          </a>
+          <a class="item item-avatar" href="#">
+            <img src="cover.jpg">
+            <h2>Marc Schatten</h2>
+            <p>Hausnummer 12</p>
+          </a>
+          <a class="item item-avatar" href="#">
+            <img src="cover.jpg">
+            <h2>Bennedikt Sondermann</h2>
+            <p>Hausnummer 13</p>
+          </a>
+        </div>
+      </ion-content>
+      <div class="bar bar-footer bar-stable">
+        <div class="row">
+          <div class="col col-15 text-center"><button class="button icon ion-home"></button></div>
+          <div class="col col-15 text-center"><button class="button icon ion-chatbubbles"></button></div>
+          <div class="col col-40 text-center"><button class="button">BorrowIt!</button></div>
+          <div class="col col-15 text-center"><button class="button icon ion-person-stalker"></button></div>
+          <div class="col col-15 text-center"><button class="button icon ion-person"></button></div>
+        </div>
+      </div>
+    </ion-view>
+  </script>
+
+  <script id="kontakt_profil" type="text/ng-template">
+    <ion-view>
+      <ion-nav-bar class="bar-positive">
+        <ion-nav-back-button class="button-clear">
+          <i class="ion-arrow-left-c"></i> Back
+        </ion-nav-back-button>
+      </ion-nav-bar>
+
+    </ion-view>
+  </script>
+
+  <script id="kontakt_hinzufuegen" type="text/ng-template">
+    <ion-view>
+      <ion-nav-bar class="bar-positive">
+        <ion-nav-back-button class="button-clear">
+          <i class="ion-arrow-left-c"></i> Back
+        </ion-nav-back-button>
+      </ion-nav-bar>
+
+    </ion-view>
+  </script>
+
+  <script id="chat" type="text/ng-template">
+    <ion-view>
+      <ion-nav-bar class="bar-positive">
+        <ion-nav-back-button class="button-clear">
+          <i class="ion-arrow-left-c"></i> Back
+        </ion-nav-back-button>
+      </ion-nav-bar>
+
+    </ion-view>
+  </script>
+
+  <script id="registrierung" type="text/ng-template">
+    <ion-view>
+      <ion-nav-bar class="bar-positive">
+        <ion-nav-back-button class="button-clear">
+          <i class="ion-arrow-left-c"></i> Back
+        </ion-nav-back-button>
+      </ion-nav-bar>
+
+    </ion-view>
+  </script>
+
+  <script id="registrierung2" type="text/ng-template">
+    <ion-view>
+      <ion-nav-bar class="bar-positive">
+        <ion-nav-back-button class="button-clear">
+          <i class="ion-arrow-left-c"></i> Back
+        </ion-nav-back-button>
+      </ion-nav-bar>
+
+    </ion-view>
+  </script>
+  <!--<ion-pane>
+    <!--<ion-checkbox data-ng-repeat="toDo in toDos"
+                  data-ng-model="toDo.done"
+                  data-ng-click="checkDone(toDo);calculateDone();">
+      <span data-ng-bind="toDo.title"></span>
+    </ion-checkbox>
+    <ion-header-bar class="bar-stable">
+      <h1 class="title">BorrowIt!</h1>
+    </ion-header-bar>
+
+    <ion-content>
+      <div>
+        <button class="button" onclick="window.location.href='/home.html'">Home</button>
+        <button class="button" onclick="window.location.href='/login.html'">Login</button>
+        <button class="button" onclick="window.location.href='/registrierung.html'">Registrierung</button>
+        <button class="button" onclick="window.location.href='/anfrage_einsehen.html'">Anfrage einsehen</button>
+        <button class="button" onclick="window.location.href='/anfrage_erstellen.html'">Anfrage erstellen</button>
+        <button class="button" onclick="window.location.href='/chat.html'">Chat</button>
+        <button class="button" onclick="window.location.href='/kontakte.html'">Kontakte</button>
+        <button class="button" onclick="window.location.href='/kontakt_hinzufuegen.html'">Kontakt hinzufügen</button>
+        <button class="button" onclick="window.location.href='/kontakt_profil.html'">Profil eines anderen</button>
+        <button class="button" onclick="window.location.href='/profil_anfrage.html'">Abgeschlossene Anfrage einsehen</button>
+        <button class="button" onclick="window.location.href='/profil.html'">Eigenes Profil</button>
+        <!--
+                    <div class="row">
+                        <div class="col col-50"> <span data-ng-bind="totalDone"></span> von <span data-ng-bind="toDos.length"></span> erledigt</div>
+                    </div>
+
+      </div>
+    </ion-content>
+  </ion-pane>-->
 </body>
 </html>

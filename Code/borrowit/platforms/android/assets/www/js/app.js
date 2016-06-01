@@ -94,3 +94,27 @@ var app = angular.module('starter', ['ionic', 'ngCordova'])
 
     $scope.calculateDone();
   });
+app.config(function($stateProvider, $urlRouterProvider) {
+  $stateProvider
+    .state('index', {
+      url: '/',
+      templateUrl: 'home.html'
+    })
+    .state('second', {
+      url: '/second',
+      templateUrl: 'second.html'
+    })
+    .state('login', {
+      url: '/login',
+      templateUrl: 'login.html'
+    })
+    .state('kontakte', {
+      url: '/kontakte',
+      templateUrl: 'kontakte.html'
+    });
+  $urlRouterProvider.otherwise('/');
+});
+
+app.controller('MainCtrl', function($scope) {
+
+});
