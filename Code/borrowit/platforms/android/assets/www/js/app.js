@@ -100,17 +100,49 @@ app.config(function($stateProvider, $urlRouterProvider) {
       url: '/',
       templateUrl: 'home.html'
     })
-    .state('second', {
-      url: '/second',
-      templateUrl: 'second.html'
-    })
     .state('login', {
       url: '/login',
       templateUrl: 'login.html'
     })
+    .state('registrierung', {
+      url: '/registrierung',
+      templateUrl: 'registrierung.html'
+    })
+    .state('registrierung2', {
+      url: '/registrierung2',
+      templateUrl: 'registrierung2.html'
+    })
+    .state('anfrage_einsehen', {
+      url: '/anfrage_einsehen',
+      templateUrl: 'anfrage_einsehen.html'
+    })
+    .state('anfrage_erstellen', {
+      url: '/anfrage_erstellen',
+      templateUrl: 'anfrage_erstellen.html'
+    })
+    .state('profil', {
+      url: '/profil',
+      templateUrl: 'profil.html'
+    })
+    .state('profil_anfrage', {
+      url: '/profil_anfrage',
+      templateUrl: 'profil_anfrage.html'
+    })
     .state('kontakte', {
       url: '/kontakte',
       templateUrl: 'kontakte.html'
+    })
+    .state('kontakt_profil', {
+      url: '/kontakt_profil',
+      templateUrl: 'kontakt_profil.html'
+    })
+    .state('kontakt_hinzufuegen', {
+      url: '/kontakt_hinzufuegen',
+      templateUrl: 'kontakt_hinzufuegen.html'
+    })
+    .state('chat', {
+      url: '/chat',
+      templateUrl: 'chat.html'
     });
   $urlRouterProvider.otherwise('/');
 });
