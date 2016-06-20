@@ -235,7 +235,75 @@
   <script id="chat.html" type="text/ng-template">
     <ion-view>
       <ion-content class="borrowit-gruen">
+        <div class="list">
+          <label class="item item-input">
+            <i class="icon ion-search placeholder-icon"></i>
+            <input type="text" placeholder="Search">
+          </label>
+          <a class="item item-avatar" href="#/anfragenchat">
+            <img src="cover.jpg">
+            <h2>f1895</h2>
+            <p>Waffeleisen</p>
+          </a>
+        </div>
       </ion-content>
+      <div class="bar bar-footer bar-borrowitgrau">
+        <div class="button-bar">
+          <a class="button button-block button-borrowitgrau ion-home" href="#/"></a>
+          <a class="button button-block button-borrowitgruen icon ion-chatbubbles" href="#/chat"></a>
+          <a class="button button-block button-borrowitgrau" href="#/anfrage_erstellen">BorrowIt!</a>
+          <a class="button button-block button-borrowitgrau icon ion-person-stalker" href="#/kontakte"></a>
+          <a class="button button-block button-borrowitgrau icon ion-person" href="#/profil_ansicht"></a>
+        </div>
+      </div>
+    </ion-view>
+  </script>
+
+  <script id="anfragenchat.html" type="text/ng-template">
+    <ion-view>
+      <ion-nav-bar class="bar-borrowitgrau">
+        <ion-nav-back-button class="button-clear">
+          <i class="ion-chevron-left"></i> Back
+        </ion-nav-back-button>
+      </ion-nav-bar>
+      <ion-content class="borrowit-gruen">
+        <div class="list">
+          <label class="item item-input">
+            <i class="icon ion-search placeholder-icon"></i>
+            <input type="text" placeholder="Search">
+          </label>
+          <!--<ion-list ng-repeat="message in messages"
+                    ng-value="message.value"
+                    ng-model="messages.message">
+            {{ message.text }}
+          </ion-list>
+          <ion-radio ng-repeat="item in addresses"
+                     ng-value="item.value"
+                     ng-model="data.address">
+            {{ item.text }}
+          </ion-radio>-->
+
+          <ion-list>
+            <ion-item class="text-right">
+              Hallo f1895, Ich bin gerne bereit, dir ein Waffeleisen zu leihen.
+            </ion-item>
+
+            <ion-item>
+              Hallo MarcShadow, das klingt sehr gut. Wenn du willst, kannst du auch gerne eine Waffel haben. Ich habe ein tolles Rezept, das ich ausprobieren möchte.
+            </ion-item>
+
+            <ion-item class="text-right">
+              Das klingt toll. Sehr gerne!
+            </ion-item>
+          </ion-list>
+
+
+
+        </div>
+      </ion-content>
+      <div class="bar bar-subfooter">
+
+      </div>
       <div class="bar bar-footer bar-borrowitgrau">
         <div class="button-bar">
           <a class="button button-block button-borrowitgrau ion-home" href="#/"></a>
@@ -306,11 +374,12 @@
       </ion-content>
       <div class="bar bar-footer bar-borrowitgrau">
         <div class="button-bar">
-          <a class="button button-block button-borrowitgrau ion-home" href="#/"></a>
-          <a class="button button-block button-borrowitgrau icon ion-chatbubbles" href="#/chat"></a>
-          <a class="button button-block button-borrowitgruen" href="#/anfrage_erstellen">BorrowIt!</a>
-          <a class="button button-block button-borrowitgrau icon ion-person-stalker" href="#/kontakte"></a>
-          <a class="button button-block button-borrowitgrau icon ion-person" href="#/profil_ansicht"></a>
+          <a class="button button-block button-borrowitgrau" href="#/"></a>
+          <a class="button button-block button-borrowitgrau" href="#/chat"></a>
+          <!--<input type="image" name="image" src="img/logo.png" class="button col-40 button-block button-borrowitgruen" width="10%" href="#/anfrage_erstellen"/>-->
+          <a class="button button-block button-borrowitgruen" href="#/anfrage_erstellen"><img src="img/logo.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/kontakte"></a>
+          <a class="button button-block button-borrowitgrau" href="#/profil_ansicht"></a>
         </div>
       </div>
     </ion-view>
@@ -320,7 +389,7 @@
     <ion-view view-title="Kontakte">
       <ion-content class="borrowit-gruen">
         <div class="list text-center div-energized">
-          <a class="button icon-center ion-plus" > Kontakt hinzufügen</a>
+          <a class="button icon-center ion-plus">Kontakt hinzufügen</a>
         </div>
         <!--<button class="button icon-center ion-plus" data-ng-click="createKontakt()">Kontakt hinzufügen</button>-->
         <div class="list list-inset">
@@ -328,8 +397,6 @@
             <i class="icon ion-search placeholder-icon"></i>
             <input type="text" placeholder="Search">
           </label>
-        </div>
-        <div class="list">
           <a class="item item-avatar" href="#/kontakt_profil">
             <img src="cover.jpg">
             <h2>Jennifer Sailer</h2>
@@ -519,7 +586,7 @@
           <a class="button button-block button-borrowitgrau ion-chatbubbles" href="#/profil_aktivitaeten"></a>
         </div>
       </div>
-      <ion-content class="borrowit-gruen has-header has-footer">
+      <ion-content class="borrowit-gruen has-header">
         <ion-scroll style="width: auto; height: auto;">
             <div class="list">
               <div class="item item-divider">

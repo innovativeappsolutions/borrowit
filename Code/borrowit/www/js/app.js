@@ -241,6 +241,10 @@ app.config(function($stateProvider, $urlRouterProvider) {
     .state('chat', {
       url: '/chat',
       templateUrl: 'chat.html'
+    })
+    .state('anfragenchat', {
+      url: '/anfragenchat',
+      templateUrl: 'anfragenchat.html'
     });
   $urlRouterProvider.otherwise('/login');
 });
