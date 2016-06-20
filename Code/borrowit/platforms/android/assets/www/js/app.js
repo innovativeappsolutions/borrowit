@@ -86,14 +86,79 @@ var app = angular.module('starter', ['ionic', 'ngCordova'])
     };
 
     $scope.addresses = [
-      {
-        street:"Müll rausbringen",
-        number: "12",
-        zip:"43543",
-        city:"Magdeburg",
-        country:"Deutschland"
-      }
-    ]
+      { text: "Am Teckenberg 51", value: 1, street: "Am Teckenberg", number: "51", zip: "40883", city: "Ratingen", country:"Deutschland" },
+      { text: "Berliner Straße 111", value: 2, street: "Berliner Straße", number: "111", zip: "40880", city: "Ratingen", country:"Deutschland" }
+    ];
+
+    $scope.data = {
+      address: 1
+    };
+
+    $scope.checkboxes = {
+      sofort : true
+    };
+
+    $scope.addAddress = function ()
+    {
+      $scope.popupData = {};
+      var addAddressPopup = $ionicPopup.show({
+        template: '<input type="text" ng-model="popupData.newToDoTitle">' +
+        '<div class="item item-input-inset">' +
+          '<label class="item item-input-wrapper">' +
+            '<input type="text" placeholder="Straße" ng-model="popupData.newAddressStreet"/>' +
+          '</label>' +
+          '<label class="item item-input-wrapper">' +
+            '<input type="text" placeholder="Hausnummer" ng-model="popupData.newAddressNumber"/>' +
+          '</label>' +
+        '</div>' +
+        '<div class="item item-input-inset">' +
+          '<label class="item item-input-wrapper">' +
+            '<input type="text" placeholder="PLZ" ng-model="popupData.newAddressZIP"/>' +
+          '</label>' +
+          '<label class="item item-input-wrapper">' +
+            '<input type="text" placeholder="Ort" ng-model="popupData.newAddressCity"/>' +
+          '</label>' +
+        '</div>' +
+        '<label class = "item item-input item-select item-light" ng-model="popupData.newAddressCountry">' +
+          '<div class = "input-label">' +
+            'Land' +
+          '</div>' +
+          '<select>' +
+            '<option selected>Deutschland</option>' +
+            '<option>Schweiz</option>' +
+            '<option>Österreich</option>' +
+            '<option>Bayern</option>' +
+            '<option>Köln</option>' +
+          '</select>' +
+        '</label>',
+        title: 'Neue Adresse anlegen',
+        scope: $scope,
+        buttons: [
+          { text: 'Abbrechen'},
+          {
+            text: '<b>Anlegen</b>',
+            type: 'button-positive',
+            onTap: function(e) {
+              if($scope.popupData.newAddressStreet != null &&
+                $scope.popupData.newAddressNumber != null &&
+                $scope.popupData.newAddressZIP != null &&
+                $scope.popupData.newAddressCity != null){
+
+                $scope.addresses.push({
+                  text: $scope.popupData.newAddressStreet + " " + $scope.popupData.newAddressNumber,
+                  value: $scope.addresses.length + 1,
+                  street: $scope.popupData.newAddressStreet,
+                  number: $scope.popupData.newAddressNumber,
+                  zip: $scope.popupData.newAddressZIP,
+                  city: $scope.popupData.newAddressCity,
+                  country: $scope.popupData.newAddressCountry
+                });
+              }
+            }
+          },
+        ]
+      });
+    };
 
     $scope.changePassword = function() {
 

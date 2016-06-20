@@ -94,6 +94,10 @@ var app = angular.module('starter', ['ionic', 'ngCordova'])
       address: 1
     };
 
+    $scope.checkboxes = {
+      sofort : true
+    };
+
     $scope.addAddress = function ()
     {
       $scope.popupData = {};
