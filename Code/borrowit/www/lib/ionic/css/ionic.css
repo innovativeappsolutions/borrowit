@@ -3860,9 +3860,9 @@ a.subdued {
  * Bar (Headers and Footers)
  * --------------------------------------------------
  */
-.borrowit-gruen{
+.borrowit-blau{
   background-color: #5DBCD2;
-  color: #fff;
+  color: #000;
   height: auto;
 }
 .borrowit-grau{
@@ -3985,14 +3985,14 @@ a.subdued {
   color: #fff; }
 .bar.bar-borrowitgrau.bar-footer {
   background-image: linear-gradient(180deg, #B2B2B2, #B2B2B2 50%, transparent 50%); }
-.bar.bar-borrowitgruen {
+.bar.bar-borrowitblau {
   border-color: #6ded38;
   background-color: #5DBCD2;
   background-image: linear-gradient(0deg, #e42112, #e42112 50%, transparent 50%);
   color: #fff; }
-.bar.bar-borrowitgruen .title {
+.bar.bar-borrowitblau .title {
   color: #fff; }
-.bar.bar-borrowitgruen.bar-footer {
+.bar.bar-borrowitblau.bar-footer {
   background-image: linear-gradient(180deg, #75ff3c, #75ff3c 50%, transparent 50%); }
 .bar.bar-energized {
   border-color: #e6b500;
@@ -7867,8 +7867,8 @@ input[type="checkbox"][readonly] {
     border-color: #ddd; }
   .checkbox input:checked:before,
   .checkbox input:checked + .checkbox-icon:before {
-    background: #75ff3c;
-    border-color: #6ded38; }
+    background: #5DBCD2;
+    border-color: #57b0c5; }
 
 .checkbox-light input:before,
 .checkbox-light .checkbox-icon:before {
@@ -8638,7 +8638,7 @@ progress {
     border-color: transparent;
     background-color: #fff;
     color: #444; }
-.button.button-borrowitgruen{
+.button.button-borrowitblau{
   border-color: transparent;
   background-color: #5DBCD2;
   color: white; }

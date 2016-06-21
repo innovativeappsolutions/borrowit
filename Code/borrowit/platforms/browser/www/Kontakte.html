@@ -26,25 +26,59 @@
 <body ng-app="starter" ng-controller="ToDoController">
 <ion-pane>
   <ion-header-bar class="bar-stable">
-    <h1 class="title">BorrowIt!</h1>
-    <button class="button icon-left ion-plus" data-ng-click="createToDo()">Hinzufügen</button>
+    <h1 class="title">Kontakte</h1>
+
   </ion-header-bar>
 
   <ion-content>
-    <div>
-      <ion-checkbox data-ng-repeat="toDo in toDos"
-                    data-ng-model="toDo.done"
-                    data-ng-click="checkDone(toDo);calculateDone();">
-        <span data-ng-bind="toDo.title"></span>
-      </ion-checkbox>
+    <div class="list text-center div-energized">
 
-      <!--
-                  <div class="row">
-                      <div class="col col-50"> <span data-ng-bind="totalDone"></span> von <span data-ng-bind="toDos.length"></span> erledigt</div>
-                  </div>
-                  -->
+      <a class="button icon-center ion-plus" > Kontakt hinzufügen</a>
+</div>
+    <!--<button class="button icon-center ion-plus" data-ng-click="createKontakt()">Kontakt hinzufügen</button>-->
+
+
+    <div class="list list-inset">
+      <label class="item item-input">
+        <i class="icon ion-search placeholder-icon"></i>
+        <input type="text" placeholder="Search">
+      </label>
     </div>
+
+    <div class="list">
+
+      <a class="item item-avatar" href="#">
+        <img src="cover.jpg">
+        <h2>Jennifer Sailer</h2>
+        <p>Hausnummer 9</p>
+      </a>
+      <a class="item item-avatar" href="#">
+        <img src="cover.jpg">
+        <h2>Mark Schatten</h2>
+        <p>Hausnummer 12</p>
+      </a>
+      <a class="item item-avatar" href="#">
+        <img src="cover.jpg">
+        <h2>Bennedikt Sondermann</h2>
+        <p>Hausnummer 13</p>
+      </a>
+
+
+    </div>
+
+
+
+
   </ion-content>
+  <div class="bar bar-footer bar-stable">
+    <div class="row">
+      <div class="col col-15 text-center"><button class="button icon ion-home"></button></div>
+      <div class="col col-15 text-center"><button class="button icon ion-chatbubbles"></button></div>
+      <div class="col col-40 text-center"><button class="button">BorrowIt!</button></div>
+      <div class="col col-15 text-center"><button class="button icon ion-person-stalker"></button></div>
+      <div class="col col-15 text-center"><button class="button icon ion-person"></button></div>
+    </div>
+  </div>
 </ion-pane>
 </body>
 </html>

@@ -26,25 +26,74 @@
 <body ng-app="starter" ng-controller="ToDoController">
 <ion-pane>
   <ion-header-bar class="bar-stable">
-    <h1 class="title">BorrowIt!</h1>
-    <button class="button icon-left ion-plus" data-ng-click="createToDo()">Hinzufügen</button>
+    <h1 class="title">Fremd-Profil</h1>
+
   </ion-header-bar>
 
-  <ion-content>
-    <div>
-      <ion-checkbox data-ng-repeat="toDo in toDos"
-                    data-ng-model="toDo.done"
-                    data-ng-click="checkDone(toDo);calculateDone();">
-        <span data-ng-bind="toDo.title"></span>
-      </ion-checkbox>
+  <div class="bar bar-subheader">
+    <h1 class="title">Vorname Nachname</h1>
+  </div>
 
-      <!--
-                  <div class="row">
-                      <div class="col col-50"> <span data-ng-bind="totalDone"></span> von <span data-ng-bind="toDos.length"></span> erledigt</div>
-                  </div>
-                  -->
+  <ion-content>
+
+    <br><br><br>
+    <div class="list text-center div-energized">
+
+      <img src="http://www.ja-pics.net/images/full/4/677ba25ee9.gif" width="80" height="80">
+
     </div>
+
+    <div class="list text-center div-energized">
+
+      <button class="button button button-stable ion-plus">
+        Als Kontakt hinzufügen
+      </button>
+
+    </div>
+    <div class="list text-center div-energized">
+      <i class="icon ion-star"></i>
+      <i class="icon ion-star"></i>
+      <i class="icon ion-star"></i>
+      <i class="icon ion-star"></i>
+      <i class="ion-ios-star-half"></i>
+    </div>
+
+    Aktivitäten:
+
+    <div class="list">
+
+      <a class="item item-icon-right" href="#">
+        Gummihammer
+        <i class="ion-chevron-right"></i>
+        <i class="ion-chevron-right"></i>
+      </a>
+      <a class="item item-icon-right" href="#">
+        500g Mehl zum Backen
+        <i class="ion-chevron-right"></i>
+        <i class="ion-chevron-right"></i>
+      </a>
+      <a class="item item-icon-left" href="#">
+        <i class="ion-chevron-left"></i>
+        <i class="ion-chevron-left"></i>
+        Fahrradpumpe für Rennrad
+      </a>
+      <a class="item item-icon-right" href="#">
+        Auflaufform
+        <i class="ion-chevron-right"></i>
+        <i class="ion-chevron-right"></i>
+      </a>
+    </div>
+
   </ion-content>
+  <div class="bar bar-footer bar-stable">
+    <div class="row">
+      <div class="col col-15 text-center"><button class="button icon ion-home"></button></div>
+      <div class="col col-15 text-center"><button class="button icon ion-chatbubbles"></button></div>
+      <div class="col col-40 text-center"><button class="button">BorrowIt!</button></div>
+      <div class="col col-15 text-center"><button class="button icon ion-person-stalker"></button></div>
+      <div class="col col-15 text-center"><button class="button icon ion-person"></button></div>
+    </div>
+  </div>
 </ion-pane>
 </body>
 </html>
