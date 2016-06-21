@@ -7,10 +7,16 @@
         "files": {}
     },
     "installed_plugins": {
+        "cordova-plugin-camera": {
+            "PACKAGE_NAME": "com.ionicframework.borrowit795688"
+        },
         "cordova-plugin-console": {
             "PACKAGE_NAME": "com.ionicframework.borrowit795688"
         },
         "cordova-plugin-device": {
+            "PACKAGE_NAME": "com.ionicframework.borrowit795688"
+        },
+        "cordova-plugin-file": {
             "PACKAGE_NAME": "com.ionicframework.borrowit795688"
         },
         "cordova-plugin-splashscreen": {
@@ -23,12 +29,6 @@
             "PACKAGE_NAME": "com.ionicframework.borrowit795688"
         },
         "ionic-plugin-keyboard": {
-            "PACKAGE_NAME": "com.ionicframework.borrowit795688"
-        },
-        "cordova-plugin-camera": {
-            "PACKAGE_NAME": "com.ionicframework.borrowit795688"
-        },
-        "cordova-plugin-file": {
             "PACKAGE_NAME": "com.ionicframework.borrowit795688"
         }
     },
