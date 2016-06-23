@@ -17,74 +17,73 @@ var app = angular.module('starter', ['ionic', 'ngCordova'])
       }
     });
   })
-  .controller("ToDoController", function($scope, $ionicPopup, $cordovaVibration, $cordovaCamera, $cordovaFile){
-    //Contains the amount of done toDos;
-    $scope.totalDone = 0;
-    //Contains the ToDos
-    $scope.toDos = [
-      {
-        title:"Müll rausbringen",
-        done: false
-      },
-      {
-        title:"Bild aufhängen",
-        done: false
-      },
-      {
-        title:"Staub saugen",
-        done: false
-      }
-    ]
 
-    $scope.checkDone = function (toDo){
-      if(toDo.done)
-        $cordovaVibration.vibrate(100);
-    };
-
-    /**
-     * Calculates how many toDos are already done
-     **/
-    $scope.calculateDone = function (){
-
-      $scope.totalDone = 0;
-
-      for(var i in $scope.toDos)
-      {
-        if($scope.toDos[i].done)
-          $scope.totalDone ++;
-      }
-    };
-
-    /**
-     *	Shows a popout to enter the new toDo's title
-     **/
-    $scope.createToDo = function ()
-    {
-      $scope.popupData = {};
-      var toDoPopup = $ionicPopup.show({
-        template: '<input type="text" ng-model="popupData.newToDoTitle">',
-        title: 'Neues ToDo anlegen',
-        subTitle: 'Bitte geben Sie den Titel ein',
-        scope: $scope,
-        buttons: [
-          { text: 'Abbrechen'},
-          {
-            text: '<b>Speichern</b>',
-            type: 'button-positive',
-            onTap: function(e) {
-              if($scope.popupData.newToDoTitle != ""){
-
-                $scope.toDos.push({
-                  title: $scope.popupData.newToDoTitle,
-                  done: false
-                });
-              }
-            }
-          },
-        ]
+  .config(function($stateProvider, $urlRouterProvider) {
+    $stateProvider
+      .state('index', {
+        url: '/',
+        templateUrl: 'home.html'
+      })
+      .state('login', {
+        url: '/login',
+        templateUrl: 'login.html'
+      })
+      .state('registrierung', {
+        url: '/registrierung',
+        templateUrl: 'registrierung.html'
+      })
+      .state('registrierung2', {
+        url: '/registrierung2',
+        templateUrl: 'registrierung2.html'
+      })
+      .state('anfrage_einsehen', {
+        url: '/anfrage_einsehen',
+        templateUrl: 'anfrage_einsehen.html'
+      })
+      .state('anfrage_erstellen', {
+        url: '/anfrage_erstellen',
+        templateUrl: 'anfrage_erstellen.html'
+      })
+      .state('profil_ansicht', {
+        url: '/profil_ansicht',
+        templateUrl: 'profil_ansicht.html'
+      })
+      .state('profil_einstellungen', {
+        url: '/profil_einstellungen',
+        templateUrl: 'profil_einstellungen.html'
+      })
+      .state('profil_aktivitaeten', {
+        url: '/profil_aktivitaeten',
+        templateUrl: 'profil_aktivitaeten.html'
+      })
+      .state('profil_anfrage', {
+        url: '/profil_anfrage',
+        templateUrl: 'profil_anfrage.html'
+      })
+      .state('kontakte', {
+        url: '/kontakte',
+        templateUrl: 'kontakte.html'
+      })
+      .state('kontakt_profil', {
+        url: '/kontakt_profil',
+        templateUrl: 'kontakt_profil.html'
+      })
+      .state('kontakt_hinzufuegen', {
+        url: '/kontakt_hinzufuegen',
+        templateUrl: 'kontakt_hinzufuegen.html'
+      })
+      .state('chat', {
+        url: '/chat',
+        templateUrl: 'chat.html'
+      })
+      .state('anfragenchat', {
+        url: '/anfragenchat',
+        templateUrl: 'anfragenchat.html'
       });
-    };
+    $urlRouterProvider.otherwise('/login');
+  })
 
+  .controller("ToDoController", function($scope, $ionicPopup, $cordovaVibration, $cordovaCamera, $cordovaDevice, $cordovaFile, $ionicPlatform, $ionicActionSheet, FileService, ImageService){
     $scope.addresses = [
       { text: "Am Teckenberg 51", value: 1, street: "Am Teckenberg", number: "51", zip: "40883", city: "Ratingen", country:"Deutschland" },
       { text: "Berliner Straße 111", value: 2, street: "Berliner Straße", number: "111", zip: "40880", city: "Ratingen", country:"Deutschland" }
@@ -182,148 +181,117 @@ var app = angular.module('starter', ['ionic', 'ngCordova'])
       });
     }
 
-    $scope.calculateDone();
+    $ionicPlatform.ready(function() {
+      $scope.images = FileService.images();
+      $scope.$apply();
+    });
 
-    // 1
-    $scope.images = [];
+    $scope.urlForImage = function(imageName) {
+      var trueOrigin = cordova.file.dataDirectory + imageName;
+      return trueOrigin;
+    }
 
-    $scope.addImage = function() {
-      // 2
-      var options = {
-        destinationType : Camera.DestinationType.FILE_URI,
-        sourceType : Camera.PictureSourceType.CAMERA, // Camera.PictureSourceType.PHOTOLIBRARY
-        allowEdit : false,
-        encodingType: Camera.EncodingType.JPEG,
-        popoverOptions: CameraPopoverOptions,
-      };
-
-      // 3
-      $cordovaCamera.getPicture(options).then(function(imageData) {
-
-        // 4
-        onImageSuccess(imageData);
-
-        function onImageSuccess(fileURI) {
-          createFileEntry(fileURI);
+    $scope.addMedia = function() {
+      $scope.hideSheet = $ionicActionSheet.show({
+        buttons: [
+          { text: 'Take photo' },
+          { text: 'Photo from library' }
+        ],
+        titleText: 'Add images',
+        cancelText: 'Cancel',
+        buttonClicked: function(index) {
+          $scope.addImage(index);
         }
-
-        function createFileEntry(fileURI) {
-          window.resolveLocalFileSystemURL(fileURI, copyFile, fail);
-        }
-
-        // 5
-        function copyFile(fileEntry) {
-          var name = fileEntry.fullPath.substr(fileEntry.fullPath.lastIndexOf('/') + 1);
-          var newName = makeid() + name;
-
-          window.resolveLocalFileSystemURL(cordova.file.dataDirectory, function(fileSystem2) {
-              fileEntry.copyTo(
-                fileSystem2,
-                newName,
-                onCopySuccess,
-                fail
-              );
-            },
-            fail);
-        }
-
-        // 6
-        function onCopySuccess(entry) {
-          $scope.$apply(function () {
-            $scope.images.push(entry.nativeURL);
-          });
-        }
-
-        function fail(error) {
-          console.log("fail: " + error.code);
-        }
-
-        function makeid() {
-          var text = "";
-          var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-          for (var i=0; i < 5; i++) {
-            text += possible.charAt(Math.floor(Math.random() * possible.length));
-          }
-          return text;
-        }
-
-      }, function(err) {
-        console.log(err);
       });
     }
 
-    $scope.urlForImage = function(imageName) {
-      var name = imageName.substr(imageName.lastIndexOf('/') + 1);
-      var trueOrigin = cordova.file.dataDirectory + name;
-      return trueOrigin;
+    $scope.addImage = function(type) {
+      $scope.hideSheet();
+      ImageService.handleMediaDialog(type).then(function() {
+        $scope.$apply();
+      });
+    }
+  })
+
+  //factories
+  .factory('FileService', function($cordovaCamera, $q, $cordovaFile) {
+    var images;
+    var IMAGE_STORAGE_KEY = 'images';
+
+    getImages = function() {
+      var img = window.localStorage.getItem(IMAGE_STORAGE_KEY);
+      if (img) {
+        images = JSON.parse(img);
+      } else {
+        images = [];
+      }
+      return images;
+    };
+
+    addImage = function(img) {
+      images.push(img);
+      window.localStorage.setItem(IMAGE_STORAGE_KEY, JSON.stringify(images));
+    };
+
+    return {
+      storeImage: addImage,
+      images: getImages
+    }
+  })
+
+  .factory('ImageService', function($cordovaCamera, FileService, $q, $cordovaFile) {
+
+    makeid = function() {
+      var text = '';
+      var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+      for (var i = 0; i < 5; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+      }
+      return text;
+    };
+
+    optionsForType = function(type) {
+      var source;
+      switch (type) {
+        case 0:
+          source = Camera.PictureSourceType.CAMERA;
+          break;
+        case 1:
+          source = Camera.PictureSourceType.PHOTOLIBRARY;
+          break;
+      }
+      return {
+        destinationType: Camera.DestinationType.FILE_URI,
+        sourceType: source,
+        allowEdit: false,
+        encodingType: Camera.EncodingType.JPEG,
+        popoverOptions: CameraPopoverOptions,
+        saveToPhotoAlbum: true
+      };
+    }
+
+    saveMedia = function(type) {
+      return $q(function(resolve, reject) {
+        var options = optionsForType(type);
+
+        $cordovaCamera.getPicture(options).then(function(imageUrl) {
+          var name = imageUrl.substr(imageUrl.lastIndexOf('/') + 1);
+          var namePath = imageUrl.substr(0, imageUrl.lastIndexOf('/') + 1);
+          var newName = makeid() + name;
+          $cordovaFile.copyFile(namePath, name, cordova.file.dataDirectory, newName)
+            .then(function(info) {
+              FileService.storeImage(newName);
+              resolve();
+            }, function(e) {
+              reject();
+            });
+        });
+      })
+    }
+    return {
+      handleMediaDialog: saveMedia
     }
   });
-app.config(function($stateProvider, $urlRouterProvider) {
-  $stateProvider
-    .state('index', {
-      url: '/',
-      templateUrl: 'home.html'
-    })
-    .state('login', {
-      url: '/login',
-      templateUrl: 'login.html'
-    })
-    .state('registrierung', {
-      url: '/registrierung',
-      templateUrl: 'registrierung.html'
-    })
-    .state('registrierung2', {
-      url: '/registrierung2',
-      templateUrl: 'registrierung2.html'
-    })
-    .state('anfrage_einsehen', {
-      url: '/anfrage_einsehen',
-      templateUrl: 'anfrage_einsehen.html'
-    })
-    .state('anfrage_erstellen', {
-      url: '/anfrage_erstellen',
-      templateUrl: 'anfrage_erstellen.html'
-    })
-    .state('profil_ansicht', {
-      url: '/profil_ansicht',
-      templateUrl: 'profil_ansicht.html'
-    })
-    .state('profil_einstellungen', {
-      url: '/profil_einstellungen',
-      templateUrl: 'profil_einstellungen.html'
-    })
-    .state('profil_aktivitaeten', {
-      url: '/profil_aktivitaeten',
-      templateUrl: 'profil_aktivitaeten.html'
-    })
-    .state('profil_anfrage', {
-      url: '/profil_anfrage',
-      templateUrl: 'profil_anfrage.html'
-    })
-    .state('kontakte', {
-      url: '/kontakte',
-      templateUrl: 'kontakte.html'
-    })
-    .state('kontakt_profil', {
-      url: '/kontakt_profil',
-      templateUrl: 'kontakt_profil.html'
-    })
-    .state('kontakt_hinzufuegen', {
-      url: '/kontakt_hinzufuegen',
-      templateUrl: 'kontakt_hinzufuegen.html'
-    })
-    .state('chat', {
-      url: '/chat',
-      templateUrl: 'chat.html'
-    })
-    .state('anfragenchat', {
-      url: '/anfragenchat',
-      templateUrl: 'anfragenchat.html'
-    });
-  $urlRouterProvider.otherwise('/login');
-});
 
-app.controller('MainCtrl', function($scope) {
 
-});
