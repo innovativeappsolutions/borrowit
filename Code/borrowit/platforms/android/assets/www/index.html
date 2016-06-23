@@ -7,24 +7,18 @@
 
   <link href="lib/ionic/css/ionic.css" rel="stylesheet">
   <link href="css/style.css" rel="stylesheet">
-
-  <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
-  <link href="css/ionic.app.css" rel="stylesheet">
-  -->
-
-  <!-- ionic/angularjs js -->
   <script src="lib/ionic/js/ionic.bundle.js"></script>
-
-  <!-- cordova script (this will be a 404 during development) -->
-
   <script src="lib/ngCordova/dist/ng-cordova.js"></script>
   <script src="cordova.js"></script>
-
-  <!-- your app's js -->
   <script src="js/app.js"></script>
+
+  <!-- moment -->
+  <script src="js/moment.js"></script>
+  <!-- angular moment -->
+  <script src="js/angular-moment.js"></script>
 </head>
 <body ng-app="starter" ng-controller="ToDoController" class="platform-android platform-cordova platform-webview">
-  <div ng-controller="MainCtrl">
+  <div>
     <ion-nav-view animation="slide-left-right"></ion-nav-view>
   </div>
 
@@ -200,7 +194,8 @@
               </div>
             </div>
           </a>
-          <button class="button button-borrowitgrau" ng-click="addImage()">
+          <a class="button button-block button-borrowitblau" href="#/UserMessages">zum Chat</a><br><br>
+          <button class="button button-borrowitgrau" ng-click="addMedia()">
             Add image
           </button><br><br>
           <ion-scroll>
@@ -266,60 +261,60 @@
   </script>
 
   <script id="anfragenchat.html" type="text/ng-template">
-    <ion-view>
-      <ion-nav-bar class="bar-borrowitgrau">
-        <ion-nav-back-button class="button-clear">
-          <i class="ion-chevron-left"></i> Back
-        </ion-nav-back-button>
-      </ion-nav-bar>
-      <ion-content class="borrowit-blau">
-        <div class="list">
-          <label class="item item-input">
-            <i class="icon ion-search placeholder-icon"></i>
-            <input type="text" placeholder="Search">
-          </label>
-          <!--<ion-list ng-repeat="message in messages"
-                    ng-value="message.value"
-                    ng-model="messages.message">
-            {{ message.text }}
-          </ion-list>
-          <ion-radio ng-repeat="item in addresses"
-                     ng-value="item.value"
-                     ng-model="data.address">
-            {{ item.text }}
-          </ion-radio>-->
+    <!--<ion-view>-->
+      <!--<ion-nav-bar class="bar-borrowitgrau">-->
+        <!--<ion-nav-back-button class="button-clear">-->
+          <!--<i class="ion-chevron-left"></i> Back-->
+        <!--</ion-nav-back-button>-->
+      <!--</ion-nav-bar>-->
+      <!--<ion-content class="borrowit-blau">-->
+        <!--<div class="list">-->
+          <!--<label class="item item-input">-->
+            <!--<i class="icon ion-search placeholder-icon"></i>-->
+            <!--<input type="text" placeholder="Search">-->
+          <!--</label>-->
+          <!--&lt;!&ndash;<ion-list ng-repeat="message in messages"-->
+                    <!--ng-value="message.value"-->
+                    <!--ng-model="messages.message">-->
+            <!--{{ message.text }}-->
+          <!--</ion-list>-->
+          <!--<ion-radio ng-repeat="item in addresses"-->
+                     <!--ng-value="item.value"-->
+                     <!--ng-model="data.address">-->
+            <!--{{ item.text }}-->
+          <!--</ion-radio>&ndash;&gt;-->
 
-          <ion-list>
-            <ion-item class="text-right">
-              Hallo f1895, Ich bin gerne bereit, dir ein Waffeleisen zu leihen.
-            </ion-item>
+          <!--<ion-list>-->
+            <!--<ion-item class="text-right">-->
+              <!--Hallo f1895, Ich bin gerne bereit, dir ein Waffeleisen zu leihen.-->
+            <!--</ion-item>-->
 
-            <ion-item>
-              Hallo MarcShadow, das klingt sehr gut. Wenn du willst, kannst du auch gerne eine Waffel haben. Ich habe ein tolles Rezept, das ich ausprobieren möchte.
-            </ion-item>
+            <!--<ion-item>-->
+              <!--Hallo MarcShadow, das klingt sehr gut. Wenn du willst, kannst du auch gerne eine Waffel haben. Ich habe ein tolles Rezept, das ich ausprobieren möchte.-->
+            <!--</ion-item>-->
 
-            <ion-item class="text-right">
-              Das klingt toll. Sehr gerne!
-            </ion-item>
-          </ion-list>
+            <!--<ion-item class="text-right">-->
+              <!--Das klingt toll. Sehr gerne!-->
+            <!--</ion-item>-->
+          <!--</ion-list>-->
 
 
 
-        </div>
-      </ion-content>
-      <div class="bar bar-subfooter">
+        <!--</div>-->
+      <!--</ion-content>-->
+      <!--<div class="bar bar-subfooter">-->
 
-      </div>
-      <div class="bar bar-footer bar-borrowitgrau">
-        <div class="button-bar">
-          <a class="button button-block button-borrowitgrau" href="#/"><img src="img/icons/white_home.png" width="30"></a>
-          <a class="button button-block button-borrowitgrau" href="#/chat"><img src="img/icons/white_communication.png" width="30"></a>
-          <a class="button button-block button-borrowitgrau" href="#/anfrage_erstellen"><img src="img/logo.png" width="30"></a>
-          <a class="button button-block button-borrowitgrau" href="#/kontakte"><img src="img/icons/white_agenda.png" width="30"></a>
-          <a class="button button-block button-borrowitgrau" href="#/profil_ansicht"><img src="img/icons/white_profile.png" width="30"></a>
-        </div>
-      </div>
-    </ion-view>
+      <!--</div>-->
+      <!--<div class="bar bar-footer bar-borrowitgrau">-->
+        <!--<div class="button-bar">-->
+          <!--<a class="button button-block button-borrowitgrau" href="#/"><img src="img/icons/white_home.png" width="30"></a>-->
+          <!--<a class="button button-block button-borrowitgrau" href="#/chat"><img src="img/icons/white_communication.png" width="30"></a>-->
+          <!--<a class="button button-block button-borrowitgrau" href="#/anfrage_erstellen"><img src="img/logo.png" width="30"></a>-->
+          <!--<a class="button button-block button-borrowitgrau" href="#/kontakte"><img src="img/icons/white_agenda.png" width="30"></a>-->
+          <!--<a class="button button-block button-borrowitgrau" href="#/profil_ansicht"><img src="img/icons/white_profile.png" width="30"></a>-->
+        <!--</div>-->
+      <!--</div>-->
+    <!--</ion-view>-->
   </script>
 
   <script id="anfrage_erstellen.html" type="text/ng-template">
@@ -767,36 +762,56 @@
       </div>
     </ion-view>
   </script>
-  <!--<ion-pane>
-    <!--<ion-checkbox data-ng-repeat="toDo in toDos"
-                  data-ng-model="toDo.done"
-                  data-ng-click="checkDone(toDo);calculateDone();">
-      <span data-ng-bind="toDo.title"></span>
-    </ion-checkbox>
-    <ion-header-bar class="bar-stable">
-      <h1 class="title">BorrowIt!</h1>
-    </ion-header-bar>
 
-    <ion-content>
-      <div>
-        <button class="button" onclick="window.location.href='/home.html'">Home</button>
-        <button class="button" onclick="window.location.href='/login.html'">Login</button>
-        <button class="button" onclick="window.location.href='/registrierung.html'">Registrierung</button>
-        <button class="button" onclick="window.location.href='/anfrage_einsehen.html'">Anfrage einsehen</button>
-        <button class="button" onclick="window.location.href='/anfrage_erstellen.html'">Anfrage erstellen</button>
-        <button class="button" onclick="window.location.href='/chat.html'">Chat</button>
-        <button class="button" onclick="window.location.href='/kontakte.html'">Kontakte</button>
-        <button class="button" onclick="window.location.href='/kontakt_hinzufuegen.html'">Kontakt hinzufügen</button>
-        <button class="button" onclick="window.location.href='/kontakt_profil.html'">Profil eines anderen</button>
-        <button class="button" onclick="window.location.href='/profil_anfrage.html'">Abgeschlossene Anfrage einsehen</button>
-        <button class="button" onclick="window.location.href='/profil.html'">Eigenes Profil</button>
-        <!--
-                    <div class="row">
-                        <div class="col col-50"> <span data-ng-bind="totalDone"></span> von <span data-ng-bind="toDos.length"></span> erledigt</div>
-                    </div>
+  <script id="UserMessages.html" type="text/ng-template">
+    <ion-view id="userMessagesView"
+              cache-view="false"
+              view-title="<i class='icon ion-chatbubble user-messages-top-icon'></i> <div class='msg-header-username'>{{toUser.username}}</div>">
 
+      <div class="loader-center" ng-if="!doneLoading">
+        <div class="loader">
+          <i class="icon ion-loading-c"></i>
+        </div>
       </div>
-    </ion-content>
-  </ion-pane>-->
+      <ion-content has-bouncing="true" class="has-header has-footer" delegate-handle="userMessageScroll">
+        <div ng-repeat="message in messages" class="message-wrapper" on-hold="onMessageHold($event, $index, message)">
+          <div ng-if="user._id !== message.userId">
+            <img ng-click="viewProfile(message)" class="profile-pic left"
+                 ng-src="{{toUser.pic}}" onerror="onProfilePicError(this)" />
+            <div class="chat-bubble left">
+              <div class="message" ng-bind-html="message.text | nl2br" autolinker></div>
+              <div class="message-detail">
+                <span ng-click="viewProfile(message)" class="bold">{{toUser.username}}</span>,
+                <span am-time-ago="message.date"></span>
+              </div>
+            </div>
+          </div>
+          <div ng-if="user._id === message.userId">
+            <img ng-click="viewProfile(message)" class="profile-pic right" ng-src="{{user.pic}}" onerror="onProfilePicError(this)" />
+            <div class="chat-bubble right">
+              <div class="message" ng-bind-html="message.text | nl2br" autolinker></div>
+              <div class="message-detail">
+                <span ng-click="viewProfile(message)" class="bold">{{user.username}}</span>,
+                <span am-time-ago="message.date"></span>
+              </div>
+            </div>
+          </div>
+          <div class="cf"></div>
+        </div>
+      </ion-content>
+      <form name="sendMessageForm" ng-submit="sendMessage(sendMessageForm)" novalidate>
+        <ion-footer-bar class="bar-stable item-input-inset message-footer" keyboard-attach>
+          <label class="item-input-wrapper">
+            <textarea ng-model="input.message" value="" placeholder="Sende {{toUser.username}} eine Nachricht..." required minlength="1" maxlength="1500" msd-elastic></textarea>
+          </label>
+          <div class="footer-btn-wrap">
+            <button class="button button-icon icon ion-android-send footer-btn" type="submit"
+                    ng-disabled="!input.message || input.message === ''">
+            </button>
+          </div>
+        </ion-footer-bar>
+      </form>
+    </ion-view>
+  </script>
 </body>
 </html>
