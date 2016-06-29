@@ -30,6 +30,12 @@ at the bottom as the textarea resizes */
   bottom: 0;
 }
 
+img.bigprofile-pic {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+
 img.profile-pic {
   width: 40px;
   height: 40px;

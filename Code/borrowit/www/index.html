@@ -64,24 +64,24 @@
             Benutzerinformationen
           </div>
           <label class="item item-input">
-            <input type="text" placeholder="Benutzername">
+            <input type="text" placeholder="Benutzername" ng-model="textboxes.username">
           </label>
           <label class="item item-input">
-            <input type="text" placeholder="Nachname">
+            <input type="text" placeholder="Nachname" ng-model="textboxes.lastname">
           </label>
           <label class="item item-input">
-            <input type="text" placeholder="Vorname">
+            <input type="text" placeholder="Vorname" ng-model="textboxes.firstname">
           </label>
           <label class="item item-input">
-            <input type="email" placeholder="E-Mail">
+            <input type="email" placeholder="E-Mail" ng-model="textboxes.email">
           </label>
           <label class="item item-input">
-            <input type="password" placeholder="Passwort">
+            <input type="password" placeholder="Passwort" ng-model="textboxes.password">
           </label>
           <label class="item item-input">
-            <input type="password" placeholder="Passwort wdh.">
+            <input type="password" placeholder="Passwort wdh." ng-model="textboxes.passwordrep">
           </label>
-          <a class="button button-block icon-right ion-chevron-right" href="#/registrierung2">Weiter</a><br/>
+          <button class="button button-light button-block icon-right ion-chevron-right" ng-click="registerFirstPart()">Weiter</button><br/>
         </div>
       </ion-content>
     </ion-view>
@@ -98,15 +98,25 @@
         <div class="list text-center div-energized">
           <div class="row">
             <div class="col col-100 text-center">
-              Hallo Vorname
+              <h1 style="color: #fff">Hallo {{profile.firstname}}</h1>
+              <h3 style="color: #fff">Bitte vervollständige dein Profil</h3>
             </div>
           </div>
-          <div class="row">
-            <div class="col col-100 text-center">
-              Hier kommt noch das mit dem Profilbild hin...Weiß noch nicht, wie das genau geht
-            </div>
-          </div>
-          <div class="row">
+          <img class="bigprofile-pic" ng-click="addMedia()" ng-src="{{profile.picture}}">
+
+          <!--<ion-scroll>
+            <img ng-repeat="image in images" ng-src="{{urlForImage(image)}}" height="200px"/>
+          </ion-scroll>
+          <!--<div class="item item-divider">
+            Clientside, Selected Value: {{ profile.actualAddress }}
+          </div>-->
+          <ion-radio ng-repeat="item in profile.addresses"
+                     ng-value="item.value"
+                     ng-model="profile.actualAddress">
+            {{ item.text }}
+          </ion-radio>
+          <button class="button button-block button-borrowitgrau" ng-click="addAddress()">Addresse ergänzen</button>
+          <!--<div class="row">
             <div class="col col-100 text-center">
               Adresse
             </div>
@@ -138,8 +148,8 @@
               <option>Bayern</option>
               <option>Köln</option>
             </select>
-          </label>
-          <a class="button button-block" href="#/">Los Geht's!</a>
+          </label>-->
+          <button class="button button-light button-block" ng-click="registerSecondPart()">Los Geht's!</button>
         </div>
       </ion-content>
     </ion-view>
@@ -147,11 +157,13 @@
 
   <script id="home.html" type="text/ng-template">
     <ion-view>
-      <ion-header-bar class="bar-borrowitblau">
-        Hallo
-      </ion-header-bar>
       <ion-content class="borrowit-blau">
         <div class="list text-center div-energized">
+          <div class="row">
+            <div class="col col-100 text-center">
+              <h1 style="color: #fff">Hallo {{profile.firstname}}</h1>
+            </div>
+          </div>
           <div class="row responsive-sm">
             <div class="col col-50">
               <label class = "item item-input item-select item-light">
@@ -201,12 +213,6 @@
               </div>
             </div>
           </a>
-          <button class="button button-borrowitgrau" ng-click="addMedia()">
-            Add image
-          </button><br><br>
-          <ion-scroll>
-            <img ng-repeat="image in images" ng-src="{{urlForImage(image)}}" height="200px"/>
-          </ion-scroll>
         </div>
       </ion-content>
       <div class="bar bar-footer bar-borrowitgrau">
@@ -620,7 +626,7 @@
       </div>
       <ion-content class="borrowit-blau has-header">
         <div class="list text-center div-energized">
-          <img src="http://www.ja-pics.net/images/full/4/677ba25ee9.gif" width="80" height="80">
+          <img class="bigprofile-pic" ng-click="addMedia()" ng-src="{{profile.picture}}">
         </div>
         <div class="list text-center div-energized">
           <i class="icon ion-star"></i>
@@ -666,9 +672,9 @@
               <div class="item item-divider">
                 Adresse:
               </div>
-              <ion-radio ng-repeat="item in addresses"
+              <ion-radio ng-repeat="item in profile.addresses"
                          ng-value="item.value"
-                         ng-model="data.address">
+                         ng-model="profile.actualAddress">
                 {{ item.text }}
               </ion-radio>
               <a class="button button-block button-borrowitgrau icon icon-right ion-chevron-right" href="#/adressen">Adressen bearbeiten</a>
@@ -696,9 +702,9 @@
                 Nutzer einladen
                 <i class="ion-chevron-right"></i>
               </a>
-              <button class="button button-block button-light icon icon-right ion-chevron-right" ng-click="logout()">
+              <a class="button button-block button-light icon icon-right ion-chevron-right" href="#/login" ng-click="logout()">
                 Abmelden
-              </button>
+              </a>
               <a class="item item-icon-right item-assertive" href="#">
                 Konto löschen
                 <i class="ion-chevron-right"></i>
@@ -727,9 +733,9 @@
         </ion-nav-back-button>
       </ion-nav-bar>
       <ion-content class="has-footer has-subfooter">
-        <ion-radio ng-repeat="item in addresses"
+        <ion-radio ng-repeat="item in profile.addresses"
                    ng-value="item.value"
-                   ng-model="data.address">
+                   ng-model="profile.actualAddress">
           {{ item.text }}
         </ion-radio>
         <!--<div class="item item-divider">
@@ -740,7 +746,7 @@
         <div class="button-bar">
           <button class="button button-block button-borrowitblau icon-left ion-plus" data-ng-click="addAddress()">Weitere Adresse hinzufügen</button>
           <!--<button class="button button-block button-borrowitgrau icon-left ion-cloud" data-ng-click="changeAddress(data.address)">Ausgewählte Adresse bearbeiten</button>-->
-          <button class="button button-block button-borrowitblau icon-left ion-minus" data-ng-click="deleteAddress(data.address)">Ausgewählte Adresse löschen</button>
+          <button class="button button-block button-borrowitblau icon-left ion-minus" data-ng-click="deleteAddress(profile.actualAddress)">Ausgewählte Adresse löschen</button>
         </div>
       </ion-footer-bar>
       <ion-footer-bar class="bar bar-footer bar-borrowitgrau">

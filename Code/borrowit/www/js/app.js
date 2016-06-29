@@ -31,11 +31,13 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
       })
       .state('registrierung', {
         url: '/registrierung',
-        templateUrl: 'registrierung.html'
+        templateUrl: 'registrierung.html',
+        controller: 'LoginCtrl'
       })
       .state('registrierung2', {
         url: '/registrierung2',
-        templateUrl: 'registrierung2.html'
+        templateUrl: 'registrierung2.html',
+        controller: 'LoginCtrl'
       })
       .state('anfrage_einsehen', {
         url: '/anfrage_einsehen',
@@ -86,9 +88,8 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
         templateUrl: 'anfragenchat.html',
         controller: 'UserMessagesCtrl'
       });
-    username = window.localStorage.getItem("username");
-    password = window.localStorage.getItem("password");
-    if(window.localStorage.getItem("username") != undefined && window.localStorage.getItem("password") != undefined)
+    //profile = JSON.parse(window.localStorage.getItem("profile"));
+    if(JSON.parse(window.localStorage.getItem("profile")))//!= undefined && window.localStorage.getItem("password") != undefined)
       $urlRouterProvider.otherwise('/');
     else
       $urlRouterProvider.otherwise('/login');
@@ -282,14 +283,46 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
 
     }])
 
-  .controller('LoginCtrl', function($scope) {
+  .controller('LoginCtrl', function($scope, ProfileService) {
     $scope.textboxes = {
 
     }
 
+    $scope.registerFirstPart = function()
+    {
+      if($scope.textboxes.username != null &&
+        $scope.textboxes.lastname != null &&
+        $scope.textboxes.firstname != null &&
+        $scope.textboxes.email != null &&
+        $scope.textboxes.password != null &&
+        $scope.textboxes.passwordrep != null &&
+        $scope.textboxes.password == $scope.textboxes.passwordrep)
+      {
+        ProfileService.profile.username = $scope.textboxes.username;
+        ProfileService.profile.lastname = $scope.textboxes.lastname;
+        ProfileService.profile.firstname = $scope.textboxes.firstname;
+        ProfileService.profile.email = $scope.textboxes.email;
+        ProfileService.profile.password = $scope.textboxes.password;
+        ProfileService.profile.addresses = [];
+        ProfileService.profile.actualAddress = 0;
+        window.location = '#/registrierung2';
+      }
+    }
+
+    $scope.registerSecondPart = function()
+    {
+      if($scope.profile.addresses != null &&
+        $scope.profile.addresses.length > 0)
+      {
+        window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
+        window.location = '#/';
+      }
+    }
+
     $scope.login = function(username, password) {
-      window.localStorage.setItem("username", username);
-      window.localStorage.setItem("password", password);
+      ProfileService.profile.username = username;
+      ProfileService.profile.password = password;
+      window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
     };
 
     $scope.checkLogin = function() {
@@ -297,7 +330,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
         //.success(function(data) {
           //if(data.username == $scope.TextboxUsernameLogin && data.password == $scope.TextboxPasswordLogin) {
             $scope.login($scope.textboxes.TextboxUsername, $scope.textboxes.TextboxPassword);
-            window.location = "#/";
+            window.location = '#/';
           //}
           //else
             //showLoginError(true);
@@ -337,22 +370,16 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
     };
   })
 
-  .controller("ToDoController", function($scope, $ionicPopup, $cordovaVibration, $cordovaCamera, $cordovaDevice, $cordovaFile, $ionicPlatform, $ionicActionSheet, FileService, ImageService, ProfileService, ResultService){
+  .controller("ToDoController", function($scope, $ionicPopup, $cordovaVibration, $cordovaCamera, $cordovaDevice, $cordovaFile, $ionicPlatform, $ionicActionSheet, ImageService, ProfileService, ResultService){
     $scope.logout = function() {
-      window.localStorage.removeItem("username");
-      window.localStorage.removeItem("password");
-      window.location = '#/login';
+      window.localStorage.removeItem("profile");
     };
-
-    $scope.data = {
-      address: 1
-    };
-
-    $scope.addresses = ProfileService.addresses;
 
     $scope.checkboxes = {
       sofort : true
     };
+
+    $scope.profile = ProfileService.profile;
 
     $scope.addAddress = function ()
     {
@@ -375,11 +402,11 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
             '<input type="text" placeholder="Ort" ng-model="popupData.newAddressCity"/>' +
           '</label>' +
         '</div>' +
-        '<label class = "item item-input item-select item-light" ng-model="popupData.newAddressCountry">' +
+        '<label class = "item item-input item-select item-light">' +
           '<div class = "input-label">' +
             'Land' +
           '</div>' +
-          '<select>' +
+          '<select ng-model="popupData.newAddressCountry">' +
             '<option selected>Deutschland</option>' +
             '<option>Schweiz</option>' +
             '<option>Österreich</option>' +
@@ -401,11 +428,12 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
               if($scope.popupData.newAddressStreet != null &&
                 $scope.popupData.newAddressNumber != null &&
                 $scope.popupData.newAddressZIP != null &&
-                $scope.popupData.newAddressCity != null){
+                $scope.popupData.newAddressCity != null &&
+                $scope.popupData.newAddressCountry != null){
 
-                ProfileService.addresses.push({
+                ProfileService.profile.addresses.push({
                   text: $scope.popupData.newAddressStreet + " " + $scope.popupData.newAddressNumber,
-                  value: $scope.addresses.length + 1,
+                  value: ProfileService.profile.addresses.length,
                   street: $scope.popupData.newAddressStreet,
                   number: $scope.popupData.newAddressNumber,
                   zip: $scope.popupData.newAddressZIP,
@@ -421,14 +449,22 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
 
     $scope.deleteAddress = function(address)
     {
-      deletedAddress = $scope.addresses[address - 1];
-      $scope.addresses.splice(address - 1,1);
+      if(address + 1 == ProfileService.profile.addresses.length)
+      {
+        ProfileService.profile.actualAddress--;
+      }
+      ProfileService.profile.addresses.splice(address,1);
+      for (var i = 0; i < ProfileService.profile.addresses.length; i++)
+      {
+        ProfileService.profile.addresses[i].value = i;
+      }
+      window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
     }
 
     $scope.changeAddress = function(address)
     {
       $scope.popupData = {};
-      chosenAddress = $scope.addresses[address - 1].street
+      chosenAddress = $scope.addresses[address].street
       var addAddressPopup = $ionicPopup.show({
         template:
         '<div class="item item-input-inset">' +
@@ -475,9 +511,9 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
                 $scope.popupData.newAddressZIP != null &&
                 $scope.popupData.newAddressCity != null){
 
-                ProfileService.addresses.push({
+                ProfileService.profile.addresses.push({
                   text: $scope.popupData.newAddressStreet + " " + $scope.popupData.newAddressNumber,
-                  value: $scope.addresses.length + 1,
+                  value: address,
                   street: $scope.popupData.newAddressStreet,
                   number: $scope.popupData.newAddressNumber,
                   zip: $scope.popupData.newAddressZIP,
@@ -513,7 +549,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
               {
                 if($scope.popupData.newPW != null && $scope.popupData.newPWrep != null && $scope.popupData.newPW === $scope.popupData.newPWrep) {
                   ProfileService.profile.password = $scope.popupData.newPW;
-                  window.localStorage.setItem("password", $scope.popupData.newPW);
+                  window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
                   ResultService.changedPassword(0);
                 }
                 else
@@ -566,6 +602,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
                 ProfileService.profile.lastname = $scope.popupData.lastname;
                 ProfileService.profile.firstname = $scope.popupData.firstname;
                 ProfileService.profile.email = $scope.popupData.email;
+                window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
                 ResultService.changedProfile(0);
               }
               else
@@ -591,7 +628,6 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
     }
 
     $ionicPlatform.ready(function() {
-      $scope.images = FileService.images();
       $scope.$apply();
     });
 
@@ -610,6 +646,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
         cancelText: 'Cancel',
         buttonClicked: function(index) {
           $scope.addImage(index);
+          $scope.profile = ProfileService.profile;
         }
       });
     }
@@ -625,33 +662,34 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
   //factories
 
 
-  .factory('FileService', function($cordovaCamera, $q, $cordovaFile) {
-    var images;
-    var IMAGE_STORAGE_KEY = 'images';
-
-    getImages = function() {
-      var img = window.localStorage.getItem(IMAGE_STORAGE_KEY);
-      if (img) {
-        images = JSON.parse(img);
-      } else {
-        images = [];
-      }
-      return images;
-    };
-
-    addImage = function(img) {
-      images.push(img);
-      window.localStorage.setItem(IMAGE_STORAGE_KEY, JSON.stringify(images));
-    };
-
-    return {
-      storeImage: addImage,
-      images: getImages
-    }
+  .factory('FileService', function($scope, $cordovaCamera, $q, $cordovaFile, ProfileService) {
+    //var images;
+    //var IMAGE_STORAGE_KEY = 'images';
+    //
+    //getImages = function() {
+    //  var img = window.localStorage.getItem(IMAGE_STORAGE_KEY);
+    //  if (img) {
+    //    images = JSON.parse(img);
+    //  } else {
+    //    images = [];
+    //  }
+    //  return images;
+    //};
+    //
+    //addImage = function(img) {
+    //  images.push(img);
+    //  window.localStorage.setItem(IMAGE_STORAGE_KEY, JSON.stringify(images));
+    //};
+    //
+    //return {
+    //  storeImage: addImage,
+    //  images: getImages
+    //}
   })
 
-  .factory('ImageService', function($cordovaCamera, FileService, $q, $cordovaFile) {
-
+  .factory('ImageService', function($cordovaCamera, ProfileService, $q, $cordovaFile) {
+    //var image = 'http://ionicframework.com/img/docs/venkman.jpg';
+    //var IMAGE_STORAGE_KEY = 'image';
     makeid = function() {
       var text = '';
       var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -684,6 +722,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
 
     saveMedia = function(type) {
       return $q(function(resolve, reject) {
+        //window.localStorage.setItem(IMAGE_STORAGE_KEY, image);
         var options = optionsForType(type);
 
         $cordovaCamera.getPicture(options).then(function(imageUrl) {
@@ -692,7 +731,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
           var newName = makeid() + name;
           $cordovaFile.copyFile(namePath, name, cordova.file.dataDirectory, newName)
             .then(function(info) {
-              FileService.storeImage(newName);
+              ProfileService.storeImage(newName);
               resolve();
             }, function(e) {
               reject();
@@ -706,25 +745,36 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
   })
 
   .factory('ProfileService', function() {
+    var profile;
 
-    addresses = [
-      { text: "Am Teckenberg 51", value: 1, street: "Am Teckenberg", number: "51", zip: "40883", city: "Ratingen", country:"Deutschland" },
-      { text: "Berliner Straße 111", value: 2, street: "Berliner Straße", number: "111", zip: "40880", city: "Ratingen", country:"Deutschland" }
-    ];
-
-    profile = {
-      username: window.localStorage.getItem("username"),
-      password: window.localStorage.getItem("password"),
-      email: "",
-      lastname: "Schatten",
-      firstname: "",
-      adresses: addresses,
-      picture: ""
+    if(JSON.parse(window.localStorage.getItem("profile")) != undefined)
+      profile = JSON.parse(window.localStorage.getItem("profile"));
+    else {
+      profile =
+      {
+        username: "",
+        lastname: "",
+        firstname: "",
+        email: "",
+        password: "",
+        addresses: [],
+        actualAddress: 0,
+        picture: "img/icons/black_avatar.png"
+      }
     }
 
+    var image;
+    var IMAGE_STORAGE_KEY = 'image';
+
+    addImage = function(img) {
+      image = img;
+      profile.picture = image;
+      window.localStorage.setItem("profile", JSON.stringify(profile));
+    };
+
     return {
-      addresses: addresses,
-      profile: profile
+      profile: profile,
+      storeImage: addImage
     }
   })
 
