@@ -28,7 +28,7 @@
 
   <script id="login.html" type="text/ng-template" onload="isLoggedIn()">
     <ion-view view-title="Login">
-      <ion-content class="borrowit-blau">
+      <ion-content class="borrowit-blau has-footer">
         <div class="list text-center">
           <img src="img/logo.png" width="25%" align="center"/>
           <label class="item item-input">
@@ -58,7 +58,7 @@
           <i class="ion-chevron-left"></i> Back
         </ion-nav-back-button>
       </ion-nav-bar>
-      <ion-content class="borrowit-blau">
+      <ion-content class="borrowit-blau has-footer">
         <div class="list text-center div-energized">
           <div class="item item-divider">
             Benutzerinformationen
@@ -94,7 +94,7 @@
           <i class="ion-chevron-left"></i> Back
         </ion-nav-back-button>
       </ion-nav-bar>
-      <ion-content class="borrowit-blau">
+      <ion-content class="borrowit-blau has-footer">
         <div class="list text-center div-energized">
           <div class="row">
             <div class="col col-100 text-center">
@@ -157,7 +157,7 @@
 
   <script id="home.html" type="text/ng-template">
     <ion-view>
-      <ion-content class="borrowit-blau">
+      <ion-content has-bouncing="true" class="borrowit-blau has-footer">
         <div class="list text-center div-energized">
           <div class="row">
             <div class="col col-100 text-center">
@@ -193,10 +193,25 @@
               </label>
             </div>
           </div>
-          <a class="item" href="#/anfrage_einsehen">
+          <div class="message-wrapper" ng-repeat="request in requests">
+            <div class="row">
+                <a class="item item-borrowitblau" ng-click="watchRequest(request.value)" href="#/anfrage_einsehen">
+                  <img class="profile-pic left"
+                       ng-src="{{request.profile.picture}}" onerror="onProfilePicError(this)" />
+                  <div class="chat-bubble left">
+                    <div class="message-detail">
+                      <span class="bold">{{request.profile.username}}</span>:
+                      <span>{{request.title}}</span>
+                    </div>
+                    <!--<div class="message" ng-bind-html="request.description | nl2br" autolinker></div>-->
+                  </div>
+                </a>
+            </div>
+          </div>
+          <!--<a class="item" href="#/anfrage_einsehen">
             <div class="row responsive-sm">
               <div class="col col-10">
-                <img src="cover.jpg">
+                <img src="img/icons/grey_man.png" height="80">
               </div>
               <div class="col col-90">
                 Waffeleisen benötigt
@@ -206,13 +221,13 @@
           <a class="item" href="#/anfrage_einsehen">
             <div class="row responsive-sm">
               <div class="col col-10">
-                <img src="cover.jpg">
+                <img src="img/icons/grey_woman.png" height="80">
               </div>
               <div class="col col-90">
                 Fahrradpumpe
               </div>
             </div>
-          </a>
+          </a>-->
         </div>
       </ion-content>
       <div class="bar bar-footer bar-borrowitgrau">
@@ -247,17 +262,20 @@
 
   <script id="chat.html" type="text/ng-template">
     <ion-view>
-      <ion-content class="borrowit-blau">
+      <ion-content class="borrowit-blau has-footer">
         <div class="list">
           <label class="item item-input">
             <i class="icon ion-search placeholder-icon"></i>
             <input type="search" placeholder="Search">
           </label>
-          <a class="item item-avatar" href="#/anfragenchat">
-            <img src="cover.jpg">
-            <h2>f1895</h2>
-            <p>Waffeleisen</p>
-          </a>
+          <div ng-repeat="chat in chats">
+            <a class="item item-avatar" ng-click="watchChat(chat.value)" href="#/anfragenchat">
+              <img class="profile-pic left"
+                   ng-src="{{chat.profile.picture}}" onerror="onProfilePicError(this)" />
+                <span class="bold">{{chat.profile.username}}</span>:
+                <span>{{chat.title}}</span>
+            </a>
+          </div>
         </div>
       </ion-content>
       <div class="bar bar-footer bar-borrowitgrau">
@@ -275,7 +293,7 @@
   <script id="anfragenchat.html" type="text/ng-template">
     <ion-view id="userMessagesView"
               cache-view="false"
-              view-title="Chat mit {{toUser.username}} über Anfrage ???">
+              view-title="Chat mit {{toUser.username}} über Anfrage {{requests[values.chosenRequest].title}}">
       <div class="loader-center" ng-if="!doneLoading">
         <div class="loader">
           <i class="icon ion-loading-c"></i>
@@ -285,27 +303,27 @@
         <ion-nav-back-button class="button-clear">
           <i class="ion-chevron-left"></i> Back
         </ion-nav-back-button>
-        <i class='icon ion-chatbubble user-messages-top-icon'></i> <div class='msg-header-username' onerror="onProfilePicError(this)">{{toUser.pic}} Chat mit {{toUser.username}} über Anfrage</div>
+        <i class='icon ion-chatbubble user-messages-top-icon'></i> <div class='msg-header-username' onerror="onProfilePicError(this)">Chat mit {{toUser.username}} über Anfrage</div>
       </ion-nav-bar>
       <ion-content has-bouncing="true" class="has-header has-footer" delegate-handle="userMessageScroll">
         <div ng-repeat="message in messages" class="message-wrapper" on-hold="onMessageHold($event, $index, message)">
-          <div ng-if="user._id !== message.userId">
+          <div ng-if="profile.username !== message.username">
             <img ng-click="viewProfile(message)" class="profile-pic left"
-                 ng-src="{{toUser.pic}}" onerror="onProfilePicError(this)" />
+                 ng-src="{{toUser.picture}}" onerror="onProfilePicError(this)" />
             <div class="chat-bubble left">
               <div class="message" ng-bind-html="message.text | nl2br" autolinker></div>
               <div class="message-detail">
-                <span ng-click="viewProfile(message)" class="bold">{{toUser.username}}</span>,
+                <span class="bold">{{toUser.username}}</span>,
                 <span am-time-ago="message.date"></span>
               </div>
             </div>
           </div>
-          <div ng-if="user._id === message.userId">
-            <img ng-click="viewProfile(message)" class="profile-pic right" ng-src="{{user.pic}}" onerror="onProfilePicError(this)" />
+          <div ng-if="profile.username === message.username">
+            <img ng-click="viewProfile(message)" class="profile-pic right" ng-src="{{profile.picture}}" onerror="onProfilePicError(this)" />
             <div class="chat-bubble right">
               <div class="message" ng-bind-html="message.text | nl2br" autolinker></div>
               <div class="message-detail">
-                <span ng-click="viewProfile(message)" class="bold">{{user.username}}</span>,
+                <span class="bold">Ich</span>,
                 <span am-time-ago="message.date"></span>
               </div>
             </div>
@@ -390,7 +408,7 @@
 
   <script id="anfrage_erstellen.html" type="text/ng-template">
     <ion-view>
-      <ion-content class="borrowit-blau">
+      <ion-content class="borrowit-blau has-footer">
         <div class="list text-center div-energized">
           <img src="img/logo.png" width="25%" align="center"/>
           <div class="item input-label">
@@ -405,11 +423,11 @@
           <label class="item item-input">
             Benötigt:
           </label>
-          <ion-checkbox class="borrowit-blau" ng-model="checkboxes.sofort">Sofort</ion-checkbox>
-          <div ng-hide="checkboxes.sofort">
+          <ion-checkbox class="borrowit-blau" ng-model="values.sofort">Sofort</ion-checkbox>
+          <div ng-hide="values.sofort">
             Ich benötige es ab:
           </div>
-          <div class="row" ng-hide="checkboxes.sofort">
+          <div class="row" ng-hide="values.sofort">
             <div class="col col 50">
               <input type="date" width="100%"/>
             </div>
@@ -458,7 +476,7 @@
 
   <script id="kontakte.html" type="text/ng-template">
     <ion-view view-title="Kontakte">
-      <ion-content class="borrowit-blau">
+      <ion-content class="borrowit-blau has-footer">
         <div class="list text-center div-energized">
           <a class="button icon-center ion-plus">Kontakt hinzufügen</a>
         </div>
@@ -469,17 +487,17 @@
             <input type="search" placeholder="Search">
           </label>
           <a class="item item-avatar" href="#/kontakt_profil">
-            <img src="cover.jpg">
+            <img src="img/icons/grey_woman.png">
             <h2>Jennifer Sailer</h2>
             <p>Hausnummer 9</p>
           </a>
           <a class="item item-avatar" href="#/kontakt_profil">
-            <img src="cover.jpg">
+            <img src="img/icons/grey_man.png">
             <h2>Marc Schatten</h2>
             <p>Hausnummer 12</p>
           </a>
           <a class="item item-avatar" href="#/kontakt_profil">
-            <img src="cover.jpg">
+            <img src="img/icons/grey_man.png">
             <h2>Bennedikt Sondermann</h2>
             <p>Hausnummer 13</p>
           </a>
@@ -507,7 +525,7 @@
       <div class="bar bar-subheader">
         <h1 class="title">Vorname Nachname</h1>
       </div>
-      <ion-content class="borrowit-blau">
+      <ion-content class="borrowit-blau has-footer">
         <br><br><br>
         <div class="list text-center div-energized">
           <img src="http://www.ja-pics.net/images/full/4/677ba25ee9.gif" width="80" height="80">
@@ -567,7 +585,7 @@
           <i class="ion-chevron-left"></i> Back
         </ion-nav-back-button>
       </ion-nav-bar>
-      <ion-content class="borrowit-blau">
+      <ion-content class="borrowit-blau has-footer">
         <div class="list list-inset">
           <label class="item item-input">
             <i class="icon ion-search placeholder-icon"></i>
@@ -576,19 +594,19 @@
         </div>
         <div class="list">
           <a class="item item-avatar" href="#">
-            <img src="cover.jpg">
+            <img src="img/icons/grey_woman.png">
             <h2>Jennifer Sailer</h2>
             <p>Hausnummer 9</p>
             <button>+ Hinzufügen</button>
           </a>
           <a class="item item-avatar" href="#">
-            <img src="cover.jpg">
+            <img src="img/icons/grey_man.png">
             <h2>Marc Schatten</h2>
             <p>Hausnummer 12</p>
             <button>+ Hinzufügen</button>
           </a>
           <a class="item item-avatar" href="#">
-            <img src="cover.jpg">
+            <img src="img/icons/grey_man.png">
             <h2>Bennedikt Sondermann</h2>
             <p>Hausnummer 13</p>
             <button>+ Hinzufügen</button>
@@ -624,7 +642,7 @@
           <a class="button button-block button-borrowitgrau" href="#/profil_aktivitaeten"><img src="img/icons/white_list.png" width="30"></a>
         </div>
       </div>
-      <ion-content class="borrowit-blau has-header">
+      <ion-content class="borrowit-blau has-footer has-header">
         <div class="list text-center div-energized">
           <img class="bigprofile-pic" ng-click="addMedia()" ng-src="{{profile.picture}}">
         </div>
@@ -657,7 +675,7 @@
           <a class="button button-block button-borrowitgrau" href="#/profil_aktivitaeten"><img src="img/icons/white_list.png" width="30"></a>
         </div>
       </div>
-      <ion-content class="borrowit-blau has-header">
+      <ion-content class="borrowit-blau has-header has-footer">
         <ion-scroll style="width: auto; height: auto;">
             <div class="list">
               <div class="item item-divider">
@@ -770,7 +788,7 @@
           <a class="button button-block button-borrowitblau" href="#/profil_aktivitaeten"><img src="img/icons/white_list.png" width="30"></a>
         </div>
       </div>
-      <ion-content class="borrowit-blau has-header">
+      <ion-content class="borrowit-blau has-header has-footer">
         <a class="item item-icon-right" href="#">
           Gummihammer
           <span class="ion-chevron-right"></span>
@@ -805,51 +823,52 @@
   </script>
 
   <script id="anfrage_einsehen.html" type="text/ng-template">
-    <ion-view view-title="Anfrage Einsehen">
+    <ion-view view-title="Anfrage einsehen">
       <ion-nav-bar class="bar-borrowitgrau">
         <ion-nav-back-button class="button-clear">
           <i class="ion-chevron-left"></i> Back
         </ion-nav-back-button>
       </ion-nav-bar>
-      <ion-content class="borrowit-blau">
+      <ion-content class="borrowit-blau has-footer">
         <div class="list text-center div-energized">
-          <div class="item item-divider">
-            Ich suche / brauche
-          </div>
-          <label class = "item item-input item-select item-light text-center">
-            <div class = "input-label">
-              <strong>Ein Waffeleisen</strong>
-            </div>
-            <div class = "input-label">
-              Ich möchte mir ein Waffeleisen ausleihen, um mit meinen Freunden Waffeln zu backen. Sehr gerne kann man sich auf eine Waffel und einen Kaffee zu uns gesellen :)
-            </div>
-          </label>
+          <ion-label class = "item item-light text-center">
+            <strong>{{requests[values.chosenRequest].profile.username}}</strong></br>
+            {{requests[values.chosenRequest].title}}
+          </ion-label>
+          <ion-label>
+            {{requests[values.chosenRequest].description}}
+          </ion-label>
           <div class="row">
             <div class="col col-50 text-right">
               Entfernung
+            </div>
+            <div class="col col-50 text-left">
+              {{requests[values.chosenRequest].place}}
             </div>
           </div>
           <div class="row">
             <div class="col col-50 text-right">
               Ab wann?
             </div>
+            <div class="col col-50 text-left">
+              {{requests[values.chosenRequest].startDate}}
+            </div>
           </div>
           <div class="row">
             <div class="col col-50 text-right">
               Bis wann?
             </div>
+            <div class="col col-50 text-left">
+              {{requests[values.chosenRequest].endDate}}
+            </div>
           </div>
-          <div class="row">
-            <div class="col col-50">
-              <button class="button button-block">
-                Anschreiben
-              </button>
-            </div>
-            <div class="col col-50">
-              <button class="button button-block">
-                BorrowIt!
-              </button>
-            </div>
+          <div class="button-bar">
+            <button class="button button-block button-light">
+              Anschreiben
+            </button>
+            <button class="button button-block button-light">
+              BorrowIt!
+            </button>
           </div>
         </div>
       </ion-content>

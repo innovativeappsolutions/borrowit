@@ -3986,7 +3986,7 @@ a.subdued {
 .bar.bar-borrowitgrau.bar-footer {
   background-image: linear-gradient(180deg, #B2B2B2, #B2B2B2 50%, transparent 50%); }
 .bar.bar-borrowitblau {
-  border-color: #6ded38;
+  border-color: #5EB0C7;
   background-color: #5DBCD2;
   background-image: linear-gradient(0deg, #e42112, #e42112 50%, transparent 50%);
   color: #fff; }
@@ -4294,6 +4294,7 @@ a.subdued {
 .bar-header {
   top: 0;
   height: 65px;
+  text-align: center;
   border-top-width: 0;
   border-bottom-width: 1px; }
   .bar-header.has-tabs-top {
@@ -4323,9 +4324,9 @@ a.subdued {
   height: 44px; }
 
 .bar-subfooter {
-  bottom: 44px;
+  bottom: 50px;
   display: block;
-  height: 44px; }
+  height: 50px; }
 
 .nav-bar-block {
   position: absolute;
@@ -5759,6 +5760,10 @@ ion-tabs.tabs-striped.tabs-color-active-dark .tab-item.tab-item-active, ion-tabs
     top: 8px; }
   .item .badge + .badge {
     margin-right: 5px; }
+  .item.item-borrowitblau {
+    border-color: #5DBCD2;
+    background-color: #5DBCD2;
+    color: #fff; }
   .item.item-light {
     border-color: #ddd;
     background-color: #fff;

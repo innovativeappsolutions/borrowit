@@ -64,24 +64,24 @@
             Benutzerinformationen
           </div>
           <label class="item item-input">
-            <input type="text" placeholder="Benutzername">
+            <input type="text" placeholder="Benutzername" ng-model="textboxes.username">
           </label>
           <label class="item item-input">
-            <input type="text" placeholder="Nachname">
+            <input type="text" placeholder="Nachname" ng-model="textboxes.lastname">
           </label>
           <label class="item item-input">
-            <input type="text" placeholder="Vorname">
+            <input type="text" placeholder="Vorname" ng-model="textboxes.firstname">
           </label>
           <label class="item item-input">
-            <input type="email" placeholder="E-Mail">
+            <input type="email" placeholder="E-Mail" ng-model="textboxes.email">
           </label>
           <label class="item item-input">
-            <input type="password" placeholder="Passwort">
+            <input type="password" placeholder="Passwort" ng-model="textboxes.password">
           </label>
           <label class="item item-input">
-            <input type="password" placeholder="Passwort wdh.">
+            <input type="password" placeholder="Passwort wdh." ng-model="textboxes.passwordrep">
           </label>
-          <a class="button button-block icon-right ion-chevron-right" href="#/registrierung2">Weiter</a><br/>
+          <button class="button button-light button-block icon-right ion-chevron-right" ng-click="registerFirstPart()">Weiter</button><br/>
         </div>
       </ion-content>
     </ion-view>
@@ -98,15 +98,25 @@
         <div class="list text-center div-energized">
           <div class="row">
             <div class="col col-100 text-center">
-              Hallo Vorname
+              <h1 style="color: #fff">Hallo {{profile.firstname}}</h1>
+              <h3 style="color: #fff">Bitte vervollständige dein Profil</h3>
             </div>
           </div>
-          <div class="row">
-            <div class="col col-100 text-center">
-              Hier kommt noch das mit dem Profilbild hin...Weiß noch nicht, wie das genau geht
-            </div>
-          </div>
-          <div class="row">
+          <img class="bigprofile-pic" ng-click="addMedia()" ng-src="{{profile.picture}}">
+
+          <!--<ion-scroll>
+            <img ng-repeat="image in images" ng-src="{{urlForImage(image)}}" height="200px"/>
+          </ion-scroll>
+          <!--<div class="item item-divider">
+            Clientside, Selected Value: {{ profile.actualAddress }}
+          </div>-->
+          <ion-radio ng-repeat="item in profile.addresses"
+                     ng-value="item.value"
+                     ng-model="profile.actualAddress">
+            {{ item.text }}
+          </ion-radio>
+          <button class="button button-block button-borrowitgrau" ng-click="addAddress()">Addresse ergänzen</button>
+          <!--<div class="row">
             <div class="col col-100 text-center">
               Adresse
             </div>
@@ -138,8 +148,8 @@
               <option>Bayern</option>
               <option>Köln</option>
             </select>
-          </label>
-          <a class="button button-block" href="#/">Los Geht's!</a>
+          </label>-->
+          <button class="button button-light button-block" ng-click="registerSecondPart()">Los Geht's!</button>
         </div>
       </ion-content>
     </ion-view>
@@ -147,11 +157,13 @@
 
   <script id="home.html" type="text/ng-template">
     <ion-view>
-      <ion-header-bar class="bar-borrowitblau">
-        Hallo
-      </ion-header-bar>
-      <ion-content class="borrowit-blau">
+      <ion-content has-bouncing="true" class="borrowit-blau">
         <div class="list text-center div-energized">
+          <div class="row">
+            <div class="col col-100 text-center">
+              <h1 style="color: #fff">Hallo {{profile.firstname}}</h1>
+            </div>
+          </div>
           <div class="row responsive-sm">
             <div class="col col-50">
               <label class = "item item-input item-select item-light">
@@ -181,10 +193,26 @@
               </label>
             </div>
           </div>
-          <a class="item" href="#/anfrage_einsehen">
+          <div class="message-wrapper" ng-repeat="request in requests">
+            <div class="row">
+                <a class="item item-borrowitblau" ng-click="watchRequest(request.value)" href="#/anfrage_einsehen">
+                  <img class="profile-pic left"
+                       ng-src="{{request.profile.picture}}" onerror="onProfilePicError(this)" />
+                  <div class="chat-bubble left">
+                    <div class="message-detail">
+                      <span class="bold">{{request.profile.username}}</span>:
+                      <span>{{request.title}}</span>
+                    </div>
+                    <!--<div class="message" ng-bind-html="request.description | nl2br" autolinker></div>-->
+                  </div>
+                  <div class="cf"></div>
+                </a>
+            </div>
+          </div>
+          <!--<a class="item" href="#/anfrage_einsehen">
             <div class="row responsive-sm">
               <div class="col col-10">
-                <img src="cover.jpg">
+                <img src="img/icons/grey_man.png" height="80">
               </div>
               <div class="col col-90">
                 Waffeleisen benötigt
@@ -194,19 +222,13 @@
           <a class="item" href="#/anfrage_einsehen">
             <div class="row responsive-sm">
               <div class="col col-10">
-                <img src="cover.jpg">
+                <img src="img/icons/grey_woman.png" height="80">
               </div>
               <div class="col col-90">
                 Fahrradpumpe
               </div>
             </div>
-          </a>
-          <button class="button button-borrowitgrau" ng-click="addMedia()">
-            Add image
-          </button><br><br>
-          <ion-scroll>
-            <img ng-repeat="image in images" ng-src="{{urlForImage(image)}}" height="200px"/>
-          </ion-scroll>
+          </a>-->
         </div>
       </ion-content>
       <div class="bar bar-footer bar-borrowitgrau">
@@ -245,10 +267,10 @@
         <div class="list">
           <label class="item item-input">
             <i class="icon ion-search placeholder-icon"></i>
-            <input type="text" placeholder="Search">
+            <input type="search" placeholder="Search">
           </label>
           <a class="item item-avatar" href="#/anfragenchat">
-            <img src="cover.jpg">
+            <img src="img/icons/grey_man.png">
             <h2>f1895</h2>
             <p>Waffeleisen</p>
           </a>
@@ -399,11 +421,11 @@
           <label class="item item-input">
             Benötigt:
           </label>
-          <ion-checkbox class="borrowit-blau" ng-model="checkboxes.sofort">Sofort</ion-checkbox>
-          <div ng-hide="checkboxes.sofort">
+          <ion-checkbox class="borrowit-blau" ng-model="values.sofort">Sofort</ion-checkbox>
+          <div ng-hide="values.sofort">
             Ich benötige es ab:
           </div>
-          <div class="row" ng-hide="checkboxes.sofort">
+          <div class="row" ng-hide="values.sofort">
             <div class="col col 50">
               <input type="date" width="100%"/>
             </div>
@@ -460,20 +482,20 @@
         <div class="list list-inset">
           <label class="item item-input">
             <i class="icon ion-search placeholder-icon"></i>
-            <input type="text" placeholder="Search">
+            <input type="search" placeholder="Search">
           </label>
           <a class="item item-avatar" href="#/kontakt_profil">
-            <img src="cover.jpg">
+            <img src="img/icons/grey_woman.png">
             <h2>Jennifer Sailer</h2>
             <p>Hausnummer 9</p>
           </a>
           <a class="item item-avatar" href="#/kontakt_profil">
-            <img src="cover.jpg">
+            <img src="img/icons/grey_man.png">
             <h2>Marc Schatten</h2>
             <p>Hausnummer 12</p>
           </a>
           <a class="item item-avatar" href="#/kontakt_profil">
-            <img src="cover.jpg">
+            <img src="img/icons/grey_man.png">
             <h2>Bennedikt Sondermann</h2>
             <p>Hausnummer 13</p>
           </a>
@@ -565,24 +587,24 @@
         <div class="list list-inset">
           <label class="item item-input">
             <i class="icon ion-search placeholder-icon"></i>
-            <input type="text" placeholder="Search">
+            <input type="search" placeholder="Search">
           </label>
         </div>
         <div class="list">
           <a class="item item-avatar" href="#">
-            <img src="cover.jpg">
+            <img src="img/icons/grey_woman.png">
             <h2>Jennifer Sailer</h2>
             <p>Hausnummer 9</p>
             <button>+ Hinzufügen</button>
           </a>
           <a class="item item-avatar" href="#">
-            <img src="cover.jpg">
+            <img src="img/icons/grey_man.png">
             <h2>Marc Schatten</h2>
             <p>Hausnummer 12</p>
             <button>+ Hinzufügen</button>
           </a>
           <a class="item item-avatar" href="#">
-            <img src="cover.jpg">
+            <img src="img/icons/grey_man.png">
             <h2>Bennedikt Sondermann</h2>
             <p>Hausnummer 13</p>
             <button>+ Hinzufügen</button>
@@ -620,7 +642,7 @@
       </div>
       <ion-content class="borrowit-blau has-header">
         <div class="list text-center div-energized">
-          <img src="http://www.ja-pics.net/images/full/4/677ba25ee9.gif" width="80" height="80">
+          <img class="bigprofile-pic" ng-click="addMedia()" ng-src="{{profile.picture}}">
         </div>
         <div class="list text-center div-energized">
           <i class="icon ion-star"></i>
@@ -657,25 +679,21 @@
               <div class="item item-divider">
                 Konto:
               </div>
-              <a class="item item-icon-right" href="#">
+              <button class="button button-block button-light icon icon-right ion-chevron-right" ng-click="changeProfile()">
                 Profil bearbeiten
-                <i class="ion-chevron-right"></i>
-              </a>
-              <button class="button button-light icon icon-right ion-chevron-right" ng-click="changePassword()">
+              </button>
+              <button class="button button-block button-light icon icon-right ion-chevron-right" ng-click="changePassword()">
                 Passwort ändern
               </button>
               <div class="item item-divider">
                 Adresse:
               </div>
-              <div class="item item-divider">
-                Aktuelle Adresse: {{ data.address }}
-              </div>
-              <ion-radio ng-repeat="item in addresses"
+              <ion-radio ng-repeat="item in profile.addresses"
                          ng-value="item.value"
-                         ng-model="data.address">
+                         ng-model="profile.actualAddress">
                 {{ item.text }}
               </ion-radio>
-              <button class="button button-full icon-left ion-plus" data-ng-click="addAddress()">Weitere Adresse hinzufügen</button>
+              <a class="button button-block button-borrowitgrau icon icon-right ion-chevron-right" href="#/adressen">Adressen bearbeiten</a>
               <div class="item item-divider">
                 Privatsphäre:
               </div>
@@ -700,9 +718,8 @@
                 Nutzer einladen
                 <i class="ion-chevron-right"></i>
               </a>
-              <a class="item item-icon-right" href="#">
+              <a class="button button-block button-light icon icon-right ion-chevron-right" href="#/login" ng-click="logout()">
                 Abmelden
-                <i class="ion-chevron-right"></i>
               </a>
               <a class="item item-icon-right item-assertive" href="#">
                 Konto löschen
@@ -721,6 +738,42 @@
           <a class="button button-block button-borrowitblau" href="#/profil_ansicht"><img src="img/icons/white_profile.png" width="30"></a>
         </div>
       </div>
+    </ion-view>
+  </script>
+
+  <script id="adressen.html" type="text/ng-template">
+    <ion-view>
+      <ion-nav-bar class="bar-borrowitgrau">
+        <ion-nav-back-button class="button-clear">
+          <i class="ion-chevron-left"></i> Back
+        </ion-nav-back-button>
+      </ion-nav-bar>
+      <ion-content class="has-footer has-subfooter">
+        <ion-radio ng-repeat="item in profile.addresses"
+                   ng-value="item.value"
+                   ng-model="profile.actualAddress">
+          {{ item.text }}
+        </ion-radio>
+        <!--<div class="item item-divider">
+          Clientside, Selected Value: {{ data.address }}
+        </div>-->
+      </ion-content>
+      <ion-footer-bar class="bar-subfooter bar-borrowitblau">
+        <div class="button-bar">
+          <button class="button button-block button-borrowitblau icon-left ion-plus" data-ng-click="addAddress()">Weitere Adresse hinzufügen</button>
+          <!--<button class="button button-block button-borrowitgrau icon-left ion-cloud" data-ng-click="changeAddress(data.address)">Ausgewählte Adresse bearbeiten</button>-->
+          <button class="button button-block button-borrowitblau icon-left ion-minus" data-ng-click="deleteAddress(profile.actualAddress)">Ausgewählte Adresse löschen</button>
+        </div>
+      </ion-footer-bar>
+      <ion-footer-bar class="bar bar-footer bar-borrowitgrau">
+        <div class="button-bar">
+          <a class="button button-block button-borrowitgrau" href="#/"><img src="img/icons/white_home.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/chat"><img src="img/icons/white_communication.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/anfrage_erstellen"><img src="img/logo.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/kontakte"><img src="img/icons/white_agenda.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/profil_ansicht"><img src="img/icons/white_profile.png" width="30"></a>
+        </div>
+      </ion-footer-bar>
     </ion-view>
   </script>
 
@@ -768,7 +821,7 @@
   </script>
 
   <script id="anfrage_einsehen.html" type="text/ng-template">
-    <ion-view view-title="Anfrage Einsehen">
+    <ion-view view-title="Anfrage einsehen">
       <ion-nav-bar class="bar-borrowitgrau">
         <ion-nav-back-button class="button-clear">
           <i class="ion-chevron-left"></i> Back
@@ -776,43 +829,44 @@
       </ion-nav-bar>
       <ion-content class="borrowit-blau">
         <div class="list text-center div-energized">
-          <div class="item item-divider">
-            Ich suche / brauche
-          </div>
-          <label class = "item item-input item-select item-light text-center">
-            <div class = "input-label">
-              <strong>Ein Waffeleisen</strong>
-            </div>
-            <div class = "input-label">
-              Ich möchte mir ein Waffeleisen ausleihen, um mit meinen Freunden Waffeln zu backen. Sehr gerne kann man sich auf eine Waffel und einen Kaffee zu uns gesellen :)
-            </div>
-          </label>
+          <ion-label class = "item item-light text-center">
+            <strong>{{requests[values.chosenRequest].profile.username}}</strong></br>
+            {{requests[values.chosenRequest].title}}
+          </ion-label>
+          <ion-label>
+            {{requests[values.chosenRequest].description}}
+          </ion-label>
           <div class="row">
             <div class="col col-50 text-right">
               Entfernung
+            </div>
+            <div class="col col-50 text-left">
+              {{requests[values.chosenRequest].place}}
             </div>
           </div>
           <div class="row">
             <div class="col col-50 text-right">
               Ab wann?
             </div>
+            <div class="col col-50 text-left">
+              {{requests[values.chosenRequest].startDate}}
+            </div>
           </div>
           <div class="row">
             <div class="col col-50 text-right">
               Bis wann?
             </div>
+            <div class="col col-50 text-left">
+              {{requests[values.chosenRequest].endDate}}
+            </div>
           </div>
-          <div class="row">
-            <div class="col col-50">
-              <button class="button button-block">
-                Anschreiben
-              </button>
-            </div>
-            <div class="col col-50">
-              <button class="button button-block">
-                BorrowIt!
-              </button>
-            </div>
+          <div class="button-bar">
+            <button class="button button-block">
+              Anschreiben
+            </button>
+            <button class="button button-block">
+              BorrowIt!
+            </button>
           </div>
         </div>
       </ion-content>

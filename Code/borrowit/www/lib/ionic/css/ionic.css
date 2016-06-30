@@ -3986,7 +3986,7 @@ a.subdued {
 .bar.bar-borrowitgrau.bar-footer {
   background-image: linear-gradient(180deg, #B2B2B2, #B2B2B2 50%, transparent 50%); }
 .bar.bar-borrowitblau {
-  border-color: #6ded38;
+  border-color: #5EB0C7;
   background-color: #5DBCD2;
   background-image: linear-gradient(0deg, #e42112, #e42112 50%, transparent 50%);
   color: #fff; }
@@ -5760,6 +5760,10 @@ ion-tabs.tabs-striped.tabs-color-active-dark .tab-item.tab-item-active, ion-tabs
     top: 8px; }
   .item .badge + .badge {
     margin-right: 5px; }
+  .item.item-borrowitblau {
+    border-color: #5DBCD2;
+    background-color: #5DBCD2;
+    color: #fff; }
   .item.item-light {
     border-color: #ddd;
     background-color: #fff;
@@ -8636,7 +8640,7 @@ progress {
     margin-top: 10px;
     margin-bottom: 10px; }
   .button.button-light {
-    border-color: transparent;
+    border-color: #e3e3e3;
     background-color: #fff;
     color: #444; }
 .button.button-borrowitblau{

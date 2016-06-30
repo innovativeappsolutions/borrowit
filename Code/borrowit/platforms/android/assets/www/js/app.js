@@ -31,11 +31,13 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
       })
       .state('registrierung', {
         url: '/registrierung',
-        templateUrl: 'registrierung.html'
+        templateUrl: 'registrierung.html',
+        controller: 'LoginCtrl'
       })
       .state('registrierung2', {
         url: '/registrierung2',
-        templateUrl: 'registrierung2.html'
+        templateUrl: 'registrierung2.html',
+        controller: 'LoginCtrl'
       })
       .state('anfrage_einsehen', {
         url: '/anfrage_einsehen',
@@ -52,6 +54,10 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
       .state('profil_einstellungen', {
         url: '/profil_einstellungen',
         templateUrl: 'profil_einstellungen.html'
+      })
+      .state('adressen', {
+        url: '/adressen',
+        templateUrl: 'adressen.html'
       })
       .state('profil_aktivitaeten', {
         url: '/profil_aktivitaeten',
@@ -82,7 +88,8 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
         templateUrl: 'anfragenchat.html',
         controller: 'UserMessagesCtrl'
       });
-    if(window.localStorage.getItem("username") !== undefined && window.localStorage.getItem("password") !== undefined)
+    //profile = JSON.parse(window.localStorage.getItem("profile"));
+    if(JSON.parse(window.localStorage.getItem("profile")))//!= undefined && window.localStorage.getItem("password") != undefined)
       $urlRouterProvider.otherwise('/');
     else
       $urlRouterProvider.otherwise('/login');
@@ -221,9 +228,11 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
         console.log('message: ' + JSON.stringify(message, null, 2));
         $ionicActionSheet.show({
           buttons: [{
-            text: 'Copy Text'
+            text: 'Copy Text',
+            type: 'button-borrowitblau'
           }, {
-            text: 'Delete Message'
+            text: 'Delete Message',
+            type: 'button-borrowitgrau'
           }],
           buttonClicked: function(index) {
             switch (index) {
@@ -274,19 +283,47 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
 
     }])
 
-  .controller('LoginCtrl', function($scope) {
+  .controller('LoginCtrl', function($scope, ProfileService) {
     $scope.textboxes = {
 
     }
 
-    $scope.login = function(username, password) {
-      window.localStorage.setItem("username", username);
-      window.localStorage.setItem("password", password);
-    };
+    $scope.registerFirstPart = function()
+    {
+      if($scope.textboxes.username != null &&
+        $scope.textboxes.lastname != null &&
+        $scope.textboxes.firstname != null &&
+        $scope.textboxes.email != null &&
+        $scope.textboxes.password != null &&
+        $scope.textboxes.passwordrep != null &&
+        $scope.textboxes.password == $scope.textboxes.passwordrep)
+      {
+        ProfileService.profile.username = $scope.textboxes.username;
+        ProfileService.profile.lastname = $scope.textboxes.lastname;
+        ProfileService.profile.firstname = $scope.textboxes.firstname;
+        ProfileService.profile.email = $scope.textboxes.email;
+        ProfileService.profile.password = $scope.textboxes.password;
+        ProfileService.profile.addresses = [];
+        ProfileService.profile.actualAddress = 0;
+        window.location = '#/registrierung2';
+      }
+    }
 
-    $scope.logout = function() {
-      window.localStorage.removeItem("username");
-      window.localStorage.removeItem("password");
+    $scope.registerSecondPart = function()
+    {
+      if($scope.profile.addresses != null &&
+        $scope.profile.addresses.length > 0)
+      {
+        window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
+        window.location = '#/';
+      }
+    }
+
+    $scope.login = function(username, password) {
+      //ProfileService.profile.username = username;
+      //ProfileService.profile.password = password;
+      //window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
+      ProfileService.profile = JSON.parse(window.localStorage.getItem("profile"));
     };
 
     $scope.checkLogin = function() {
@@ -294,7 +331,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
         //.success(function(data) {
           //if(data.username == $scope.TextboxUsernameLogin && data.password == $scope.TextboxPasswordLogin) {
             $scope.login($scope.textboxes.TextboxUsername, $scope.textboxes.TextboxPassword);
-            window.location = "#/";
+            window.location = '#/';
           //}
           //else
             //showLoginError(true);
@@ -313,7 +350,10 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
           title: 'Fehler beim Anmelden',
           scope: $scope,
           buttons: [
-            { text: 'OK'}
+            {
+              text: 'OK',
+              type: 'button-borrowitblau'
+            }
           ]
         });
       else
@@ -322,23 +362,64 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
           title: 'Fehler beim Anmelden',
           scope: $scope,
           buttons: [
-            { text: 'OK'}
+            {
+              text: 'OK',
+              type: 'button-borrowitblau'
+            }
           ]
         });
     };
   })
 
-  .controller("ToDoController", function($scope, $ionicPopup, $cordovaVibration, $cordovaCamera, $cordovaDevice, $cordovaFile, $ionicPlatform, $ionicActionSheet, FileService, ImageService, ProfilService){
-
-    $scope.data = {
-      address: 1
+  .controller("ToDoController", function($scope, $ionicPopup, $cordovaVibration, $cordovaCamera, $cordovaDevice, $cordovaFile, $ionicPlatform, $ionicActionSheet, ImageService, ProfileService, ResultService){
+    $scope.logout = function() {
+      window.localStorage.removeItem("profile");
     };
 
-    $scope.addresses = ProfilService.addresses;
-
-    $scope.checkboxes = {
-      sofort : true
+    $scope.values = {
+      sofort : true,
+      chosenRequest : 0
     };
+
+    $scope.watchRequest = function(request)
+    {
+      $scope.values.chosenRequest = request;
+    }
+
+    $scope.requests = [
+      {
+        id: "puif8657oti8f6tz",
+        title: "Waffeleisen benötigt",
+        description: "Ich möchte mir ein Waffeleisen ausleihen. Ich habe ein tolles neues Rezept. Sehr gerne kannst du auch eine Waffel haben.",
+        profile: {username: "BeneS", picture: "img/icons/black_avatar.png", rating: 5},
+        place: "Düsseldorf",
+        startDate: "30.06.2016",
+        endDate: "31.06.2016",
+        value: 0
+      },
+      {
+        id: "oihajsfiohsdfhs",
+        title: "Grillkohle benötigt",
+        description: "Ich möchte meine Nachbarschaft zum Grillen einladen, habe aber die Grillkohle vergessen. Du kannst gerne dazukommen, wenn du welche mitbringst. Für Grillgut ist gesorgt.",
+        profile: {username: "DennisR", picture: "img/icons/black_avatar.png", rating: 2},
+        place: "Saarland",
+        startDate: "01.07.2016",
+        endDate: "01.07.2016",
+        value: 1
+      },
+      {
+        id: "igujcgapiudcjksd",
+        title: "Gesucht: Schaufel",
+        description: "Ich habe festgestellt, dass mein Garten dringend mal umgegraben werden muss. Dafür benötige ich eine Schaufel. Danke im Voraus :)",
+        profile: {username: "JennyS", picture: "img/icons/grey_woman.png", rating: 4},
+        place: "Irgendwo im Nirgendwo",
+        startDate: "01.07.2016",
+        endDate: "01.07.2016",
+        value: 2
+      }
+    ]
+
+    $scope.profile = ProfileService.profile;
 
     $scope.addAddress = function ()
     {
@@ -361,6 +442,87 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
             '<input type="text" placeholder="Ort" ng-model="popupData.newAddressCity"/>' +
           '</label>' +
         '</div>' +
+        '<label class = "item item-input item-select item-light">' +
+          '<div class = "input-label">' +
+            'Land' +
+          '</div>' +
+          '<select ng-model="popupData.newAddressCountry">' +
+            '<option selected>Deutschland</option>' +
+            '<option>Schweiz</option>' +
+            '<option>Österreich</option>' +
+            '<option>Bayern</option>' +
+            '<option>Köln</option>' +
+          '</select>' +
+        '</label>',
+        title: 'Neue Adresse anlegen',
+        scope: $scope,
+        buttons: [
+          {
+            text: 'Abbrechen',
+            type: 'button-borrowitgrau'
+          },
+          {
+            text: '<b>Anlegen</b>',
+            type: 'button-borrowitblau',
+            onTap: function(e) {
+              if($scope.popupData.newAddressStreet != null &&
+                $scope.popupData.newAddressNumber != null &&
+                $scope.popupData.newAddressZIP != null &&
+                $scope.popupData.newAddressCity != null &&
+                $scope.popupData.newAddressCountry != null){
+
+                ProfileService.profile.addresses.push({
+                  text: $scope.popupData.newAddressStreet + " " + $scope.popupData.newAddressNumber,
+                  value: ProfileService.profile.addresses.length,
+                  street: $scope.popupData.newAddressStreet,
+                  number: $scope.popupData.newAddressNumber,
+                  zip: $scope.popupData.newAddressZIP,
+                  city: $scope.popupData.newAddressCity,
+                  country: $scope.popupData.newAddressCountry
+                });
+              }
+            }
+          },
+        ]
+      });
+    };
+
+    $scope.deleteAddress = function(address)
+    {
+      if(address + 1 == ProfileService.profile.addresses.length)
+      {
+        ProfileService.profile.actualAddress--;
+      }
+      ProfileService.profile.addresses.splice(address,1);
+      for (var i = 0; i < ProfileService.profile.addresses.length; i++)
+      {
+        ProfileService.profile.addresses[i].value = i;
+      }
+      window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
+    }
+
+    $scope.changeAddress = function(address)
+    {
+      $scope.popupData = {};
+      chosenAddress = $scope.addresses[address].street
+      var addAddressPopup = $ionicPopup.show({
+        template:
+        '<div class="item item-input-inset">' +
+          '<label class="item item-input-wrapper">' +
+            '<input type="text" placeholder="Straße" ng-model="popupData.newAddressStreet"/>' +
+          '</label>' +
+          '<label class="item item-input-wrapper">' +
+            '<input type="text" content=chosenAddress.number ng-model="popupData.newAddressNumber"/>' +
+          '</label>' +
+        '</div>' +
+        '<div class="item item-input-inset">' +
+          '<label class="item item-input-wrapper">' +
+           '<input type="text" content=chosenAddress.ZIP ng-model="popupData.newAddressZIP"/>' +
+          '</label>' +
+          '<label class="item item-input-wrapper">' +
+            '<input type="text" content=chosenAddress.city ng-model="popupData.newAddressCity"/>' +
+          '</label>' +
+        '</div>' +
         '<label class = "item item-input item-select item-light" ng-model="popupData.newAddressCountry">' +
           '<div class = "input-label">' +
             'Land' +
@@ -376,19 +538,22 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
         title: 'Neue Adresse anlegen',
         scope: $scope,
         buttons: [
-          { text: 'Abbrechen'},
+          {
+            text: 'Abbrechen',
+            type: 'button-borrowitgrau'
+          },
           {
             text: '<b>Anlegen</b>',
-            type: 'button-positive',
+            type: 'button-borrowitblau',
             onTap: function(e) {
               if($scope.popupData.newAddressStreet != null &&
                 $scope.popupData.newAddressNumber != null &&
                 $scope.popupData.newAddressZIP != null &&
                 $scope.popupData.newAddressCity != null){
 
-                ProfilService.addresses.push({
+                ProfileService.profile.addresses.push({
                   text: $scope.popupData.newAddressStreet + " " + $scope.popupData.newAddressNumber,
-                  value: $scope.addresses.length + 1,
+                  value: address,
                   street: $scope.popupData.newAddressStreet,
                   number: $scope.popupData.newAddressNumber,
                   zip: $scope.popupData.newAddressZIP,
@@ -403,12 +568,90 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
     };
 
     $scope.changePassword = function() {
-
+      $scope.popupData = {};
       var promptPopup = $ionicPopup.prompt({
-        title: 'Title',
-        template: '<label class="item item-input"><input type="text" placeholder="Altes Passwort"></label></br>' +
-        '<label class="item item-input"><input type="text" placeholder="Neues Passwort"></label></br>' +
-        '<label class="item item-input"><input type="text" placeholder="Neues Passwort wdh."></label>'
+        template:
+        '<label class="item item-input"><input type="password" placeholder="Altes Passwort" ng-model="popupData.oldPW"></label></br>' +
+        '<label class="item item-input"><input type="password" placeholder="Neues Passwort" ng-model="popupData.newPW"></label></br>' +
+        '<label class="item item-input"><input type="password" placeholder="Neues Passwort wdh." ng-model="popupData.newPWrep"></label>',
+        title: 'Passwort ändern',
+        scope: $scope,
+        buttons: [
+          {
+            text: 'Abbrechen',
+            type: 'button-borrowitgrau'
+          },
+          {
+            text: '<b>Ändern</b>',
+            type: 'button-borrowitblau',
+            onTap: function(e) {
+              if($scope.popupData.oldPW == ProfileService.profile.password)
+              {
+                if($scope.popupData.newPW != null && $scope.popupData.newPWrep != null && $scope.popupData.newPW === $scope.popupData.newPWrep) {
+                  ProfileService.profile.password = $scope.popupData.newPW;
+                  window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
+                  ResultService.changedPassword(0);
+                }
+                else
+                {
+                  ResultService.changedPassword(2);
+                }
+              }
+              else
+              {
+                ResultService.changedPassword(1);
+              }
+            }
+          },
+        ]
+      });
+
+      promptPopup.then(function(res) {
+        console.log(res);
+      });
+
+    };
+
+    $scope.changeProfile = function() {
+      $scope.popupData = {};
+      var promptPopup = $ionicPopup.prompt({
+        title: 'Profil ändern',
+        template:
+          '<label class="item item-input">' +
+            '<input type="text" placeholder="Nachname" ng-model="popupData.lastname">' +
+          '</label>' +
+          '<label class="item item-input">' +
+            '<input type="text" placeholder="Vorname" ng-model="popupData.firstname">' +
+          '</label>' +
+          '<label class="item item-input">' +
+            '<input type="email" placeholder="E-Mail" ng-model="popupData.email">' +
+          '</label>',
+        scope: $scope,
+        buttons: [
+          {
+            text: 'Abbrechen',
+            type: 'button-borrowitgrau'
+          },
+          {
+            text: '<b>Ändern</b>',
+            type: 'button-borrowitblau',
+            onTap: function(e) {
+              if($scope.popupData.lastname != null &&
+                $scope.popupData.firstname != null &&
+                $scope.popupData.email != null){
+                ProfileService.profile.lastname = $scope.popupData.lastname;
+                ProfileService.profile.firstname = $scope.popupData.firstname;
+                ProfileService.profile.email = $scope.popupData.email;
+                window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
+                ResultService.changedProfile(0);
+              }
+              else
+              {
+                ResultService.changedProfile(1);
+              }
+            }
+          },
+        ]
       });
 
       promptPopup.then(function(res) {
@@ -425,7 +668,6 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
     }
 
     $ionicPlatform.ready(function() {
-      $scope.images = FileService.images();
       $scope.$apply();
     });
 
@@ -444,6 +686,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
         cancelText: 'Cancel',
         buttonClicked: function(index) {
           $scope.addImage(index);
+          $scope.profile = ProfileService.profile;
         }
       });
     }
@@ -459,33 +702,34 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
   //factories
 
 
-  .factory('FileService', function($cordovaCamera, $q, $cordovaFile) {
-    var images;
-    var IMAGE_STORAGE_KEY = 'images';
-
-    getImages = function() {
-      var img = window.localStorage.getItem(IMAGE_STORAGE_KEY);
-      if (img) {
-        images = JSON.parse(img);
-      } else {
-        images = [];
-      }
-      return images;
-    };
-
-    addImage = function(img) {
-      images.push(img);
-      window.localStorage.setItem(IMAGE_STORAGE_KEY, JSON.stringify(images));
-    };
-
-    return {
-      storeImage: addImage,
-      images: getImages
-    }
+  .factory('FileService', function($scope, $cordovaCamera, $q, $cordovaFile, ProfileService) {
+    //var images;
+    //var IMAGE_STORAGE_KEY = 'images';
+    //
+    //getImages = function() {
+    //  var img = window.localStorage.getItem(IMAGE_STORAGE_KEY);
+    //  if (img) {
+    //    images = JSON.parse(img);
+    //  } else {
+    //    images = [];
+    //  }
+    //  return images;
+    //};
+    //
+    //addImage = function(img) {
+    //  images.push(img);
+    //  window.localStorage.setItem(IMAGE_STORAGE_KEY, JSON.stringify(images));
+    //};
+    //
+    //return {
+    //  storeImage: addImage,
+    //  images: getImages
+    //}
   })
 
-  .factory('ImageService', function($cordovaCamera, FileService, $q, $cordovaFile) {
-
+  .factory('ImageService', function($cordovaCamera, ProfileService, $q, $cordovaFile) {
+    //var image = 'http://ionicframework.com/img/docs/venkman.jpg';
+    //var IMAGE_STORAGE_KEY = 'image';
     makeid = function() {
       var text = '';
       var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -518,6 +762,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
 
     saveMedia = function(type) {
       return $q(function(resolve, reject) {
+        //window.localStorage.setItem(IMAGE_STORAGE_KEY, image);
         var options = optionsForType(type);
 
         $cordovaCamera.getPicture(options).then(function(imageUrl) {
@@ -526,7 +771,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
           var newName = makeid() + name;
           $cordovaFile.copyFile(namePath, name, cordova.file.dataDirectory, newName)
             .then(function(info) {
-              FileService.storeImage(newName);
+              ProfileService.storeImage(newName);
               resolve();
             }, function(e) {
               reject();
@@ -539,26 +784,115 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
     }
   })
 
-  .factory('ProfilService', function() {
+  .factory('ProfileService', function() {
+    var profile;
 
-    addresses = [
-      { text: "Am Teckenberg 51", value: 1, street: "Am Teckenberg", number: "51", zip: "40883", city: "Ratingen", country:"Deutschland" },
-      { text: "Berliner Straße 111", value: 2, street: "Berliner Straße", number: "111", zip: "40880", city: "Ratingen", country:"Deutschland" }
-    ];
-
-    profil = {
-      username: "",
-      password: "",
-      email: "",
-      nachname: "",
-      vorname: "",
-      adressen: addresses,
-      profilbild: ""
+    if(JSON.parse(window.localStorage.getItem("profile")) != undefined)
+      profile = JSON.parse(window.localStorage.getItem("profile"));
+    else {
+      profile =
+      {
+        username: "",
+        lastname: "",
+        firstname: "",
+        email: "",
+        password: "",
+        addresses: [],
+        actualAddress: 0,
+        picture: "img/icons/black_avatar.png",
+        kontakte: [],
+        rating: 3
+      }
     }
 
+    var image;
+    var IMAGE_STORAGE_KEY = 'image';
+
+    addImage = function(img) {
+      image = img;
+      profile.picture = image;
+      window.localStorage.setItem("profile", JSON.stringify(profile));
+    };
+
     return {
-      addresses: addresses,
-      profil: profil
+      profile: profile,
+      storeImage: addImage
+    }
+  })
+
+  .factory('ResultService', function($ionicPopup) {
+    changedPassword = function(result)
+    {
+      switch(result)
+      {
+        case 0:
+          var promptPopup = $ionicPopup.prompt({
+            title: 'Passwort erfolgreich geändert',
+            buttons: [
+              {
+                text: 'OK',
+                type: 'button-borrowitblau'
+              }
+            ]
+          });
+          break;
+        case 1:
+          var promptPopup = $ionicPopup.prompt({
+            title: 'Altes Passwort falsch',
+            buttons: [
+              {
+                text: 'OK',
+                type: 'button-borrowitblau'
+              }
+            ]
+          });
+          break;
+        case 2:
+          var promptPopup = $ionicPopup.prompt({
+            title: 'Die Passwörter sind nicht gleich',
+            buttons: [
+              {
+                text: 'OK',
+                type: 'button-borrowitblau'
+              }
+            ]
+          });
+          break;
+      }
+    };
+
+    changedProfile = function(result)
+    {
+      switch(result)
+      {
+        case 0:
+          var promptPopup = $ionicPopup.prompt({
+            title: 'Profil erfolgreich geändert',
+            buttons: [
+              {
+                text: 'OK',
+                type: 'button-borrowitblau'
+              }
+            ]
+          });
+          break;
+        case 1:
+          var promptPopup = $ionicPopup.prompt({
+            title: 'Mindestens ein Feld ist falsch ausgefüllt',
+            buttons: [
+              {
+                text: 'OK',
+                type: 'button-borrowitblau'
+              }
+            ]
+          });
+          break;
+      }
+    };
+
+    return {
+      changedPassword: changedPassword,
+      changedProfile: changedProfile
     }
   })
 
