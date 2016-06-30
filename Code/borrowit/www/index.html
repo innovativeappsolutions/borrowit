@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-  <title>Ionic First Try</title>
+  <title>BorrowIt!</title>
+  <link href="img/favicon/favicon_hYs_9.ico" type="image/x-icon" rel="shortcut icon"/>
 
   <link href="lib/ionic/css/ionic.css" rel="stylesheet">
   <link href="css/style.css" rel="stylesheet">
@@ -269,7 +270,7 @@
             <input type="search" placeholder="Search">
           </label>
           <div ng-repeat="chat in chats">
-            <a class="item item-avatar" ng-click="watchChat(chat.value)" href="#/anfragenchat">
+            <a class="item item-avatar" ng-click="watchChat(chat.requestid)" href="#/anfragenchat">
               <img class="profile-pic left"
                    ng-src="{{chat.profile.picture}}" onerror="onProfilePicError(this)" />
                 <span class="bold">{{chat.profile.username}}</span>:
@@ -293,7 +294,7 @@
   <script id="anfragenchat.html" type="text/ng-template">
     <ion-view id="userMessagesView"
               cache-view="false"
-              view-title="Chat mit {{toUser.username}} über Anfrage {{requests[values.chosenRequest].title}}">
+              view-title="Chat mit {{toUser.username}} über Anfrage &raquo;{{requests[values.chosenRequest].title}}&laquo;">
       <div class="loader-center" ng-if="!doneLoading">
         <div class="loader">
           <i class="icon ion-loading-c"></i>
@@ -305,7 +306,7 @@
         </ion-nav-back-button>
         <i class='icon ion-chatbubble user-messages-top-icon'></i> <div class='msg-header-username' onerror="onProfilePicError(this)">Chat mit {{toUser.username}} über Anfrage</div>
       </ion-nav-bar>
-      <ion-content has-bouncing="true" class="has-header has-footer" delegate-handle="userMessageScroll">
+      <ion-content has-bouncing="true" class="has-header has-footer has-subfooter" delegate-handle="userMessageScroll">
         <div ng-repeat="message in messages" class="message-wrapper" on-hold="onMessageHold($event, $index, message)">
           <div ng-if="profile.username !== message.username">
             <img ng-click="viewProfile(message)" class="profile-pic left"
@@ -332,7 +333,7 @@
         </div>
       </ion-content>
       <form name="sendMessageForm" ng-submit="sendMessage(sendMessageForm)" novalidate>
-        <ion-footer-bar keyboard-attach class="bar-borrowitblau item-input-inset">
+        <ion-footer-bar keyboard-attach class="bar-subfooter bar-borrowitblau item-input-inset">
           <label class="item-input-wrapper">
             <input type="text" ng-model="input.message" value="" placeholder="Sende {{toUser.username}} eine Nachricht..." required minlength="1" maxlength="1500" msd-elastic/>
           </label>
@@ -349,6 +350,15 @@
           </div>
         </ion-footer-bar>-->
       </form>
+      <div class="bar bar-footer bar-borrowitgrau">
+        <div class="button-bar">
+          <a class="button button-block button-borrowitgrau" href="#/"><img src="img/icons/white_home.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/chat"><img src="img/icons/white_communication.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/anfrage_erstellen"><img src="img/logo.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/kontakte"><img src="img/icons/white_agenda.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/profil_ansicht"><img src="img/icons/white_profile.png" width="30"></a>
+        </div>
+      </div>
     </ion-view>
     <!--<ion-view>-->
       <!--<ion-nav-bar class="bar-borrowitgrau">-->
@@ -863,9 +873,9 @@
             </div>
           </div>
           <div class="button-bar">
-            <button class="button button-block button-light">
+            <a class="button button-block button-light" ng-click="watchChat(requests[values.chosenRequest].id)" href="#/anfragenchat">
               Anschreiben
-            </button>
+            </a>
             <button class="button button-block button-light">
               BorrowIt!
             </button>

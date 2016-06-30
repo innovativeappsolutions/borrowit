@@ -374,15 +374,41 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
       $scope.values.chosenRequest = request;
     }
 
-    $scope.watchChat = function(chat)
+    $scope.watchChat = function(reqID)
     {
-      ProfileService.toUser.username = $scope.chats[chat].profile.username;
-      ProfileService.toUser.picture = $scope.chats[chat].profile.picture;
+      var request;
       for(var i = 0; i < $scope.requests.length; i++) {
-        if($scope.requests[i].id == $scope.chats[chat].requestid) {
-          $scope.values.chosenRequest = $scope.requests[i].value;
+        if ($scope.requests[i].id == reqID) {
+          $scope.values.chosenRequest = i;
+          request = $scope.requests[i];
+          break;
         }
       }
+      if(!$scope.checkChatStarted(reqID))
+      {
+        $scope.chats.push({
+          requestid: reqID,
+          title: request.title,
+          profile: request.profile,
+          value: 0
+        })
+      }
+      ProfileService.toUser.username = request.profile.username;
+      ProfileService.toUser.picture = request.profile.picture;
+    }
+
+    $scope.checkChatStarted = function(reqID)
+    {
+      var started = false;
+      for(var i = 0; i < $scope.chats.length; i++)
+      {
+        if($scope.chats[i].requestid == reqID)
+        {
+          started = true;
+          break;
+        }
+      }
+      return started;
     }
 
     $scope.requests = [
@@ -429,20 +455,6 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
     ];
 
     $scope.chats = [
-      {
-        id: "owiefuiowjfwof",
-        requestid: "igujcgapiudcjksd",
-        title: "Gesucht: Schaufel",
-        profile: {username: "JennyS", picture: "img/icons/grey_woman.png"},
-        value: 0
-      },
-      {
-        id: "jhfkskdfbckjpopojjxkenru",
-        requestid: "jhfkskdfbcjxkenru",
-        title: "Gesucht: Plastikbesteck",
-        profile: {username: "PeterP", picture: "img/icons/black_home.png"},
-        value: 1
-      }
     ];
 
     $scope.profile = ProfileService.profile;
