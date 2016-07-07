@@ -1,9 +1,165 @@
+//angular.module('starter', ['ionic','starter.controllers','starter.services','ngCordova'])
+//
+//  .run(function($ionicPlatform) {
+//    $ionicPlatform.ready(function() {
+//      // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+//      // for form inputs)
+//      if(window.cordova && window.cordova.plugins.Keyboard) {
+//        cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+//      }
+//      if(window.StatusBar) {
+//        StatusBar.styleDefault();
+//      }
+//    });
+//  });
+//
+//angular.module('starter.controllers', [])
+//
+//  .controller('MainCtrl', function($scope, Events,$ionicPlatform,$cordovaCalendar,$timeout) {
+//
+//    $ionicPlatform.ready(function() {
+//      Events.get().then(function(events) {
+//        console.log("events", JSON.stringify(events));
+//        $scope.events = events;
+//      });
+//    });
+//
+//    $scope.addEvent = function(event,idx) {
+//      console.log("add ",event);
+//
+//      Events.add(event).then(function(result) {
+//        console.log("done adding event, result is "+result);
+//        if(result === 1) {
+//          //update the event
+//          $timeout(function() {
+//            $scope.events[idx].status = true;
+//            $scope.$apply();
+//          });
+//        } else {
+//          //For now... maybe just tell the user it didn't work?
+//        }
+//      });
+//
+//
+//    };
+//
+//  });
+//
+//angular.module('starter.services', [])
+//
+//  .factory('Events', function($q,$cordovaCalendar) {
+//
+//    //kind of a hack
+//    var incrementDate = function (date, amount) {
+//      var tmpDate = new Date(date);
+//      tmpDate.setDate(tmpDate.getDate() + amount);
+//      tmpDate.setHours(13);
+//      tmpDate.setMinutes(0);
+//      tmpDate.setSeconds(0);
+//      tmpDate.setMilliseconds(0);
+//      return tmpDate;
+//    };
+//
+//    var incrementHour = function(date, amount) {
+//      var tmpDate = new Date(date);
+//      tmpDate.setHours(tmpDate.getHours() + amount);
+//      return tmpDate;
+//    };
+//
+//    //create fake events, but make it dynamic so they are in the next week
+//    var fakeEvents = [];
+//    fakeEvents.push(
+//      {
+//        "title":"Meetup on Ionic",
+//        "description":"We'll talk about beer, not Ionic.",
+//        "date":incrementDate(new Date(), 1)
+//      }
+//    );
+//    fakeEvents.push(
+//      {
+//        "title":"Meetup on Beer",
+//        "description":"We'll talk about Ionic, not Beer.",
+//        "date":incrementDate(new Date(), 2)
+//      }
+//    );
+//    fakeEvents.push(
+//      {
+//        "title":"Ray's Birthday Bash",
+//        "description":"Celebrate the awesomeness of Ray",
+//        "date":incrementDate(new Date(), 4)
+//      }
+//    );
+//    fakeEvents.push(
+//      {
+//        "title":"Code Review",
+//        "description":"Let's tear apart Ray's code.",
+//        "date":incrementDate(new Date(), 5)
+//      }
+//    );
+//
+//    var getEvents = function() {
+//      var deferred = $q.defer();
+//
+//      /*
+//       Logic is:
+//       For each, see if it exists an event.
+//       */
+//      var promises = [];
+//      fakeEvents.forEach(function(ev) {
+//        //add enddate as 1 hour plus
+//        ev.enddate = incrementHour(ev.date, 1);
+//        console.log('try to find '+JSON.stringify(ev));
+//        promises.push($cordovaCalendar.findEvent({
+//          title:ev.title,
+//          startDate:ev.date
+//        }));
+//      });
+//
+//      $q.all(promises).then(function(results) {
+//        console.log("in the all done");
+//        //should be the same len as events
+//        for(var i=0;i<results.length;i++) {
+//          fakeEvents[i].status = results[i].length === 1;
+//        }
+//        deferred.resolve(fakeEvents);
+//      });
+//
+//      return deferred.promise;
+//    }
+//
+//    var addEvent = function(event) {
+//      var deferred = $q.defer();
+//
+//      $cordovaCalendar.createEvent({
+//        title: event.title,
+//        notes: event.description,
+//        startDate: event.date,
+//        endDate:event.enddate
+//      }).then(function (result) {
+//        console.log('success');console.dir(result);
+//        deferred.resolve(1);
+//      }, function (err) {
+//        console.log('error');console.dir(err);
+//        deferred.resolve(0);
+//      });
+//
+//      return deferred.promise;
+//
+//    }
+//
+//    return {
+//      get:getEvents,
+//      add:addEvent
+//    };
+//
+//  });
+
 // Ionic Starter App
 
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
+var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'satellizer', 'ngCookies'])
 
   .run(function($ionicPlatform) {
     $ionicPlatform.ready(function() {
@@ -18,7 +174,12 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
     });
   })
 
-  .config(function($stateProvider, $urlRouterProvider) {
+  .config(['$ionicConfigProvider', '$authProvider', '$stateProvider', '$urlRouterProvider', function ( $ionicConfigProvider, $authProvider, $stateProvider, $urlRouterProvider) {
+    $authProvider.facebook({
+      clientId: '1577756505877617',
+      responseType: 'token'
+    });
+
     $stateProvider
       .state('index', {
         url: '/',
@@ -59,10 +220,6 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
         url: '/adressen',
         templateUrl: 'adressen.html'
       })
-      .state('profil_aktivitaeten', {
-        url: '/profil_aktivitaeten',
-        templateUrl: 'profil_aktivitaeten.html'
-      })
       .state('profil_anfrage', {
         url: '/profil_anfrage',
         templateUrl: 'profil_anfrage.html'
@@ -75,9 +232,17 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
         url: '/kontakt_profil',
         templateUrl: 'kontakt_profil.html'
       })
-      .state('kontakt_hinzufuegen', {
-        url: '/kontakt_hinzufuegen',
-        templateUrl: 'kontakt_hinzufuegen.html'
+      .state('kontakt_hinzufuegen_name', {
+        url: '/kontakt_hinzufuegen_name',
+        templateUrl: 'kontakt_hinzufuegen_name.html'
+      })
+      .state('kontakt_hinzufuegen_ort', {
+        url: '/kontakt_hinzufuegen_ort',
+        templateUrl: 'kontakt_hinzufuegen_ort.html'
+      })
+      .state('kontakt_hinzufuegen_geraet', {
+        url: '/kontakt_hinzufuegen_geraet',
+        templateUrl: 'kontakt_hinzufuegen_geraet.html'
       })
       .state('chat', {
         url: '/chat',
@@ -93,7 +258,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
       $urlRouterProvider.otherwise('/');
     else
       $urlRouterProvider.otherwise('/login');
-  })
+  }])
 
   .controller('UserMessagesCtrl',
     function($scope, $rootScope, $state, $stateParams, MockService,
@@ -120,7 +285,10 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
       $scope.$on('$ionicView.enter', function() {
         console.log('UserMessages $ionicView.enter');
 
-        getMessages();
+        //getMessages();
+        $timeout(function() {
+          viewScroll.scrollBottom();
+        }, 0);
 
         $timeout(function() {
           footerBar = document.body.querySelector('#userMessagesView .bar-footer');
@@ -148,7 +316,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
         }
       });
 
-      function getMessages() {
+      /*function getMessages() {
         // the service is mock but you would probably pass the toUser's GUID here
         MockService.getUserMessages({
           toUserId: $scope.toUser.username
@@ -160,7 +328,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
             viewScroll.scrollBottom();
           }, 0);
         });
-      }
+      }*/
 
       $scope.$watch('input.message', function(newValue, oldValue) {
         console.log('input.message $watch, newValue ' + newValue);
@@ -186,7 +354,8 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
         message.username = $scope.profile.username;
         message.picture = $scope.profile.picture;
 
-        $scope.messages.push(message);
+        $scope.chats[$scope.values.actualChat].messages.push(message);
+        window.localStorage.setItem("chats", JSON.stringify($scope.chats));
 
         $timeout(function() {
           keepKeyboardOpen();
@@ -194,7 +363,8 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
         }, 0);
 
         $timeout(function() {
-          $scope.messages.push(MockService.getMockMessage());
+          $scope.chats[$scope.values.actualChat].messages.push(MockService.getMockMessage());
+          window.localStorage.setItem("chats", JSON.stringify($scope.chats));
           keepKeyboardOpen();
           viewScroll.scrollBottom(true);
         }, 2000);
@@ -271,7 +441,74 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
 
     })
 
-  .controller('LoginCtrl', function($scope, ProfileService) {
+  .controller('LoginCtrl',['$scope', '$http','$auth', 'ProfileService', function($scope, $http, $auth, ProfileService) {
+    var HOST = "https://sb.pftclan.de";
+    var PORT = 546;
+    var URL = HOST + ":" + PORT + "/api/smartbackend/";
+    var salt;
+
+    sha512 = function(password, salt){
+      var hash = window.CryptoJS.HmacSHA512(password, salt).toString(); /** Hashing algorithm sha512 */
+      return hash;
+    };
+
+    createSalt = function() {
+      var text = '';
+      var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+      for (var i = 0; i < 64; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+      }
+      return text;
+    }
+
+    signup = function(provider){
+      salt = ProfileService.profile.email;
+      ProfileService.profile.password = sha512(ProfileService.profile.password, salt);  // THERE IS NO GUARANTEE THAT THE SALT IS CORRECT MAY ITS A RANDOM SALT FOR SAFTEY IF EMAIL ISNT CORRECT
+      ProfileService.profile.salt = salt;
+      $http({method: "POST", url:URL + "auth/signup", params:{email:ProfileService.profile.email,password: ProfileService.profile.password}})
+        .then(function(result) {
+          ProfileService.profile.access_token = result.data.access_token;
+          $http.defaults.headers.common['Authorization'] = "Bearer "+ ProfileService.profile.access_token;
+        },function(error) {
+          // toSomething
+        })
+    }
+
+    login = function(provider){
+      if(provider==="email"){
+        //SENT EMAIL TO SERVER GET A SALT
+        ProfileService.profile.password = sha512(ProfileService.profile.password,  ProfileService.profile.salt);  // THERE IS NO GUARANTEE THAT THE SALT IS CORRECT MAY ITS A RANDOM SALT FOR SAFTEY IF EMAIL ISNT CORRECT
+        $http({method: "POST", url:URL + "auth/email", params:{email:ProfileService.profile.email,password: ProfileService.profile.password}})
+          .then(function(result) {
+            ProfileService.profile.access_token = result.data.access_token;
+            $http.defaults.headers.common['Authorization'] = "Bearer "+ ProfileService.profile.access_token;
+          },function(error) {
+            // toSomething
+          })
+      }
+    }
+
+    authenticate = function(provider){
+      if(provider==="facebook"){
+        $auth.authenticate(provider).then(function(response) {
+          console.log($auth.getToken());
+          console.log($auth.getPayload());
+          $http({method: "GET", url:URL + "auth/" + provider + "/", params:{id_token: $auth.getToken()}})
+            .then(function(result) {
+                console.log('yes im ok');
+              },function(error) {
+                console.log('Error: ' + error);
+              }
+            )
+            .catch(function(response) {
+              userService.SocialLoginFailed();
+            });
+        })
+      }
+    }
+
+
     $scope.textboxes = {
 
     }
@@ -282,6 +519,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
         $scope.textboxes.lastname != null &&
         $scope.textboxes.firstname != null &&
         $scope.textboxes.email != null &&
+        $scope.textboxes.telefon != null &&
         $scope.textboxes.password != null &&
         $scope.textboxes.passwordrep != null &&
         $scope.textboxes.password == $scope.textboxes.passwordrep)
@@ -290,6 +528,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
         ProfileService.profile.lastname = $scope.textboxes.lastname;
         ProfileService.profile.firstname = $scope.textboxes.firstname;
         ProfileService.profile.email = $scope.textboxes.email;
+        ProfileService.profile.telefon = $scope.textboxes.telefon;
         ProfileService.profile.password = $scope.textboxes.password;
         ProfileService.profile.addresses = [];
         ProfileService.profile.actualAddress = 0;
@@ -303,6 +542,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
         $scope.profile.addresses.length > 0)
       {
         window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
+        //signup("email", $scope.profile.email, $scope.profile.password);
         window.location = '#/';
       }
     }
@@ -315,10 +555,11 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
     };
 
     $scope.checkLogin = function() {
+
       //$http.get("https://api.example.com/profile", { params: { "api_key": "some_key_here" } })
         //.success(function(data) {
           //if(data.username == $scope.TextboxUsernameLogin && data.password == $scope.TextboxPasswordLogin) {
-            $scope.login($scope.textboxes.TextboxUsername, $scope.textboxes.TextboxPassword);
+            $scope.login($scope.textboxes.TextboxEmail, $scope.textboxes.TextboxPassword);
             window.location = '#/';
           //}
           //else
@@ -357,22 +598,136 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
           ]
         });
     };
-  })
+  }])
 
-  .controller("ToDoController", function($scope, $ionicPopup, $cordovaVibration, $cordovaCamera, $cordovaDevice, $cordovaFile, $ionicPlatform, $ionicActionSheet, ImageService, ProfileService, ResultService){
+  .controller("ToDoController", function($scope, $ionicPopup, $cordovaVibration, $cordovaCamera, $cordovaDevice, $cordovaFile, $cordovaContacts, $ionicPlatform, $ionicActionSheet, ImageService, ProfileService, ResultService){
+    /*$scope.addContact = function() {
+      $cordovaContacts.save($scope.contactForm).then(function(result) {
+        // Contact saved
+      }, function(err) {
+        // Contact error
+      });
+    };*/
+    $scope.searchEvents = function(startDate, startTime, endDate, endTime) {
+      $cordovaCalendar.findEvent({
+        title:ev.title,
+        startDate:ev.date
+      })
+    }
+
+    $scope.startRequest = function() {
+      var newRequest;
+      if($scope.values.sofort)
+      {
+        newRequest.startDate = new Date();
+      }
+      else
+      {
+        newRequest.startDate = $scope.textboxes.startDate;
+        newRequest.startTime = $scope.textboxes.startTime;
+      }
+      newRequest.title = $scope.textboxes.requestTitle;
+      newRequest.description = $scope.textboxes.requestDescription;
+      newRequest.endDate = $scope.textboxes.endDate;
+      newRequest.endTime = $scope.textboxes.endTime;
+      newRequest.category = $scope.textboxes.category;
+    }
+
+    $scope.deleteProfile = function() {
+      window.localStorage.removeItem('profile');
+      window.location = "#/login";
+    }
+
+    $scope.addContact = function(person){
+      ProfileService.profile.contacts.push(person);
+    }
+
+    $scope.getAllContacts = function() {
+      $cordovaContacts.find().then(function(allContacts) { //omitting parameter to .find() causes all contacts to be returned
+        //var devConts = allContacts;
+        $scope.deviceContacts = contactsFound;
+      });
+      for(var i = 0; i < devConts.length; i++)
+      {
+        //ask Backend, if devConts[i].phoneNumbers already is signed up
+      }
+    };
+
+    $scope.findContactsBySearchTerm = function (searchTerm) {
+      var opts = {
+        multiple: true
+      };
+
+      $cordovaContacts.find(opts).then(function (contactsFound) {
+        $scope.deviceContacts = contactsFound;
+      });
+    }
+
+    $scope.pickContactUsingNativeUI = function () {
+      $cordovaContacts.pickContact().then(function (contactPicked) {
+        $scope.deviceContact = contactPicked;
+      });
+    }
+
+
     $scope.logout = function() {
       window.localStorage.removeItem("profile");
     };
 
     $scope.values = {
       sofort : true,
-      chosenRequest : 0
+      chosenRequest : 0,
+      chosenPerson : 0,
+      chosenSortedBy : "startDate",
+      chosenCategory : "all",
+      actualChat: 0
     };
 
     $scope.watchRequest = function(request)
     {
       $scope.values.chosenRequest = request;
     }
+
+    $scope.watchRequestById = function(requestID)
+    {
+      for(var i = 0; i < $scope.requests.length; i++) {
+        if($scope.requests[i].id == requestID) {
+          $scope.values.chosenRequest = $scope.requests[i].value;
+        }
+      }
+    }
+
+    $scope.watchContact = function(contactname)
+    {
+      for(var i = 0; i < $scope.persons.length; i++)
+      {
+        if(contactname === $scope.persons[i].username) {
+          $scope.values.chosenPerson = i;
+          break;
+        }
+      }
+      window.location = "#/kontakt_profil";
+    }
+
+    $scope.alreadyContact = function(person)
+    {
+      var isContact = false;
+      for(var i = 0; i < $scope.profile.contacts.length; i++)
+      {
+        if($scope.profile.contacts[i].username === person.username)
+        {
+          isContact = true;
+          break;
+        }
+      }
+      return isContact;
+    }
+
+    $scope.borrowit = function(request) {
+      $scope.requests[request.value].borrowed = true;
+      window.location = "#/"
+    }
+
 
     $scope.watchChat = function(reqID)
     {
@@ -390,8 +745,10 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
           requestid: reqID,
           title: request.title,
           profile: request.profile,
-          value: 0
+          value: $scope.chats.length,
+          messages: []
         })
+        $scope.values.actualChat = $scope.chats.length - 1;
       }
       ProfileService.toUser.username = request.profile.username;
       ProfileService.toUser.picture = request.profile.picture;
@@ -405,11 +762,43 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
         if($scope.chats[i].requestid == reqID)
         {
           started = true;
+          $scope.values.actualChat = i;
           break;
         }
       }
       return started;
     }
+
+    $scope.persons = [
+      {
+        username: "JennyS",
+        rating: 4,
+        picture: "img/icons/grey_woman.png",
+        requests: [{id: "igujcgapiudcjksd", title: "Gesucht: Schaufel", requested: true}, {id: "hf8923ü4whofnüsdioacnce489ogiaehrljg", title: "Pfanne bitte!", requested: true}],
+        value: 0
+      },
+      {
+        username: "BeneS",
+        rating: 5,
+        picture: "img/icons/black_avatar.png",
+        requests: [{id: "puif8657oti8f6tz", title: "Waffeleisen benötigt", requested: true}],
+        value: 1
+      },
+      {
+        username: "DennisR",
+        rating: 2,
+        picture: "img/icons/black_avatar.png",
+        requests: [{id: "oihajsfiohsdfhs", title: "Grillkohle benötigt", requested: false}],
+        value: 2
+      },
+      {
+        username: "PeterP",
+        rating: 1,
+        picture: "img/icons/black_home.png",
+        requests: [{id: "jhfkskdfbcjxkenru", title: "Gesucht: Plastikbesteck", requested: false},{id: "ioüwhdfioüasdfpjiasdasuidh", title: "Gesucht: Plastikbecher", requested: true}],
+        value: 3
+      }
+    ]
 
     $scope.requests = [
       {
@@ -420,7 +809,9 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
         place: "Düsseldorf",
         startDate: "30.06.2016",
         endDate: "31.06.2016",
-        value: 0
+        category: "food",
+        value: 0,
+        borrowed: false
       },
       {
         id: "oihajsfiohsdfhs",
@@ -430,7 +821,9 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
         place: "Saarland",
         startDate: "01.07.2016",
         endDate: "01.07.2016",
-        value: 1
+        category: "food",
+        value: 1,
+        borrowed: false
       },
       {
         id: "igujcgapiudcjksd",
@@ -440,7 +833,9 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
         place: "Irgendwo im Nirgendwo",
         startDate: "01.07.2016",
         endDate: "01.07.2016",
-        value: 2
+        category: "home",
+        value: 2,
+        borrowed: false
       },
       {
         id: "jhfkskdfbcjxkenru",
@@ -450,12 +845,55 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
         place: "Nimmerland",
         startDate: "01.06.2016",
         endDate: "01.07.2016",
-        value: 3
+        category: "food",
+        value: 3,
+        borrowed: false
+      },
+      {
+        id: "ioüwhdfioüasdfpjiasdasuidh",
+        title: "Gesucht: Plastikbecher",
+        description: "Ich habe festgestellt, dass ich für meine Gartenparty keine Becher habe. Wer kann mir was leihen?",
+        profile: {username: "PeterP", picture: "img/icons/black_home.png", rating: 1},
+        place: "Nimmerland",
+        startDate: "01.06.2016",
+        endDate: "01.07.2016",
+        category: "food",
+        value: 4,
+        borrowed: false
+      },
+      {
+        id: "zf889234fhüq03e9uag4",
+        title: "Tischtennisschläger leihen",
+        description: "Ich bräuchte Schläger zum Spielen",
+        profile: {username: "MarcS.", picture: "img/icons/black_avatar.png", rating: 5},
+        place: "Ratingen",
+        startDate: "01.05.2016",
+        endDate: "01.09.2016",
+        category: "food",
+        value: 5,
+        borrowed: false
+      },
+      {
+        id: "hf8923ü4whofnüsdioacnce489ogiaehrljg",
+        title: "Pfanne bitte!",
+        description: "Ich möchte gerne kochen",
+        profile: {username: "JennyS", picture: "img/icons/black_avatar.png", rating: 5},
+        place: "Ratingen",
+        startDate: "14.06.2016",
+        endDate: "01.07.2017",
+        category: "food",
+        value: 6,
+        borrowed: true
       }
     ];
 
-    $scope.chats = [
-    ];
+    if (JSON.parse(window.localStorage.getItem("chats")) != undefined) {
+      $scope.chats = JSON.parse(window.localStorage.getItem("chats"));
+      //$scope.chats = [];
+      //window.localStorage.setItem("chats", JSON.stringify($scope.chats));
+    }
+    else
+      $scope.chats = [];
 
     $scope.profile = ProfileService.profile;
 
@@ -485,7 +923,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
             'Land' +
           '</div>' +
           '<select ng-model="popupData.newAddressCountry">' +
-            '<option selected>Deutschland</option>' +
+            '<option ng-selected="selected">Deutschland</option>' +
             '<option>Schweiz</option>' +
             '<option>Österreich</option>' +
             '<option>Bayern</option>' +
@@ -664,7 +1102,10 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
             '<input type="text" placeholder="Vorname" ng-model="popupData.firstname">' +
           '</label>' +
           '<label class="item item-input">' +
-            '<input type="email" placeholder="E-Mail" ng-model="popupData.email">' +
+          '<input type="email" placeholder="E-Mail" ng-model="popupData.email">' +
+          '</label>' +
+          '<label class="item item-input">' +
+          '<input type="tel" placeholder="Telefonnummer" ng-model="popupData.telefon">' +
           '</label>',
         scope: $scope,
         buttons: [
@@ -678,10 +1119,12 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
             onTap: function(e) {
               if($scope.popupData.lastname != null &&
                 $scope.popupData.firstname != null &&
-                $scope.popupData.email != null){
+                $scope.popupData.email != null &&
+                $scope.popupData.telefon != null){
                 ProfileService.profile.lastname = $scope.popupData.lastname;
                 ProfileService.profile.firstname = $scope.popupData.firstname;
                 ProfileService.profile.email = $scope.popupData.email;
+                ProfileService.profile.telefon = $scope.popupData.telefon;
                 window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
                 ResultService.changedProfile(0);
               }
@@ -810,12 +1253,27 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
         lastname: "",
         firstname: "",
         email: "",
+        telefon: "",
         password: "",
         addresses: [],
         actualAddress: 0,
         picture: "img/icons/black_avatar.png",
-        kontakte: [],
-        rating: 3
+        contacts: [{
+            username: "JennyS",
+            rating: 4,
+            picture: "img/icons/grey_woman.png",
+            value: 0
+          },
+          {
+            username: "BeneS",
+            rating: 5,
+            picture: "img/icons/black_avatar.png",
+            value: 0
+          }],
+        rating: 3,
+        salt: 0,
+        requests: [{id: "zf889234fhüq03e9uag4", title: "Tischtennisschläger leihen", requested: true}, {id: "hf8923ü4whofnüsdioacnce489ogiaehrljg", title: "Pfanne bitte!", requested: false}],
+        access_token: "jskdvsldvks"
       }
     }
 
@@ -879,7 +1337,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
           });
           break;
       }
-    };
+    }
 
     changedProfile = function(result)
     {
@@ -915,6 +1373,81 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
       changedProfile: changedProfile
     }
   })
+
+  /*.factory('CommunicationService',['$http', '$auth', function($http, $auth, ResultService, ProfileService)
+  {
+    var HOST = "https://sb.pftclan.de";
+    var PORT = 546;
+    var URL = HOST + ":" + PORT + "/api/smartbackend/";
+    var salt;
+
+    sha512 = function(password, salt){
+      var hash = window.CryptoJS.HmacSHA512(password, salt).toString(); /** Hashing algorithm sha512 */
+      /*return hash;
+    };
+
+    createSalt = function() {
+      var text = '';
+      var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+      for (var i = 0; i < 64; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+      }
+      return text;
+    }
+
+    signup = function(provider){
+      salt = ProfileService.profile.email;
+      ProfileService.profile.password = sha512(ProfileService.profile.password, salt);  // THERE IS NO GUARANTEE THAT THE SALT IS CORRECT MAY ITS A RANDOM SALT FOR SAFTEY IF EMAIL ISNT CORRECT
+      ProfileService.profile.salt = salt;
+      $http({method: "POST", url:URL + "auth/signup", params:{email:ProfileService.profile.email,password: ProfileService.profile.password}})
+        .then(function(result) {
+          ProfileService.profile.access_token = result.data.access_token;
+          $http.defaults.headers.common['Authorization'] = "Bearer "+ ProfileService.profile.access_token;
+        },function(error) {
+          // toSomething
+        })
+    }
+
+    login = function(provider){
+      if(provider==="email"){
+        //SENT EMAIL TO SERVER GET A SALT
+        ProfileService.profile.password = sha512(ProfileService.profile.password,  ProfileService.profile.salt);  // THERE IS NO GUARANTEE THAT THE SALT IS CORRECT MAY ITS A RANDOM SALT FOR SAFTEY IF EMAIL ISNT CORRECT
+        $http({method: "POST", url:URL + "auth/email", params:{email:ProfileService.profile.email,password: ProfileService.profile.password}})
+          .then(function(result) {
+            ProfileService.profile.access_token = result.data.access_token;
+            $http.defaults.headers.common['Authorization'] = "Bearer "+ ProfileService.profile.access_token;
+          },function(error) {
+            // toSomething
+          })
+      }
+    }
+
+    authenticate = function(provider){
+      if(provider==="facebook"){
+        $auth.authenticate(provider).then(function(response) {
+          console.log($auth.getToken());
+          console.log($auth.getPayload());
+          $http({method: "GET", url:URL + "auth/" + provider + "/", params:{id_token: $auth.getToken()}})
+            .then(function(result) {
+                console.log('yes im ok');
+              },function(error) {
+                console.log('Error: ' + error);
+              }
+            )
+            .catch(function(response) {
+              userService.SocialLoginFailed();
+            });
+        })
+      }
+    }
+
+    return {
+      signup:signup,
+      login:login,
+      authenticate:authenticate
+    }
+  }])*/
 
   .factory('MockService', ['$http', '$q',
     function($http, $q) {
@@ -961,6 +1494,62 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment'])
       };
     }
   ])
+
+  .filter('searchContent', function(){
+    return function (items, query) {
+      var filtered = [];
+      if (query) {
+        var letterMatch = new RegExp(query.toLowerCase());
+        for (var i = 0; i < items.length; i++) {
+          var item = items[i];
+          if (letterMatch.test(item.profile.username.toLowerCase()) || letterMatch.test(item.title.toLowerCase())) {
+            filtered.push(item);
+          }
+        }
+      } else {
+        filtered = items;
+      }
+      return filtered;
+    };
+  })
+
+  .filter('searchContact', function(){
+    return function (items, query) {
+      var filtered = [];
+      if (query) {
+        var letterMatch = new RegExp(query.toLowerCase());
+        for (var i = 0; i < items.length; i++) {
+          var item = items[i];
+          if (letterMatch.test(item.username.toLowerCase())) {
+            filtered.push(item);
+          }
+        }
+      } else {
+        filtered = items;
+      }
+      return filtered;
+    };
+  })
+
+  .filter('filterRequests', function(){
+    return function (items, category) {
+      var filtered = [];
+      switch(category) {
+        case "all":
+          filtered = items;
+          break;
+        default:
+          for (var i = 0; i < items.length; i++) {
+            var item = items[i];
+            if (item.category === category) {
+              filtered.push(item);
+            }
+          }
+          break;
+      }
+      return filtered;
+    };
+  })
 
   //constant
   .constant('msdElasticConfig', {

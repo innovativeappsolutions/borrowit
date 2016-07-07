@@ -36,6 +36,14 @@ img.bigprofile-pic {
   border-radius: 50%;
 }
 
+img.facebook-pic {
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  left: 0px;
+  background-color: #354f88;
+}
+
 img.profile-pic {
   width: 40px;
   height: 40px;
@@ -196,4 +204,36 @@ a.autolinker {
 
 .loader .ion-loading-c {
   font-size: 64px;
+}
+
+/* Facebook */
+.fb-icon-bg {
+  background: #354f88;
+  left: 10px;
+  height: 37px;
+  width: 41px;
+}
+
+.fb-icon-bg:after {
+  display: block;
+}
+
+.fb-bg {
+  background: #3b5998;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.fb-bg:after {
+  color: #fff;
+  position: relative;
+  text-transform: uppercase;
+}
+
+.fb-bg:hover{
+  cursor: pointer;
+}
+
+.fb-bg:active{
+  background: #3b5998;
 }

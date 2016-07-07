@@ -5761,7 +5761,7 @@ ion-tabs.tabs-striped.tabs-color-active-dark .tab-item.tab-item-active, ion-tabs
   .item .badge + .badge {
     margin-right: 5px; }
   .item.item-borrowitblau {
-    border-color: #5DBCD2;
+    border-color: #5EB0C7;
     background-color: #5DBCD2;
     color: #fff; }
   .item.item-light {
@@ -8639,39 +8639,60 @@ progress {
   .button.button-block, .button.button-full {
     margin-top: 10px;
     margin-bottom: 10px; }
-  .button.button-light {
-    border-color: #e3e3e3;
-    background-color: #fff;
-    color: #444; }
-.button.button-borrowitblau{
-  border-color: transparent;
-  background-color: #5DBCD2;
-  color: white; }
-.button.button-borrowitgrau{
-  border-color: #dddddd;
-  background-color: #B2B2B2;
-  color: white; }
-    .button.button-light:hover {
+    .button.button-light {
+      border-color: #e3e3e3;
+      background-color: #fff;
+      color: #444; }
+  .button.button-borrowitblau{
+      border-color: transparent;
+      background-color: #5DBCD2;
+      color: white; }
+    .button.button-borrowitblau:hover {
       color: #444;
       text-decoration: none; }
-    .button.button-light.active, .button.button-light.activated {
-      background-color: #fafafa; }
-    .button.button-light.button-clear {
+    .button.button-borrowitblau.active, .button.button-borrowitblau.activated {
+      background-color: #5EB0C7; }
+    .button.button-borrowitblau.button-clear {
       border-color: transparent;
       background: none;
       box-shadow: none;
       color: #ddd; }
-    .button.button-light.button-icon {
+    .button.button-borrowitblau.button-icon {
       border-color: transparent;
       background: none; }
-    .button.button-light.button-outline {
+    .button.button-borrowitblau.button-outline {
       border-color: #ddd;
       background: transparent;
       color: #ddd; }
-      .button.button-light.button-outline.active, .button.button-light.button-outline.activated {
-        background-color: #ddd;
+    .button.button-borrowitblau.button-outline.active, .button.button-borrowitblau.button-outline.activated {
+      background-color: #ddd;
+      box-shadow: none;
+      color: #fff; }
+  .button.button-borrowitgrau{
+    border-color: #dddddd;
+    background-color: #B2B2B2;
+    color: white; }
+      .button.button-borrowitgrau:hover {
+        color: #444;
+        text-decoration: none; }
+      .button.button-borrowitgrau.active, .button.button-borrowitgrau.activated {
+        background-color: #dddddd; }
+      .button.button-borrowitgrau.button-clear {
+        border-color: transparent;
+        background: none;
         box-shadow: none;
-        color: #fff; }
+        color: #ddd; }
+      .button.button-borrowitgrau.button-icon {
+        border-color: transparent;
+        background: none; }
+      .button.button-borrowitgrau.button-outline {
+        border-color: #ddd;
+        background: transparent;
+        color: #ddd; }
+        .button.button-borrowitgrau.button-outline.active, .button.button-borrowitgrau.button-outline.activated {
+          background-color: #ddd;
+          box-shadow: none;
+          color: #fff; }
   .button.button-stable {
     border-color: transparent;
     background-color: #f8f8f8;

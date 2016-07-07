@@ -30,6 +30,12 @@
         },
         "cordova-plugin-file": {
             "PACKAGE_NAME": "com.ionicframework.borrowit795688"
+        },
+        "cordova-plugin-contacts": {
+            "PACKAGE_NAME": "com.ionicframework.borrowit795688"
+        },
+        "cordova-plugin-calendar": {
+            "PACKAGE_NAME": "com.ionicframework.borrowit795688"
         }
     },
     "dependent_plugins": {

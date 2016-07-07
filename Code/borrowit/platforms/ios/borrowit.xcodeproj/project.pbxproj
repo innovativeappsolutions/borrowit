@@ -30,6 +30,13 @@
 		AB25B5DFFE6643E2ADFB1201 /* CDVViewController+SplashScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = DDB48D4B268347988790B9CE /* CDVViewController+SplashScreen.m */; };
 		ECB308268FC7452B9D10D64B /* CDVStatusBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EC0393F4CBB4142A5102BE2 /* CDVStatusBar.m */; };
 		8F2313370B7D4EFDBDCFEE55 /* IonicKeyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E04232BD7FD4957A3383A34 /* IonicKeyboard.m */; };
+		972492D54D17472696B01153 /* CDVContacts.m in Sources */ = {isa = PBXBuildFile; fileRef = 22C57868193A4997A2B31E5B /* CDVContacts.m */; };
+		B9A3C366FA124BAE80818F37 /* CDVContact.m in Sources */ = {isa = PBXBuildFile; fileRef = 89A893E4281A47908142968A /* CDVContact.m */; };
+		30AAB53E47234990BDEE7C74 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC69FE3C2C914A1D80B45CF3 /* AddressBook.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		C41AE9B9C33F49FB828E2C5B /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DCFCB39BED841AEAD9B8EF9 /* AddressBookUI.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		82A33C1DB33C4839AD476DB9 /* Calendar.m in Sources */ = {isa = PBXBuildFile; fileRef = B24AD42C4CF24F608FA10E08 /* Calendar.m */; };
+		C8B21401989A48A489DA925E /* EventKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C4260BDB8E64C659BFE0BC8 /* EventKit.framework */; };
+		5481DE8007264253BB18CDB3 /* EventKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BD8DC10BD06C4A0FAB887980 /* EventKitUI.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -97,6 +104,16 @@
 		A3AEEA8FC1C04DEE8E2C2167 /* CDVStatusBar.h */ = {isa = PBXFileReference; name = "CDVStatusBar.h"; path = "cordova-plugin-statusbar/CDVStatusBar.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
 		7E04232BD7FD4957A3383A34 /* IonicKeyboard.m */ = {isa = PBXFileReference; name = "IonicKeyboard.m"; path = "ionic-plugin-keyboard/IonicKeyboard.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
 		86316B6BA49B4BA78D9DB921 /* IonicKeyboard.h */ = {isa = PBXFileReference; name = "IonicKeyboard.h"; path = "ionic-plugin-keyboard/IonicKeyboard.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		22C57868193A4997A2B31E5B /* CDVContacts.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "CDVContacts.m"; path = "cordova-plugin-contacts/CDVContacts.m"; sourceTree = "<group>"; fileEncoding = 4; };
+		89A893E4281A47908142968A /* CDVContact.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "CDVContact.m"; path = "cordova-plugin-contacts/CDVContact.m"; sourceTree = "<group>"; fileEncoding = 4; };
+		465CF907FD7D44B782D072C8 /* CDVContacts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "CDVContacts.h"; path = "cordova-plugin-contacts/CDVContacts.h"; sourceTree = "<group>"; fileEncoding = 4; };
+		4D6825E746A5466C819FEB8A /* CDVContact.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "CDVContact.h"; path = "cordova-plugin-contacts/CDVContact.h"; sourceTree = "<group>"; fileEncoding = 4; };
+		AC69FE3C2C914A1D80B45CF3 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "AddressBook.framework"; path = "System/Library/Frameworks/AddressBook.framework"; sourceTree = SDKROOT; fileEncoding = 4; };
+		1DCFCB39BED841AEAD9B8EF9 /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "AddressBookUI.framework"; path = "System/Library/Frameworks/AddressBookUI.framework"; sourceTree = SDKROOT; fileEncoding = 4; };
+		B24AD42C4CF24F608FA10E08 /* Calendar.m */ = {isa = PBXFileReference; name = "Calendar.m"; path = "cordova-plugin-calendar/Calendar.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		A8BFEAF8341F484EB69F8D4F /* Calendar.h */ = {isa = PBXFileReference; name = "Calendar.h"; path = "cordova-plugin-calendar/Calendar.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		7C4260BDB8E64C659BFE0BC8 /* EventKit.framework */ = {isa = PBXFileReference; name = "EventKit.framework"; path = "System/Library/Frameworks/EventKit.framework"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = wrapper.framework; explicitFileType = undefined; includeInIndex = 0; };
+		BD8DC10BD06C4A0FAB887980 /* EventKitUI.framework */ = {isa = PBXFileReference; name = "EventKitUI.framework"; path = "System/Library/Frameworks/EventKitUI.framework"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = wrapper.framework; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,6 +125,10 @@
 				87A21F810CDB4BE8AD3BD18F /* ImageIO.framework in Frameworks */,
 				80B350C35D764DEEB1291142 /* CoreLocation.framework in Frameworks */,
 				01248CF2E35140F5B2DB4446 /* AVFoundation.framework in Frameworks */,
+				30AAB53E47234990BDEE7C74 /* AddressBook.framework in Frameworks */,
+				C41AE9B9C33F49FB828E2C5B /* AddressBookUI.framework in Frameworks */,
+				C8B21401989A48A489DA925E /* EventKit.framework in Frameworks */,
+				5481DE8007264253BB18CDB3 /* EventKitUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -180,6 +201,10 @@
 				CA027168D8BF45CCB161D004 /* ImageIO.framework */,
 				7583A98FEE0F44ABBDBFD543 /* CoreLocation.framework */,
 				B557CBE2908246D2BF93D7F0 /* AVFoundation.framework */,
+				AC69FE3C2C914A1D80B45CF3 /* AddressBook.framework */,
+				1DCFCB39BED841AEAD9B8EF9 /* AddressBookUI.framework */,
+				7C4260BDB8E64C659BFE0BC8 /* EventKit.framework */,
+				BD8DC10BD06C4A0FAB887980 /* EventKitUI.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -230,6 +255,12 @@
 				A3AEEA8FC1C04DEE8E2C2167 /* CDVStatusBar.h */,
 				7E04232BD7FD4957A3383A34 /* IonicKeyboard.m */,
 				86316B6BA49B4BA78D9DB921 /* IonicKeyboard.h */,
+				22C57868193A4997A2B31E5B /* CDVContacts.m */,
+				89A893E4281A47908142968A /* CDVContact.m */,
+				465CF907FD7D44B782D072C8 /* CDVContacts.h */,
+				4D6825E746A5466C819FEB8A /* CDVContact.h */,
+				B24AD42C4CF24F608FA10E08 /* Calendar.m */,
+				A8BFEAF8341F484EB69F8D4F /* Calendar.h */,
 			);
 			name = Plugins;
 			path = "borrowit/Plugins";
@@ -356,6 +387,9 @@
 				AB25B5DFFE6643E2ADFB1201 /* CDVViewController+SplashScreen.m in Sources */,
 				ECB308268FC7452B9D10D64B /* CDVStatusBar.m in Sources */,
 				8F2313370B7D4EFDBDCFEE55 /* IonicKeyboard.m in Sources */,
+				972492D54D17472696B01153 /* CDVContacts.m in Sources */,
+				B9A3C366FA124BAE80818F37 /* CDVContact.m in Sources */,
+				82A33C1DB33C4839AD476DB9 /* Calendar.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
