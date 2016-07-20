@@ -3979,7 +3979,7 @@ a.subdued {
 .bar.bar-borrowitgrau {
   border-color: #999999;
   background-color: #B2B2B2;
-  background-image: linear-gradient(0deg, #e42112, #e42112 50%, transparent 50%);
+  background-image: linear-gradient(0deg, #999999, #999999 50%, transparent 50%);
   color: #fff; }
 .bar.bar-borrowitgrau .title {
   color: #fff; }
@@ -3988,7 +3988,7 @@ a.subdued {
 .bar.bar-borrowitblau {
   border-color: #5EB0C7;
   background-color: #5DBCD2;
-  background-image: linear-gradient(0deg, #e42112, #e42112 50%, transparent 50%);
+  background-image: linear-gradient(0deg, #999999, #999999 50%, transparent 50%);
   color: #fff; }
 .bar.bar-borrowitblau .title {
   color: #fff; }

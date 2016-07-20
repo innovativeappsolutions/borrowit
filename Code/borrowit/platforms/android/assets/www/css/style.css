@@ -44,6 +44,23 @@ img.facebook-pic {
   background-color: #354f88;
 }
 
+img.category-pic {
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+}
+
+img.profile-pic-top {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 51px;
+  left: 10px;
+}
+
 img.profile-pic {
   width: 40px;
   height: 40px;
