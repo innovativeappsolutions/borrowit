@@ -965,14 +965,14 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
             $scope.persons.push(result[i]);
         }
       });
-    }
+    };
 
     $scope.loadCurrentRequest = function(reqid) {
       var loadedRequest = CommunicationService.getCurrentRequest(reqid);
       loadedRequest.then(function(result){
         $scope.values.currentRequest = result;
       })
-    }
+    };
 
     $scope.requests = [];
 
@@ -984,20 +984,15 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
           $scope.requests.push(result[i]);
         }
       })
-    }
+    };
 
-    if (JSON.parse(window.localStorage.getItem("chats")) != undefined) {
-      $scope.chats = JSON.parse(window.localStorage.getItem("chats"));
-    }
-    else {
-      var loadedChats = CommunicationService.getAllChats();
-      loadedChats.then(function(result){
-        $scope.chats = [];
-        for(var i = 0; i < result.length; i++) {
-          $scope.chats.push(result[i]);
-        }
-      })
-    }
+    var loadedChats = CommunicationService.getAllChats();
+    loadedChats.then(function(result){
+      $scope.chats = [];
+      for(var i = 0; i < result.length; i++) {
+        $scope.chats.push(result[i]);
+      }
+    });
 
     $scope.profile = ProfileService.profile;
 
@@ -1535,10 +1530,10 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
 
   .factory('CommunicationService',['$http', '$auth', '$cordovaGeolocation', '$timeout', 'ResultService', 'ProfileService', function($http, $auth, $cordovaGeolocation, $timeout, ResultService, ProfileService)
   {
-    var HOST = "https://sb.pftclan.de";
-    var PORT = 546;
-    //var HOST = "http://localhost";
-    //var PORT = "3000"
+    HOST = "https://sb.pftclan.de";
+    PORT = 546;
+    var HOST = "http://localhost";
+    var PORT = "3000"
     var URLBACKEND = HOST + ":" + PORT + "/api/smartbackend/";
     var URLBORROWIT = HOST + ":" + PORT + "/api/borrowit/";
     var salt;
@@ -1993,7 +1988,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
                 ProfileService.profile.firstname = result.data[0].firstname;
                 ProfileService.profile.telephone = result.data[0].telephone;
                 ProfileService.profile.addresses = result.data[0].addresses;
-                ProfileService.profile.currentAddress = result.data[0].currentAddress.addressid;
+                ProfileService.profile.currentAddress = result.data[0].currentaddress;
                 ProfileService.profile.picture = result.data[0].picture;
                 ProfileService.profile.contacts = result.data[0].contacts;
                 ProfileService.profile.rating = result.data[0].rating;
