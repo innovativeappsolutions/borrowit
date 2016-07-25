@@ -161,7 +161,8 @@
 // the 2nd parameter is an array of 'requires'
 var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'satellizer', 'ngCookies'])
 
-  .run(function($ionicPlatform) {
+  .run(function($ionicPlatform, CommunicationService) {
+    CommunicationService.initiateConnection();
     $ionicPlatform.ready(function() {
       // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
       // for form inputs)
@@ -251,15 +252,17 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         controller: 'UserMessagesCtrl'
       });
     //profile = JSON.parse(window.localStorage.getItem("profile"));
-    if(JSON.parse(window.localStorage.getItem("profile")))//!= undefined && window.localStorage.getItem("password") != undefined)
+    var profileexists = JSON.parse(window.localStorage.getItem("profile"));
+    if(profileexists && profileexists.access_token && profileexists.access_token != "") {//!= undefined && window.localStorage.getItem("password") != undefined)
+      //$http.defaults.headers.common['Authorization'] = "Bearer "+ profileexists.access_token;
       $urlRouterProvider.otherwise('/');
+    }
     else
       $urlRouterProvider.otherwise('/login');
   }])
 
   .controller('UserMessagesCtrl',
-    function($scope, $rootScope, $state, $stateParams, MockService,
-             $ionicActionSheet,
+    function($scope, $rootScope, $state, $stateParams, $ionicActionSheet,
              $ionicPopup, $ionicScrollDelegate, $timeout, $interval, ProfileService) {
 
       // mock acquiring data via $stateParams
@@ -350,7 +353,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         //MockService.sendMessage(message).then(function(data) {
         $scope.input.message = '';
 
-        $scope.chats[$scope.values.currentChat].messages.push(message);
+        $scope.chats[$scope.values.currentChat].messages.push(message); //change to id
         window.localStorage.setItem("chats", JSON.stringify($scope.chats));
 
         $timeout(function() {
@@ -359,7 +362,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         }, 0);
 
         $timeout(function() {
-          $scope.chats[$scope.values.currentChat].messages.push($scope.getRequestMessage());
+          $scope.chats[$scope.values.currentChat].messages.push($scope.getRequestMessage()); //delete this one day
           window.localStorage.setItem("chats", JSON.stringify($scope.chats));
           keepKeyboardOpen();
           viewScroll.scrollBottom(true);
@@ -448,73 +451,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
 
     })
 
-  .controller('LoginCtrl',['$scope', '$http','$auth', 'ProfileService', function($scope, $http, $auth, ProfileService) {
-    var HOST = "https://sb.pftclan.de";
-    var PORT = 546;
-    var URL = HOST + ":" + PORT + "/api/smartbackend/";
-    var salt;
-
-    sha512 = function(password, salt){
-      var hash = window.CryptoJS.HmacSHA512(password, salt).toString(); /** Hashing algorithm sha512 */
-      return hash;
-    };
-
-    createSalt = function() {
-      var text = '';
-      var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-      for (var i = 0; i < 64; i++) {
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-      }
-      return text;
-    }
-
-    signup = function(provider){
-      salt = ProfileService.profile.email;
-      ProfileService.profile.password = sha512(ProfileService.profile.password, salt);  // THERE IS NO GUARANTEE THAT THE SALT IS CORRECT MAY ITS A RANDOM SALT FOR SAFTEY IF EMAIL ISNT CORRECT
-      ProfileService.profile.salt = salt;
-      $http({method: "POST", url:URL + "auth/signup", params:{email:ProfileService.profile.email,password: ProfileService.profile.password}})
-        .then(function(result) {
-          ProfileService.profile.access_token = result.data.access_token;
-          $http.defaults.headers.common['Authorization'] = "Bearer "+ ProfileService.profile.access_token;
-        },function(error) {
-          // toSomething
-        })
-    }
-
-    login = function(provider){
-      if(provider==="email"){
-        //SENT EMAIL TO SERVER GET A SALT
-        ProfileService.profile.password = sha512(ProfileService.profile.password,  ProfileService.profile.salt);  // THERE IS NO GUARANTEE THAT THE SALT IS CORRECT MAY ITS A RANDOM SALT FOR SAFTEY IF EMAIL ISNT CORRECT
-        $http({method: "POST", url:URL + "auth/email", params:{email:ProfileService.profile.email,password: ProfileService.profile.password}})
-          .then(function(result) {
-            ProfileService.profile.access_token = result.data.access_token;
-            $http.defaults.headers.common['Authorization'] = "Bearer "+ ProfileService.profile.access_token;
-          },function(error) {
-            // toSomething
-          })
-      }
-    }
-
-    authenticate = function(provider){
-      if(provider==="facebook"){
-        $auth.authenticate(provider).then(function(response) {
-          console.log($auth.getToken());
-          console.log($auth.getPayload());
-          $http({method: "GET", url:URL + "auth/" + provider + "/", params:{id_token: $auth.getToken()}})
-            .then(function(result) {
-                console.log('yes im ok');
-              },function(error) {
-                console.log('Error: ' + error);
-              }
-            )
-            .catch(function(response) {
-              userService.SocialLoginFailed();
-            });
-        })
-      }
-    }
-
+  .controller('LoginCtrl',['$scope', 'ProfileService', 'CommunicationService', function($scope, ProfileService, CommunicationService) {
     $scope.registerFirstPart = function()
     {
       if($scope.textboxes.username != null &&
@@ -534,7 +471,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         ProfileService.profile.password = $scope.textboxes.password;
         ProfileService.profile.addresses = [];
         ProfileService.profile.currentAddress = 0;
-        ProfileService.profile.requests = [{id: "zf889234fhüq03e9uag4", title: "Tischtennisschläger leihen", username: $scope.profile.username}, {id: "hf8923ü4whofnüsdioacnce489ogiaehrljg", title: "Pfanne bitte!", username: "JennyS"}];
+        ProfileService.profile.requests = [];
         window.location = '#/registrierung2';
       }
     }
@@ -546,6 +483,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
       {
         ProfileService.profile.push = true;
         ProfileService.profile.location = true;
+        CommunicationService.signup("email");
         window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
         //signup("email", $scope.profile.email, $scope.profile.password);
         window.location = '#/';
@@ -563,10 +501,9 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
 
       //$http.get("https://api.example.com/profile", { params: { "api_key": "some_key_here" } })
         //.success(function(data) {
-          //if(data.username == $scope.TextboxUsernameLogin && data.password == $scope.TextboxPasswordLogin) {
-            $scope.login($scope.textboxes.TextboxEmail, $scope.textboxes.TextboxPassword);
-            window.location = '#/';
-          //}
+          if($scope.textboxes.TextboxEmail && $scope.textboxes.TextboxPassword) {
+            CommunicationService.login("email", $scope.textboxes.TextboxEmail, $scope.textboxes.TextboxPassword);
+          }
           //else
             //showLoginError(true);
         //})
@@ -605,26 +542,23 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
     };
   }])
 
-  .controller("ToDoController", function($scope, $ionicPopup, $cordovaVibration, $cordovaCamera, $cordovaDevice, $cordovaFile, $cordovaContacts, $ionicPlatform, $ionicActionSheet, ImageService, ProfileService, ResultService){
-    /*$scope.addContact = function() {
-      $cordovaContacts.save($scope.contactForm).then(function(result) {
-        // Contact saved
-      }, function(err) {
-        // Contact error
-      });
-    };*/
+  .controller("ToDoController", function($scope, $ionicPopup, $cordovaVibration, $cordovaCamera, $cordovaDevice, $cordovaFile, $cordovaContacts, $ionicPlatform, $ionicActionSheet, ImageService, ProfileService, ResultService, CommunicationService){
+
+    $scope.currentAddressChanged = function() {
+      CommunicationService.changeCurrentAddress(ProfileService.profile.currentAddress);
+    };
 
     $scope.pushToggleChange = function() {
       console.log('Push Notification Change', $scope.values.push);
       ProfileService.profile.push = $scope.values.push;
-      //Send to Backend
-    }
+      CommunicationService.changePush($scope.values.push);
+    };
 
     $scope.locationToggleChange = function() {
       console.log('Location', $scope.values.location);
       ProfileService.profile.location = $scope.values.location;
-      //Send to Backend
-    }
+      CommunicationService.changeLocation($scope.values.location);
+    };
 
     $scope.images = {
       blackAvatar: "img/icons/black_avatar.png",
@@ -677,23 +611,54 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
       }
     }
 
-    $scope.startRequest = function() {
-      var newRequest = $scope.setRequestFields();
-      newRequest.id = ImageService.makeid();
-      $scope.requests.push(newRequest);
-      ProfileService.profile.requests.push({id: newRequest.id,title: newRequest.title, username: $scope.profile.username});
+    $scope.prepareStartRequest = function() {
+      var newRequest = setRequestFields();
+      if($scope.values.useLocationForRequest) {
+        var location = CommunicationService.getGeoLocation();
+        location.then(function(result) {
+          newRequest.location = result;
+          $scope.startRequest(newRequest);
+        })
+      }
+      else {
+        for(var i = 0; i < $scope.profile.addresses.length; i++) {
+          if($scope.profile.addresses[i].aid === $scope.profile.currentAddress) {
+            newRequest.location = $scope.profile.addresses[i].street + " " + $scope.profile.addresses[i].streetnumber + ", " + $scope.profile.addresses[i].zip + " " + $scope.profile.addresses[i].city + ", " + $scope.profile.addresses[i].country;
+            break;
+          }
+        }
+        $scope.startRequest(newRequest);
+      }
+    }
+
+    $scope.updateRequestInformations = function(requestid) { //work with id
+      var requestToUpdate;
+      for(var i = 0; i < $scope.profile.requests.length; i++) {
+        if($scope.profile.requests[i].requestid === requestid) {
+          requestToUpdate = $scope.setRequestFields();
+          requestToUpdate.requestid = requestid;
+          CommunicationService.updateRequest(requestid, requestToUpdate.title, requestToUpdate.description, requestToUpdate.location, requestToUpdate.startdate, requestToUpdate.enddate, requestToUpdate.category)
+          ProfileService.profile.requests[i] = requestToUpdate;
+        }
+      }
       $scope.emptyAllFields();
     }
 
-    $scope.actualizeRequestInformations = function(requestvalue) {
-      var id = $scope.requests[requestvalue].id;
-      $scope.requests[requestvalue] = $scope.setRequestFields();
-      $scope.requests[requestvalue].id = id;
-      ProfileService.profile.requests[requestvalue] = $scope.requests[requestvalue];
-      $scope.emptyAllFields();
+    $scope.startRequest = function(request){
+      var newReqId = CommunicationService.startRequest(request.title, request.description, request.location, request.startDate, request.endDate, request.category);
+      newReqId.then(function (result) {
+        request.requestid = result.rid;
+        ProfileService.profile.requests.push({
+          requestid: request.requestid,
+          title: request.title,
+          username: $scope.profile.username
+        });
+        window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
+        $scope.emptyAllFields();
+      });
     }
 
-    $scope.setRequestFields = function() {
+    var setRequestFields = function() {
       var newRequest = {};
       if($scope.values.sofort)
       {
@@ -711,21 +676,19 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
       newRequest.endDate = endDate[2] + $scope.getMonthNumber(endDate[1]) + endDate[3] + " " + $scope.textboxes.closeTime.toString().split(' ')[4];
       newRequest.category = $scope.textboxes.category;
       newRequest.profile = {username: $scope.profile.username, picture: $scope.profile.picture, rating: $scope.profile.rating};
-      newRequest.place = $scope.profile.addresses[$scope.profile.currentAddress];
-      newRequest.value = $scope.requests.length;
-      newRequest.offered = false;
-      newRequest.confirmed = false;
       return newRequest;
     }
 
     $scope.deleteProfile = function() {
       window.localStorage.removeItem('profile');
       window.localStorage.removeItem('chats');
+      $scope.emptyAllFields();
       window.location = "#/login";
     }
 
     $scope.addContact = function(person){
       ProfileService.profile.contacts.push(person);
+      CommunicationService.addContact(person.uid);
     }
 
     $scope.getAllContacts = function() {
@@ -741,71 +704,40 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
 
     $scope.phoneContacts = [];
 
-    $scope.checkPhoneNumbers = function(numbers) {
-      for (var i = 0; i < numbers.length; i++)
-        for (var j = 0; j < $scope.phoneContacts.length; j++)
-          for (var k = 0; k < $scope.phoneContacts[j].phoneNumbers.length; k++)
-            if (numbers[i].value == $scope.phoneContacts[j].phoneNumbers[k].value)
-              return true;
+    $scope.checkPhoneNumber = function(allNumbers, contactNumber) {
+      //for (var i = 0; i < allNumbers.length; i++)
+        //if (allNumbers[i].telephone === contactNumber)
+          //return true;
       return false;
     }
 
-    $scope.checkNames = function(name) {
-      for (var j = 0; j < $scope.phoneContacts.length; j++)
-        if (name == $scope.phoneContacts[j].username)
-          return true;
-      return false;
-    }
-
-    $scope.testNumbers1 = ["+2312342342341", "234235235234", "234235245734"];
-
-    $scope.testNumbers2 = ["0ß090988908", "346456456464", "234235235234"];
-
-    //$scope.checkPhoneNumbers($scope.testNumbers1, $scope.testNumbers2);
-
-    $scope.testContacts = [
-      {displayName: "Peter Pan", picture: $scope.images.blackAvatar, phoneNumbers: [{value: "093274230957"}]},
-      {displayName: "Marc", picture: $scope.images.blackAvatar, phoneNumbers: [{value: "2465624562456"}]},
-      {displayName: "Bene", picture: $scope.images.blackAvatar, phoneNumbers: [{value: "234523452466"}]},
-      {displayName: "Dennis", picture: $scope.images.blackAvatar, phoneNumbers: [{value: "76856897976"}]},
-      {displayName: "Test", picture: $scope.images.blackAvatar, phoneNumbers: [{value: "2342523445765"}]},
-      {displayName: "Tada", picture: $scope.images.blackAvatar, phoneNumbers: [{value: "756876975673"}]},
-      {displayName: "Jo", picture: $scope.images.blackAvatar, phoneNumbers: [{value: "23453414534"}]},
-      {displayName: "David", picture: $scope.images.blackAvatar, phoneNumbers: [{value: "093274230957"}]},
-      {displayName: "Tatjana", picture: $scope.images.blackAvatar, phoneNumbers: [{value: "093274230957"}]},
-    ]
-
-    $scope.getContacts = function() {
-      /*for (var i = 0; i < $scope.testContacts.length; i++) {
-        var contact = $scope.testContacts[i];
-        contact.username = contact.displayName;
-        //var alreadyPushed = false;
-        //for (var j = 0; j < $scope.phoneContacts.length; j++) {
-        if (!$scope.checkNames(contact.username)) {
-          //ask Backend, if contact.phoneNumbers already is signed up
-          $scope.phoneContacts.push(contact);
-          //break;
-        }
-        //}
-      }*/
+    $scope.getDeviceContacts = function() {
       function onSuccess(contacts) {
+        var allNumbers = [];
         for (var i = 0; i < contacts.length; i++) {
           var contact = contacts[i];
-          contact.username = contact.displayName;
-          //var alreadyPushed = false;
-          //for (var j = 0; j < $scope.phoneContacts.length; j++) {
-            //if (!$scope.checkPhoneNumbers(contact.phoneNumbers)) {
-          if (!$scope.checkNames(contact.username)) {
-            //ask Backend, if contact.phoneNumbers already is signed up
-            $scope.phoneContacts.push(contact);
-            //break;
+          if (contact.phoneNumbers) {
+            for(var j = 0; j < contact.phoneNumbers.length; j++) {
+              if (!$scope.checkPhoneNumber(allNumbers, contact.phoneNumbers[j].value.replace(" ",""))) {
+                //var number = {}
+                //number.telephone = contact.phoneNumbers[j].value.replace(" ","");
+                allNumbers.push({telephone: contact.phoneNumbers[j].value.replace(" ","")});
+              }
+            }
           }
-            //}
-          //}
         }
+        //var allNumbers = [{telephone: "017634670616"}]
+        var loadedContacts = CommunicationService.getContactsFromDevice(allNumbers);
+        loadedContacts.then(function(result){
+          $scope.phoneContacts = [];
+          for(var i = 0; i < result.length; i++) {
+            if(result[i].username != ProfileService.profile.username)
+              $scope.phoneContacts.push(result[i]);
+          }
+        })
       };
       function onError(contactError) {
-        alert(contactError);
+        ResultService.showError(contactError)
       };
       var options = {};
       options.multiple = true;
@@ -834,16 +766,18 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
       });
     };
 
-
     $scope.logout = function() {
       window.localStorage.removeItem("profile");
+      window.localStorage.removeItem('chats');
+      $scope.emptyAllFields();
+      window.location = "#/";
     };
 
     $scope.emptyAllFields = function() {
       $scope.values = {
         sofort: true,
-        chosenRequest: 0,
-        chosenPerson: 0,
+        currentRequest: {},
+        chosenPerson: {},
         chosenSortedBy: "startDate",
         chosenCategory: "all",
         currentChat: 0,
@@ -851,7 +785,8 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         requestOffered: false,
         requestAccepted: false,
         push: true,
-        location: true
+        location: true,
+        useLocationForRequest: true
       };
       $scope.textboxes = {
         startDate: "",
@@ -860,7 +795,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         requestDescription: "",
         endDate: "",
         endTime: "",
-        category: "",
+        category: "kitchen",
         username: "",
         lastname: "",
         firstname: "",
@@ -875,16 +810,16 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
 
     $scope.emptyAllFields();
 
-    $scope.viewRequest = function(request)
+    $scope.viewRequest = function(requestid)
     {
-      $scope.values.chosenRequest = request;
+      $scope.values.currentRequest = requestid; //ask Backend for Request
     }
 
     $scope.viewRequestById = function(requestID)
     {
       for(var i = 0; i < $scope.requests.length; i++) {
         if($scope.requests[i].id == requestID) {
-          $scope.values.chosenRequest = $scope.requests[i].value;
+          $scope.values.currentRequest = $scope.requests[i].value; //change with informations from Backend
         }
       }
     }
@@ -894,7 +829,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
       for(var i = 0; i < $scope.persons.length; i++)
       {
         if(contactname == $scope.persons[i].username) {
-          $scope.values.chosenPerson = i;
+          $scope.values.chosenPerson = i; //work with id
           break;
         }
       }
@@ -915,11 +850,11 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
       return isContact;
     }
 
-    $scope.borrowit = function(request) {
+    $scope.borrowit = function(request) { //noch mit Backend kombinieren + mit id arbeiten
       $scope.requests[request.value].offered = true;
       $scope.requests[request.value].accepted = false;
       ProfileService.profile.requests.push($scope.requests[request.value]);
-      window.location = "#/"
+      window.location = "#/anfragenchat"
     }
 
     $scope.actualizeRequest = function(reqID)
@@ -927,7 +862,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
       var request;
       for(var i = 0; i < $scope.requests.length; i++) {
         if ($scope.requests[i].id == reqID) {
-          $scope.values.chosenRequest = i;
+          $scope.values.currentRequest = i; //change with id
           request = $scope.requests[i];
           break;
         }
@@ -940,19 +875,12 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
       $scope.values.actualizeRequest = true;
     }
 
-    $scope.viewChat = function(reqID)
+    $scope.viewChat = function(req)
     {
-      var request;
-      for(var i = 0; i < $scope.requests.length; i++) {
-        if ($scope.requests[i].id == reqID) {
-          $scope.values.chosenRequest = i;
-          request = $scope.requests[i];
-          break;
-        }
-      }
-      if(!$scope.checkChatStarted(reqID))
+      var request = req;
+      if(!$scope.checkChatStarted(req.requestid)) //ask backend to get the room
       {
-        $scope.chats.push({
+        $scope.chats.push({ //contact Backend for new room
           requestid: reqID,
           title: request.title,
           profile: request.profile,
@@ -969,157 +897,155 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
 
     $scope.checkChatStarted = function(reqID)
     {
-      var started = false;
       for(var i = 0; i < $scope.chats.length; i++)
       {
         if($scope.chats[i].requestid == reqID)
         {
-          started = true;
           $scope.values.currentChat = i;
-          break;
+          return true
         }
       }
-      return started;
+      return false;
     }
 
-    $scope.persons = [
-      {
-        username: "JennyS",
-        rating: 4,
-        picture: $scope.images.greyWoman,
-        requests: [{id: "igujcgapiudcjksd", title: "Gesucht: Schaufel", username: "JennyS"}, {id: "hf8923ü4whofnüsdioacnce489ogiaehrljg", title: "Pfanne bitte!", username: "JennyS"}],
-        value: 0
-      },
-      {
-        username: "BeneS",
-        rating: 5,
-        picture: $scope.images.blackAvatar,
-        requests: [{id: "puif8657oti8f6tz", title: "Waffeleisen benötigt", username: "BeneS"}],
-        value: 1
-      },
-      {
-        username: "DennisR",
-        rating: 2,
-        picture: $scope.images.blackAvatar,
-        requests: [{id: "oihajsfiohsdfhs", title: "Grillkohle benötigt", username: "DennisR"}],
-        value: 2
-      },
-      {
-        username: "PeterP",
-        rating: 1,
-        picture: $scope.images.blackHome,
-        requests: [{id: "jhfkskdfbcjxkenru", title: "Gesucht: Plastikbesteck", username: "PeterP"},{id: "ioüwhdfioüasdfpjiasdasuidh", title: "Gesucht: Plastikbecher", username: "PeterP"}],
-        value: 3
-      }
-    ]
+    $scope.persons = [];
 
-    $scope.requests = [
-      {
-        id: "puif8657oti8f6tz",
-        title: "Waffeleisen benötigt",
-        description: "Ich möchte mir ein Waffeleisen ausleihen. Ich habe ein tolles neues Rezept. Sehr gerne kannst du auch eine Waffel haben.",
-        profile: {username: "BeneS", picture: $scope.images.blackAvatar, rating: 5},
-        place: {city: "Düsseldorf"},
-        startDate: "30.06.2016",
-        startTime: "08:30:00",
-        endDate: "31.06.2016",
-        endTime: "08:30:00",
-        category: "food",
-        value: 0,
-        offered: false,
-        accepted: false
-      },
-      {
-        id: "oihajsfiohsdfhs",
-        title: "Grillkohle benötigt",
-        description: "Ich möchte meine Nachbarschaft zum Grillen einladen, habe aber die Grillkohle vergessen. Du kannst gerne dazukommen, wenn du welche mitbringst. Für Grillgut ist gesorgt.",
-        profile: {username: "DennisR", picture: $scope.images.blackAvatar, rating: 2},
-        place: {city: "Saarland"},
-        startDate: "01.07.2016",
-        startTime: "08:30:00",
-        endDate: "01.07.2016",
-        endTime: "18:30:00",
-        category: "food",
-        value: 1,
-        offered: false,
-        accepted: false
-      },
-      {
-        id: "igujcgapiudcjksd",
-        title: "Gesucht: Schaufel",
-        description: "Ich habe festgestellt, dass mein Garten dringend mal umgegraben werden muss. Dafür benötige ich eine Schaufel. Danke im Voraus :)",
-        profile: {username: "JennyS", picture: $scope.images.greyWoman, rating: 4},
-        place: {city: "Irgendwo im Nirgendwo"},
-        startDate: "01.07.2016",
-        startTime: "08:30:00",
-        endDate: "01.07.2016",
-        endTime: "14:30:00",
-        category: "garden",
-        value: 2,
-        offered: false,
-        accepted: false
-      },
-      {
-        id: "jhfkskdfbcjxkenru",
-        title: "Gesucht: Plastikbesteck",
-        description: "Ich habe festgestellt, dass ich für meine Gartenparty kein Besteck habe. Wer kann mir was leihen?",
-        profile: {username: "PeterP", picture: $scope.images.blackHome, rating: 1},
-        place: {city: "Nimmerland"},
-        startDate: "01.06.2016",
-        startTime: "08:30:00",
-        endDate: "01.07.2016",
-        endTime: "08:30:00",
-        category: "kitchen",
-        value: 3,
-        offered: false,
-        accepted: false
-      },
-      {
-        id: "ioüwhdfioüasdfpjiasdasuidh",
-        title: "Gesucht: Plastikbecher",
-        description: "Ich habe festgestellt, dass ich für meine Gartenparty keine Becher habe. Wer kann mir was leihen?",
-        profile: {username: "PeterP", picture: $scope.images.blackHome, rating: 1},
-        place: {city: "Nimmerland"},
-        startDate: "01.06.2016",
-        startTime: "08:30:00",
-        endDate: "01.07.2016",
-        endTime: "08:30:00",
-        category: "kitchen",
-        value: 4,
-        offered: false,
-        accepted: false
-      },
-      {
-        id: "zf889234fhüq03e9uag4",
-        title: "Tischtennisschläger leihen",
-        description: "Ich bräuchte Schläger zum Spielen",
-        profile: {username: ProfileService.profile.username, picture: $scope.images.blackAvatar, rating: 5},
-        place: {city: "Ratingen"},
-        startDate: "01.05.2016",
-        startTime: "08:30:00",
-        endDate: "01.09.2016",
-        endTime: "08:30:00",
-        category: "freetime",
-        value: 5,
-        offered: false,
-        accepted: false
-      },
-      {
-        id: "hf8923ü4whofnüsdioacnce489ogiaehrljg",
-        title: "Pfanne bitte!",
-        description: "Ich möchte gerne kochen",
-        profile: {username: "JennyS", picture: $scope.images.blackAvatar, rating: 4},
-        place: {city: "Stuttgart"},
-        startDate: "14.06.2016",
-        startTime: "08:30:00",
-        endDate: "01.07.2017",
-        endTime: "08:30:00",
-        category: "food",
-        value: 6,
-        offered: true,
-        accepted: false
-      }
-    ];
+    $scope.loadContacts = function() {
+      var loadedContacts = CommunicationService.getAllPersons();
+      loadedContacts.then(function(result){
+        $scope.persons = [];
+        for(var i = 0; i < result.length; i++) {
+          if(result[i].username != ProfileService.profile.username)
+            $scope.persons.push(result[i]);
+        }
+      })
+    }
+
+    $scope.loadCurrentRequest = function(reqid) {
+      var loadedRequest = CommunicationService.getCurrentRequest(reqid);
+      loadedRequest.then(function(result){
+        $scope.values.currentRequest = result;
+      })
+    }
+
+    $scope.requests = [];
+
+    $scope.loadRequests = function() {
+      var loadedRequests = CommunicationService.getAllRequests();
+      loadedRequests.then(function(result){
+        $scope.requests = [];
+        for(var i = 0; i < result.length; i++) {
+          $scope.requests.push(result[i]);
+        }
+      })
+      /*[ //ask Backend for all requests
+        {
+         id: "puif8657oti8f6tz",
+         title: "Waffeleisen benötigt",
+         description: "Ich möchte mir ein Waffeleisen ausleihen. Ich habe ein tolles neues Rezept. Sehr gerne kannst du auch eine Waffel haben.",
+         profile: {username: "BeneS", picture: $scope.images.blackAvatar, rating: 5},
+         place: {city: "Düsseldorf"},
+         startDate: "30.06.2016",
+         startTime: "08:30:00",
+         endDate: "31.06.2016",
+         endTime: "08:30:00",
+         category: "food",
+         value: 0,
+         offered: false,
+         accepted: false
+         },
+         {
+         id: "oihajsfiohsdfhs",
+         title: "Grillkohle benötigt",
+         description: "Ich möchte meine Nachbarschaft zum Grillen einladen, habe aber die Grillkohle vergessen. Du kannst gerne dazukommen, wenn du welche mitbringst. Für Grillgut ist gesorgt.",
+         profile: {username: "DennisR", picture: $scope.images.blackAvatar, rating: 2},
+         place: {city: "Saarland"},
+         startDate: "01.07.2016",
+         startTime: "08:30:00",
+         endDate: "01.07.2016",
+         endTime: "18:30:00",
+         category: "food",
+         value: 1,
+         offered: false,
+         accepted: false
+         },
+         {
+         id: "igujcgapiudcjksd",
+         title: "Gesucht: Schaufel",
+         description: "Ich habe festgestellt, dass mein Garten dringend mal umgegraben werden muss. Dafür benötige ich eine Schaufel. Danke im Voraus :)",
+         profile: {username: "JennyS", picture: $scope.images.greyWoman, rating: 4},
+         place: {city: "Irgendwo im Nirgendwo"},
+         startDate: "01.07.2016",
+         startTime: "08:30:00",
+         endDate: "01.07.2016",
+         endTime: "14:30:00",
+         category: "garden",
+         value: 2,
+         offered: false,
+         accepted: false
+         },
+         {
+         id: "jhfkskdfbcjxkenru",
+         title: "Gesucht: Plastikbesteck",
+         description: "Ich habe festgestellt, dass ich für meine Gartenparty kein Besteck habe. Wer kann mir was leihen?",
+         profile: {username: "PeterP", picture: $scope.images.blackHome, rating: 1},
+         place: {city: "Nimmerland"},
+         startDate: "01.06.2016",
+         startTime: "08:30:00",
+         endDate: "01.07.2016",
+         endTime: "08:30:00",
+         category: "kitchen",
+         value: 3,
+         offered: false,
+         accepted: false
+         },
+         {
+         id: "ioüwhdfioüasdfpjiasdasuidh",
+         title: "Gesucht: Plastikbecher",
+         description: "Ich habe festgestellt, dass ich für meine Gartenparty keine Becher habe. Wer kann mir was leihen?",
+         profile: {username: "PeterP", picture: $scope.images.blackHome, rating: 1},
+         place: {city: "Nimmerland"},
+         startDate: "01.06.2016",
+         startTime: "08:30:00",
+         endDate: "01.07.2016",
+         endTime: "08:30:00",
+         category: "kitchen",
+         value: 4,
+         offered: false,
+         accepted: false
+         },
+         {
+         id: "zf889234fhüq03e9uag4",
+         title: "Tischtennisschläger leihen",
+         description: "Ich bräuchte Schläger zum Spielen",
+         profile: {username: ProfileService.profile.username, picture: $scope.images.blackAvatar, rating: 5},
+         place: {city: "Ratingen"},
+         startDate: "01.05.2016",
+         startTime: "08:30:00",
+         endDate: "01.09.2016",
+         endTime: "08:30:00",
+         category: "freetime",
+         value: 5,
+         offered: false,
+         accepted: false
+         },
+         {
+         id: "hf8923ü4whofnüsdioacnce489ogiaehrljg",
+         title: "Pfanne bitte!",
+         description: "Ich möchte gerne kochen",
+         profile: {username: "JennyS", picture: $scope.images.blackAvatar, rating: 4},
+         place: {city: "Stuttgart"},
+         startDate: "14.06.2016",
+         startTime: "08:30:00",
+         endDate: "01.07.2017",
+         endTime: "08:30:00",
+         category: "food",
+         value: 6,
+         offered: true,
+         accepted: false
+         }
+      ];*/
+    }
 
     if (JSON.parse(window.localStorage.getItem("chats")) != undefined) {
       $scope.chats = JSON.parse(window.localStorage.getItem("chats"));
@@ -1180,35 +1106,37 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
                 $scope.popupData.newAddressZIP != null &&
                 $scope.popupData.newAddressCity != null &&
                 $scope.popupData.newAddressCountry != null){
-
-                ProfileService.profile.addresses.push({
-                  text: $scope.popupData.newAddressStreet + " " + $scope.popupData.newAddressNumber,
-                  value: ProfileService.profile.addresses.length,
+                var address = {
                   street: $scope.popupData.newAddressStreet,
-                  number: $scope.popupData.newAddressNumber,
+                  streetnumber: $scope.popupData.newAddressNumber,
                   zip: $scope.popupData.newAddressZIP,
                   city: $scope.popupData.newAddressCity,
                   country: $scope.popupData.newAddressCountry
+                };
+                var addressid = CommunicationService.addAddress(address);
+                addressid.then(function(result){
+                  address.aid = result;
+                  ProfileService.profile.addresses.push(address);
+                  window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
                 });
-                window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
               }
             }
-          },
+          }
         ]
       });
     };
 
-    $scope.deleteAddress = function(address)
+    $scope.removeAddress = function(address) //change to id
     {
       if(ProfileService.profile.addresses.length > 1) {
-        if (address + 1 == ProfileService.profile.addresses.length) {
-          ProfileService.profile.currentAddress--;
-        }
-        ProfileService.profile.addresses.splice(address, 1);
-        for (var i = 0; i < ProfileService.profile.addresses.length; i++) {
-          ProfileService.profile.addresses[i].value = i;
+        ProfileService.profile.currentAddress = ProfileService.profile.addresses[0];
+        for(var i = 0; i < ProfileService.profile.addresses.length; i++) {
+          if(ProfileService.profile.addresses[i].aid == address.aid) {
+            ProfileService.profile.addresses.splice(i, 1);
+          }
         }
         window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
+        CommunicationService.removeAddress(address.aid);
       }
       else {
         //Popup ergänzen
@@ -1266,10 +1194,8 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
                 $scope.popupData.newAddressCity != null){
 
                 ProfileService.profile.addresses.push({
-                  text: $scope.popupData.newAddressStreet + " " + $scope.popupData.newAddressNumber,
-                  value: address,
                   street: $scope.popupData.newAddressStreet,
-                  number: $scope.popupData.newAddressNumber,
+                  streetnumber: $scope.popupData.newAddressNumber,
                   zip: $scope.popupData.newAddressZIP,
                   city: $scope.popupData.newAddressCity,
                   country: $scope.popupData.newAddressCountry
@@ -1329,6 +1255,9 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
 
     $scope.changeProfile = function() {
       $scope.popupData = {};
+      popupData.lastname = $scope.profile.lastname;
+      popupData.firstname = $scope.profile.firstname;
+      popupData.telephone = $scope.profile.telephone;
       var promptPopup = $ionicPopup.prompt({
         title: 'Profil ändern',
         template:
@@ -1339,10 +1268,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
             '<input type="text" placeholder="Vorname" ng-model="popupData.firstname">' +
           '</label>' +
           '<label class="item item-input">' +
-          '<input type="email" placeholder="E-Mail" ng-model="popupData.email">' +
-          '</label>' +
-          '<label class="item item-input">' +
-          '<input type="tel" placeholder="Telefonnummer" ng-model="popupData.telephone">' +
+            '<input type="tel" placeholder="Telefonnummer" ng-model="popupData.telephone">' +
           '</label>',
         scope: $scope,
         buttons: [
@@ -1356,14 +1282,12 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
             onTap: function(e) {
               if($scope.popupData.lastname != null &&
                 $scope.popupData.firstname != null &&
-                $scope.popupData.email != null &&
                 $scope.popupData.telephone != null){
                 ProfileService.profile.lastname = $scope.popupData.lastname;
                 ProfileService.profile.firstname = $scope.popupData.firstname;
-                ProfileService.profile.email = $scope.popupData.email;
                 ProfileService.profile.telephone = $scope.popupData.telephone;
                 window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
-                ResultService.changedProfile(0);
+                CommunicationService.changeProfileInfos(ProfileService.profile.lastname, ProfileService.profile.firstname, ProfileService.profile.telephone);
               }
               else
               {
@@ -1389,7 +1313,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
 
     $ionicPlatform.ready(function() {
       $scope.$apply();
-      $scope.getContacts();
+      $scope.getDeviceContacts();
     });
 
     $scope.urlForImage = function(imageName) {
@@ -1490,8 +1414,6 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
 
     if(JSON.parse(window.localStorage.getItem("profile")) != undefined) {
       profile = JSON.parse(window.localStorage.getItem("profile"));
-      profile.push = true;
-      profile.location = true;
     }
     else {
       profile =
@@ -1518,7 +1440,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         rating: 5,
         salt: 0,
         requests: [{id: "zf889234fhüq03e9uag4", title: "Tischtennisschläger leihen", username: ""}, {id: "hf8923ü4whofnüsdioacnce489ogiaehrljg", title: "Pfanne bitte!", username: "JennyS"}],
-        access_token: "jskdvsldvks",
+        access_token: "",
         push: true,
         location: true
       }
@@ -1615,22 +1537,40 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
       }
     };
 
+    showError = function(error) {
+      switch(status) {
+        case 400:break; //fehlender Parameter
+        case 401:break; //nicht authorisiert
+        case 500:break; //interner Fehler (DB nicht erreichbar z.B.)
+        case 942:break; //Username vergeben
+        case 943:break; //Telefonnummer vergeben
+      }
+    }
+
     return {
       changedPassword: changedPassword,
-      changedProfile: changedProfile
+      changedProfile: changedProfile,
+      showError:showError
     }
   })
 
-  /*.factory('CommunicationService',['$http', '$auth', function($http, $auth, ResultService, ProfileService)
+  .factory('CommunicationService',['$http', '$auth', '$cordovaGeolocation', 'ResultService', 'ProfileService', function($http, $auth, $cordovaGeolocation, ResultService, ProfileService)
   {
     var HOST = "https://sb.pftclan.de";
     var PORT = 546;
-    var URL = HOST + ":" + PORT + "/api/smartbackend/";
+    //var HOST = "http://localhost";
+    //var PORT = "3000"
+    var URLBACKEND = HOST + ":" + PORT + "/api/smartbackend/";
+    var URLBORROWIT = HOST + ":" + PORT + "/api/borrowit/";
     var salt;
+
+    initiateConnection = function(token) {
+      $http.defaults.headers.common['Authorization'] = "Bearer "+ ProfileService.profile.access_token;
+    }
 
     sha512 = function(password, salt){
       var hash = window.CryptoJS.HmacSHA512(password, salt).toString(); /** Hashing algorithm sha512 */
-      /*return hash;
+      return hash;
     };
 
     createSalt = function() {
@@ -1641,31 +1581,301 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         text += possible.charAt(Math.floor(Math.random() * possible.length));
       }
       return text;
+    };
+
+    var addAddress = function(address) {
+      return $http({method: "POST", url:URLBORROWIT + "profile/address/add", data:{street: address.street,streetnumber: address.streetnumber,zip: address.zip, city: address.city, country:address.country}})
+        .then(function(result) {
+          //man könnte ne Bestätigung zeigen
+          var addressid = result.data[0];
+          return addressid;
+        },function(error) {
+          ResultService.showError(error);
+          // toSomething
+        });
+    };
+
+    removeAddress = function(addressid) {
+      $http({method: "POST", url:URLBORROWIT + "profile/address/remove", data:{addressid: addressid}})
+        .then(function(result) {
+          //man könnte ne Bestätigung zeigen
+        },function(error) {
+          ResultService.showError(error);
+          // toSomething
+        });
+    };
+
+    changeCurrentAddress = function(currentaddress) {
+      $http({method: "POST", url:URLBORROWIT + "profile/address/currentaddress", data:{currentaddress:currentaddress}})
+        .then(function(result) {
+          //man könnte ne Bestätigung zeigen
+        },function(error) {
+          ResultService.showError(error);
+          // toSomething
+        });
+    };
+
+    var getAllPersons = function() {
+      return $http({method: "GET", url:URLBORROWIT + "user"})
+        .then(function(result) {
+          var contacts = result.data;
+          return contacts;
+          console.log("Juhu");
+          //ProfileService.profile.access_token = result.data.access_token;
+          //$http.defaults.headers.common['Authorization'] = "Bearer "+ ProfileService.profile.access_token;
+        },function(error) {
+          console.log("Mist");
+          ResultService.showError(error);
+          // toSomething
+        });
+    };
+
+    var getContactsFromDevice = function(phoneContacts) {
+      return $http({method: "POST", url:URLBORROWIT + "user", data:{phonenumbers: phoneContacts}})
+        .then(function(result) {
+          var contacts = result.data;
+          return contacts;
+          console.log("Juhu");
+          //ProfileService.profile.access_token = result.data.access_token;
+          //$http.defaults.headers.common['Authorization'] = "Bearer "+ ProfileService.profile.access_token;
+        },function(error) {
+          console.log("Mist");
+          ResultService.showError(error);
+          // toSomething
+        });
+    }
+
+    getAllChats = function() {
+
+    };
+
+    openChat = function() {
+
+    };
+
+    sendMessage = function() {
+
+    };
+
+    updateChat = function() {
+
+    };
+
+    sendBorrowIt = function() {
+
+    }
+
+    acceptBorrowIt = function() {
+
+    }
+
+    getLocation = function() {
+      //alle 15 Minuten
+    };
+
+    var getGeoLocation = function() {
+      var posOptions = {timeout: 10000, enableHighAccuracy: true};
+      return $cordovaGeolocation.getCurrentPosition(posOptions)
+        .then(function (position) {
+          var lat  = position.coords.latitude;
+          var long = position.coords.longitude;
+          return lat + ", " + long;
+        }, function(err) {
+          ResultService.showError(err);
+        });
+    };
+
+    var startRequest = function(title, description, location, startdate, enddate, category) {
+      return $http({method: "PUT", url:URLBORROWIT + "request", data:{title: title, description: description, location: location, startdate: startdate, enddate: enddate, category: category}})
+        .then(function(result) {
+          //man könnte ne Bestätigung zeigen
+          var addressid = result.data[0];
+          return addressid;
+        },function(error) {
+          ResultService.showError(error);
+          // toSomething
+        });
+    };
+
+    updateRequest = function(reqid, title, description, location, startdate, enddate, category) {
+      $http({method: "POST", url:URLBORROWIT + "request/" + reqid, data:{title: title, description: description, location: location, startdate: startdate, enddate: enddate, category: category}})
+        .then(function(result) {
+          //man könnte ne Bestätigung zeigen
+        },function(error) {
+          ResultService.showError(error);
+          // toSomething
+        });
+    };
+
+    deleteRequest = function() {
+
+    };
+
+    changeProfileInfos = function(lastname, firstname, telephone) {
+      $http({method: "POST", url:URLBORROWIT + "profile/maindata", data:{lastname:lastname, firstname:firstname, telephone:telephone}})
+        .then(function(result) {
+          //man könnte ne Bestätigung zeigen
+        },function(error) {
+          ResultService.showError(error);
+          // toSomething
+        });
+    };
+
+    changeProfilePicture = function(picture) {
+      //upload picture and get URL
+      var pictureURl
+      $http({method: "POST", url:URLBORROWIT + "profile/picture", data:{picture:pictureURl}})
+        .then(function(result) {
+          //man könnte ne Bestätigung zeigen
+        },function(error) {
+          ResultService.showError(error);
+          // toSomething
+        });
+    };
+
+    addContact = function(contactid) {
+      $http({method: "POST", url:URLBORROWIT + "profile/contact/add", data:{contactid:contactid}})
+        .then(function(result) {
+          //man könnte ne Bestätigung zeigen
+        },function(error) {
+          ResultService.showError(error);
+          // toSomething
+        });
+    };
+
+    changePush = function(push) {
+      $http({method: "POST", url:URLBORROWIT + "profile/push", data:{push: push}})
+        .then(function(result) {
+          //man könnte ne Bestätigung zeigen
+        },function(error) {
+          ResultService.showError(error);
+          // toSomething
+        });
+    };
+
+    changeLocation = function(location) {
+      $http({method: "POST", url:URLBORROWIT + "profile/location", data:{location: location}})
+        .then(function(result) {
+          //man könnte ne Bestätigung zeigen
+        },function(error) {
+          ResultService.showError(error);
+          // toSomething
+        });
+    };
+
+    addRating = function(contactid, reqid, rating) {
+      $http({method: "POST", url:URLBORROWIT + "rating", data:{rated_user:contactid, request:reqid, rating:rating}})
+        .then(function(result) {
+          //man könnte ne Bestätigung zeigen
+        },function(error) {
+          ResultService.showError(error);
+          // toSomething
+        });
+    };
+
+    var getCurrentRequest = function(reqid) {
+      return $http({method: "GET", url:URLBORROWIT + "request/" + reqid})
+        .then(function(result) {
+          var request = result.data[0];
+          var startdate = request.startdate.split('T')[0].split('-');
+          var starttime = request.startdate.split('T')[1].split('.')[0].split(':');
+          request.startdate = startdate[2] + "." + startdate[1] + "." + startdate[0] + " " + starttime[0] + ":" + starttime[1];
+          var enddate = request.enddate.split('T')[0].split('-');
+          var endtime = request.enddate.split('T')[1].split('.')[0].split(':');
+          request.enddate = enddate[2] + "." + enddate[1] + "." + enddate[0] + " " + endtime[0] + ":" + endtime[1];
+          return request;
+          console.log("Juhu");
+          //ProfileService.profile.access_token = result.data.access_token;
+          //$http.defaults.headers.common['Authorization'] = "Bearer "+ ProfileService.profile.access_token;
+        },function(error) {
+          console.log("Mist");
+          ResultService.showError(error);
+          // toSomething
+        });
+    }
+
+    var getAllRequests = function() {
+      return $http({method: "GET", url:URLBORROWIT + "request"})
+        .then(function(result) {
+          var requests = result.data;
+          return requests;
+          console.log("Juhu");
+          //ProfileService.profile.access_token = result.data.access_token;
+          //$http.defaults.headers.common['Authorization'] = "Bearer "+ ProfileService.profile.access_token;
+        },function(error) {
+          console.log("Mist");
+          ResultService.showError(error);
+          // toSomething
+        });
     }
 
     signup = function(provider){
       salt = ProfileService.profile.email;
       ProfileService.profile.password = sha512(ProfileService.profile.password, salt);  // THERE IS NO GUARANTEE THAT THE SALT IS CORRECT MAY ITS A RANDOM SALT FOR SAFTEY IF EMAIL ISNT CORRECT
-      ProfileService.profile.salt = salt;
-      $http({method: "POST", url:URL + "auth/signup", params:{email:ProfileService.profile.email,password: ProfileService.profile.password}})
+      //ProfileService.profile.salt = salt;
+      $http({method: "POST", url:URLBACKEND + "auth/signup", params:{email:ProfileService.profile.email,password: ProfileService.profile.password}})
         .then(function(result) {
           ProfileService.profile.access_token = result.data.access_token;
-          $http.defaults.headers.common['Authorization'] = "Bearer "+ ProfileService.profile.access_token;
+          initiateConnection(ProfileService.profile.access_token);
+          $http({method: "PUT", url:URLBORROWIT + "profile", data:{
+            lastname:ProfileService.profile.lastname,
+            firstname: ProfileService.profile.firstname,
+            email: ProfileService.profile.email,
+            username: ProfileService.profile.username,
+            telephone: ProfileService.profile.telephone,
+            picture: ProfileService.profile.picture,
+            currentaddress: ProfileService.profile.currentAddress,
+            addresses: ProfileService.profile.addresses}})
+            .then(function(result) {
+              console.log("Juhu");
+              //ProfileService.profile.access_token = result.data.access_token;
+              //$http.defaults.headers.common['Authorization'] = "Bearer "+ ProfileService.profile.access_token;
+            },function(error) {
+              console.log("Mist");
+              ResultService.showError(error);
+              // toSomething
+            });
         },function(error) {
+          ResultService.showError(error);
           // toSomething
-        })
+        });
     }
 
-    login = function(provider){
+    login = function(provider, email, password){
       if(provider==="email"){
         //SENT EMAIL TO SERVER GET A SALT
-        ProfileService.profile.password = sha512(ProfileService.profile.password,  ProfileService.profile.salt);  // THERE IS NO GUARANTEE THAT THE SALT IS CORRECT MAY ITS A RANDOM SALT FOR SAFTEY IF EMAIL ISNT CORRECT
-        $http({method: "POST", url:URL + "auth/email", params:{email:ProfileService.profile.email,password: ProfileService.profile.password}})
+        var salt = email;
+        ProfileService.profile.password = sha512(password,  salt);  // THERE IS NO GUARANTEE THAT THE SALT IS CORRECT MAY ITS A RANDOM SALT FOR SAFTEY IF EMAIL ISNT CORRECT
+        ProfileService.profile.email = email;
+        $http({method: "POST", url:URLBACKEND + "auth/email", params:{email:ProfileService.profile.email,password: ProfileService.profile.password}})
           .then(function(result) {
             ProfileService.profile.access_token = result.data.access_token;
-            $http.defaults.headers.common['Authorization'] = "Bearer "+ ProfileService.profile.access_token;
+            initiateConnection(ProfileService.profile.access_token);
+            $http({method: "GET", url:URLBORROWIT + "profile"})
+              .then(function(result) {
+                console.log("Juhu");
+                ProfileService.profile.username = result.data[0].username;
+                ProfileService.profile.lastname = result.data[0].lastname;
+                ProfileService.profile.firstname = result.data[0].firstname;
+                ProfileService.profile.telephone = result.data[0].telephone;
+                ProfileService.profile.addresses = result.data[0].addresses;
+                ProfileService.profile.currentAddress = result.data[0].currentAddress;
+                ProfileService.profile.picture = result.data[0].picture;
+                ProfileService.profile.contacts = result.data[0].contacts;
+                ProfileService.profile.rating = result.data[0].rating;
+                ProfileService.profile.requests = result.data[0].requests;
+                ProfileService.profile.push = result.data[0].push;
+                ProfileService.profile.location = result.data[0].location;
+                window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
+              },function(error) {
+                console.log("Mist");
+                ResultService.showError(error);
+                // toSomething
+              });
+            window.location = '#/';
           },function(error) {
-            // toSomething
+            ResultService.showError(error);
+            console.log(error.data);
           })
       }
     }
@@ -1675,11 +1885,12 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         $auth.authenticate(provider).then(function(response) {
           console.log($auth.getToken());
           console.log($auth.getPayload());
-          $http({method: "GET", url:URL + "auth/" + provider + "/", params:{id_token: $auth.getToken()}})
+          $http({method: "GET", url:URLBACKEND + "auth/" + provider + "/", params:{id_token: $auth.getToken()}})
             .then(function(result) {
                 console.log('yes im ok');
               },function(error) {
                 console.log('Error: ' + error);
+              ResultService.showError(error);
               }
             )
             .catch(function(response) {
@@ -1692,9 +1903,27 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
     return {
       signup:signup,
       login:login,
-      authenticate:authenticate
+      authenticate:authenticate,
+      initiateConnection:initiateConnection,
+      getAllPersons:getAllPersons,
+      getContactsFromDevice:getContactsFromDevice,
+      getAllRequests:getAllRequests,
+      getCurrentRequest:getCurrentRequest,
+      addAddress:addAddress,
+      removeAddress:removeAddress,
+      changeCurrentAddress:changeCurrentAddress,
+      addContact: addContact,
+      addRating: addRating,
+      changeProfileInfos:changeProfileInfos,
+      changePush:changePush,
+      changeLocation:changeLocation,
+      startRequest:startRequest,
+      updateRequest:updateRequest,
+      deleteRequest:deleteRequest,
+      getLocation:getLocation,
+      getGeoLocation:getGeoLocation
     }
-  }])*/
+  }])
 
   .factory('MockService', ['$http', '$q',
     function($http, $q) {

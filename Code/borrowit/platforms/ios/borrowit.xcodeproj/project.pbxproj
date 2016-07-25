@@ -37,6 +37,7 @@
 		82A33C1DB33C4839AD476DB9 /* Calendar.m in Sources */ = {isa = PBXBuildFile; fileRef = B24AD42C4CF24F608FA10E08 /* Calendar.m */; };
 		C8B21401989A48A489DA925E /* EventKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C4260BDB8E64C659BFE0BC8 /* EventKit.framework */; };
 		5481DE8007264253BB18CDB3 /* EventKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BD8DC10BD06C4A0FAB887980 /* EventKitUI.framework */; };
+		6AFF37C9D3334EB7B1FA0062 /* CDVLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C6D03A8C9C24CE9A806D6C3 /* CDVLocation.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -114,6 +115,8 @@
 		A8BFEAF8341F484EB69F8D4F /* Calendar.h */ = {isa = PBXFileReference; name = "Calendar.h"; path = "cordova-plugin-calendar/Calendar.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
 		7C4260BDB8E64C659BFE0BC8 /* EventKit.framework */ = {isa = PBXFileReference; name = "EventKit.framework"; path = "System/Library/Frameworks/EventKit.framework"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = wrapper.framework; explicitFileType = undefined; includeInIndex = 0; };
 		BD8DC10BD06C4A0FAB887980 /* EventKitUI.framework */ = {isa = PBXFileReference; name = "EventKitUI.framework"; path = "System/Library/Frameworks/EventKitUI.framework"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = wrapper.framework; explicitFileType = undefined; includeInIndex = 0; };
+		8C6D03A8C9C24CE9A806D6C3 /* CDVLocation.m */ = {isa = PBXFileReference; name = "CDVLocation.m"; path = "cordova-plugin-geolocation/CDVLocation.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		DFAB23FF0CA2488B97D45BED /* CDVLocation.h */ = {isa = PBXFileReference; name = "CDVLocation.h"; path = "cordova-plugin-geolocation/CDVLocation.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -261,6 +264,8 @@
 				4D6825E746A5466C819FEB8A /* CDVContact.h */,
 				B24AD42C4CF24F608FA10E08 /* Calendar.m */,
 				A8BFEAF8341F484EB69F8D4F /* Calendar.h */,
+				8C6D03A8C9C24CE9A806D6C3 /* CDVLocation.m */,
+				DFAB23FF0CA2488B97D45BED /* CDVLocation.h */,
 			);
 			name = Plugins;
 			path = "borrowit/Plugins";
@@ -390,6 +395,7 @@
 				972492D54D17472696B01153 /* CDVContacts.m in Sources */,
 				B9A3C366FA124BAE80818F37 /* CDVContact.m in Sources */,
 				82A33C1DB33C4839AD476DB9 /* Calendar.m in Sources */,
+				6AFF37C9D3334EB7B1FA0062 /* CDVLocation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

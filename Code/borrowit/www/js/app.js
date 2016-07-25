@@ -161,17 +161,12 @@
 // the 2nd parameter is an array of 'requires'
 var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'satellizer', 'ngCookies'])
 
-  .run(function($ionicPlatform) {
+  .run(function($ionicPlatform, CommunicationService) {
+    CommunicationService.initiateConnection();
     $ionicPlatform.ready(function() {
       // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
       // for form inputs)
-      if(window.cordova && window.cordova.plugins.Keyboard) {
-        cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-        cordova.plugins.Keyboard.disableScroll(true);
-      }
-      if(window.StatusBar) {
-        StatusBar.styleDefault();
-      }
+
     });
   })
 
@@ -251,25 +246,24 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         controller: 'UserMessagesCtrl'
       });
     //profile = JSON.parse(window.localStorage.getItem("profile"));
-    if(JSON.parse(window.localStorage.getItem("profile")))//!= undefined && window.localStorage.getItem("password") != undefined)
+    var profileexists = JSON.parse(window.localStorage.getItem("profile"));
+    if(profileexists && profileexists.access_token && profileexists.access_token != "") {//!= undefined && window.localStorage.getItem("password") != undefined)
+      //$http.defaults.headers.common['Authorization'] = "Bearer "+ profileexists.access_token;
       $urlRouterProvider.otherwise('/');
+    }
     else
       $urlRouterProvider.otherwise('/login');
   }])
 
   .controller('UserMessagesCtrl',
-    function($scope, $rootScope, $state, $stateParams, MockService,
-             $ionicActionSheet,
-             $ionicPopup, $ionicScrollDelegate, $timeout, $interval, ProfileService) {
-
-      // mock acquiring data via $stateParams
-      $scope.toUser = ProfileService.toUser;
+    function($scope, $rootScope, $state, $stateParams, $ionicActionSheet,
+             $ionicPopup, $ionicScrollDelegate, $timeout, $interval, ProfileService, CommunicationService) {
 
       // this could be on $rootScope rather than in $stateParams
       //$scope.user = ProfileService;
 
       $scope.input = {
-        message: localStorage['userMessage-' + $scope.toUser.username] || ''
+        message: ''
       };
 
       var messageCheckTimer;
@@ -309,7 +303,6 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
 
       $scope.$on('$ionicView.beforeLeave', function() {
         if (!$scope.input.message || $scope.input.message === '') {
-          localStorage.removeItem('userMessage-' + $scope.toUser.username);
         }
       });
 
@@ -330,14 +323,11 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
       $scope.doneLoading = false;
 
       $scope.$watch('input.message', function(newValue, oldValue) {
-        console.log('input.message $watch, newValue ' + newValue);
-        if (!newValue) newValue = '';
-        localStorage['userMessage-' + $scope.toUser.username] = newValue;
       });
 
       $scope.sendMessage = function(sendMessageForm) {
         var message = {
-          text: $scope.input.message.replace(/(<([^>]+)>)/ig,""),
+          text: $scope.textboxes.message.replace(/(<([^>]+)>)/ig,""),
           date: new Date(),
           username: $scope.profile.username
         };
@@ -348,9 +338,15 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         keepKeyboardOpen();
 
         //MockService.sendMessage(message).then(function(data) {
-        $scope.input.message = '';
+        $scope.emptyAllFields();
 
-        $scope.chats[$scope.values.currentChat].messages.push(message);
+        CommunicationService.sendMessage(message);
+        $scope.values.currentChat.messages.push(message); //change to id
+        for(var i = 0; i < $scope.chats.length; i++) {
+          if($scope.chats[i].roomid == $scope.values.currentChat.roomid) {
+            $scope.chats[i] = $scope.values.currentChat;
+          }
+        }
         window.localStorage.setItem("chats", JSON.stringify($scope.chats));
 
         $timeout(function() {
@@ -358,12 +354,12 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
           viewScroll.scrollBottom(true);
         }, 0);
 
-        $timeout(function() {
-          $scope.chats[$scope.values.currentChat].messages.push($scope.getRequestMessage());
+        /*$timeout(function() {
+          $scope.chats[$scope.values.currentChat].messages.push($scope.getRequestMessage()); //delete this one day
           window.localStorage.setItem("chats", JSON.stringify($scope.chats));
           keepKeyboardOpen();
           viewScroll.scrollBottom(true);
-        }, 2000);
+        }, 2000);*/
 
         //});
       };
@@ -421,12 +417,8 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
       };
 
       // this prob seems weird here but I have reasons for this in my app, secret!
-      $scope.viewProfile = function(msg) {
-        if (msg.username === $scope.profile.username) {
-          vindow.location = "#/profil_ansicht";
-        } else {
-          // go to other users profile
-        }
+      $scope.viewProfile = function() {
+        window.location = "#/profil_ansicht";
       };
 
       // I emit this event from the monospaced.elastic directive, read line 480
@@ -448,7 +440,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
 
     })
 
-  .controller('LoginCtrl',['$scope', '$http','$auth', 'ProfileService', 'CommunicationService', function($scope, $http, $auth, ProfileService, CommunicationService) {
+  .controller('LoginCtrl',['$scope', 'ProfileService', 'CommunicationService', function($scope, ProfileService, CommunicationService) {
     $scope.registerFirstPart = function()
     {
       if($scope.textboxes.username != null &&
@@ -468,7 +460,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         ProfileService.profile.password = $scope.textboxes.password;
         ProfileService.profile.addresses = [];
         ProfileService.profile.currentAddress = 0;
-        ProfileService.profile.requests = [{id: "zf889234fhüq03e9uag4", title: "Tischtennisschläger leihen", username: $scope.profile.username}, {id: "hf8923ü4whofnüsdioacnce489ogiaehrljg", title: "Pfanne bitte!", username: "JennyS"}];
+        ProfileService.profile.requests = [];
         window.location = '#/registrierung2';
       }
     }
@@ -488,26 +480,17 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
     }
 
     $scope.login = function(username, password) {
-      //ProfileService.profile.username = username;
-      //ProfileService.profile.password = password;
-      //window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
       ProfileService.profile = JSON.parse(window.localStorage.getItem("profile"));
     };
 
     $scope.checkLogin = function() {
+      if($scope.textboxes.TextboxEmail && $scope.textboxes.TextboxPassword) {
+        CommunicationService.login("email", $scope.textboxes.TextboxEmail, $scope.textboxes.TextboxPassword);
+      }
+    }
 
-      //$http.get("https://api.example.com/profile", { params: { "api_key": "some_key_here" } })
-        //.success(function(data) {
-          //if(data.username == $scope.TextboxUsernameLogin && data.password == $scope.TextboxPasswordLogin) {
-            $scope.login($scope.textboxes.TextboxEmail, $scope.textboxes.TextboxPassword);
-            window.location = '#/';
-          //}
-          //else
-            //showLoginError(true);
-        //})
-        //.error(function(data) {
-          //showLoginError(false);
-        //});
+    $scope.facebookLogin = function() {
+      CommunicationService.authenticate("facebook");
     }
 
     $scope.showLoginError = function(wrongPassword)
@@ -540,30 +523,25 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
     };
   }])
 
-  .controller("ToDoController", function($scope, $ionicPopup, $cordovaVibration, $cordovaCamera, $cordovaDevice, $cordovaFile, $cordovaContacts, $ionicPlatform, $ionicActionSheet, ImageService, ProfileService, ResultService){
-    /*$scope.addContact = function() {
-      $cordovaContacts.save($scope.contactForm).then(function(result) {
-        // Contact saved
-      }, function(err) {
-        // Contact error
-      });
-    };*/
+  .controller("ToDoController", function($scope, $ionicPopup, $cordovaVibration, $cordovaCamera, $cordovaDevice, $cordovaFile, $cordovaContacts, $ionicPlatform, $ionicActionSheet, ImageService, ProfileService, ResultService, CommunicationService){
 
-    $scope.showNotification = function() {
-
-    }
+    $scope.currentAddressChanged = function() {
+      CommunicationService.changeCurrentAddress(ProfileService.profile.currentAddress);
+    };
 
     $scope.pushToggleChange = function() {
-      console.log('Push Notification Change', $scope.values.push);
-      ProfileService.profile.push = $scope.values.push;
-      //Send to Backend
-    }
+      console.log('Push Notification Change', $scope.profile.push);
+      ProfileService.profile.push = $scope.profle.push;
+      CommunicationService.changePush($scope.profile.push);
+      window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
+    };
 
     $scope.locationToggleChange = function() {
-      console.log('Location', $scope.values.location);
-      ProfileService.profile.location = $scope.values.location;
-      //Send to Backend
-    }
+      console.log('Location', $scope.profile.location);
+      ProfileService.profile.location = $scope.profile.location;
+      CommunicationService.changeLocation($scope.profile.location);
+      window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
+    };
 
     $scope.images = {
       blackAvatar: "img/icons/black_avatar.png",
@@ -616,23 +594,73 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
       }
     }
 
-    $scope.startRequest = function() {
-      var newRequest = $scope.setRequestFields();
-      newRequest.id = ImageService.makeid();
-      $scope.requests.push(newRequest);
-      ProfileService.profile.requests.push({id: newRequest.id,title: newRequest.title, username: $scope.profile.username});
+    $scope.prepareStartRequest = function() {
+      var newRequest = setRequestFields();
+      if($scope.profile.location && $scope.values.useLocationForRequest) {
+        var location = CommunicationService.getGeoLocation();
+        location.then(function(result) {
+          newRequest.location = result;
+          $scope.startRequest(newRequest);
+        })
+      }
+      else {
+        for(var i = 0; i < $scope.profile.addresses.length; i++) {
+          if($scope.profile.addresses[i].addressid === $scope.profile.currentAddress) {
+            newRequest.location = $scope.profile.addresses[i].street + " " + $scope.profile.addresses[i].streetnumber + ", " + $scope.profile.addresses[i].zip + " " + $scope.profile.addresses[i].city + ", " + $scope.profile.addresses[i].country;
+            break;
+          }
+        }
+        $scope.startRequest(newRequest);
+      }
+    }
+
+    $scope.updateRequestInformations = function(requestid) { //work with id
+      var requestToUpdate;
+      for(var i = 0; i < $scope.profile.requests.length; i++) {
+        if($scope.profile.requests[i].requestid === requestid) {
+          requestToUpdate = $scope.setRequestFields();
+          requestToUpdate.requestid = requestid;
+          if($scope.profile.location && $scope.values.useLocationForRequest) {
+            var location = CommunicationService.getGeoLocation();
+            location.then(function(result) {
+              requestToUpdate.location = result;
+              CommunicationService.updateRequest(requestid, requestToUpdate.title, requestToUpdate.description, requestToUpdate.location, requestToUpdate.startdate, requestToUpdate.enddate, requestToUpdate.category)
+              ProfileService.profile.requests[i] = requestToUpdate;
+              window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
+            })
+          }
+          else {
+            for (var i = 0; i < $scope.profile.addresses.length; i++) {
+              if ($scope.profile.addresses[i].addressid === $scope.profile.currentAddress) {
+                requestToUpdate.location = $scope.profile.addresses[i].street + " " + $scope.profile.addresses[i].streetnumber + ", " + $scope.profile.addresses[i].zip + " " + $scope.profile.addresses[i].city + ", " + $scope.profile.addresses[i].country;
+                CommunicationService.updateRequest(requestid, requestToUpdate.title, requestToUpdate.description, requestToUpdate.location, requestToUpdate.startdate, requestToUpdate.enddate, requestToUpdate.category)
+                ProfileService.profile.requests[i] = requestToUpdate;
+                window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
+                break;
+              }
+            }
+          }
+          break;
+        }
+      }
       $scope.emptyAllFields();
     }
 
-    $scope.actualizeRequestInformations = function(requestvalue) {
-      var id = $scope.requests[requestvalue].id;
-      $scope.requests[requestvalue] = $scope.setRequestFields();
-      $scope.requests[requestvalue].id = id;
-      ProfileService.profile.requests[requestvalue] = $scope.requests[requestvalue];
-      $scope.emptyAllFields();
+    $scope.startRequest = function(request){
+      var newReqId = CommunicationService.startRequest(request.title, request.description, request.location, request.startDate, request.endDate, request.category);
+      newReqId.then(function (result) {
+        request.requestid = result.rid;
+        ProfileService.profile.requests.push({
+          requestid: request.requestid,
+          title: request.title,
+          username: $scope.profile.username
+        });
+        window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
+        $scope.emptyAllFields();
+      });
     }
 
-    $scope.setRequestFields = function() {
+    var setRequestFields = function() {
       var newRequest = {};
       if($scope.values.sofort)
       {
@@ -650,101 +678,58 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
       newRequest.endDate = endDate[2] + $scope.getMonthNumber(endDate[1]) + endDate[3] + " " + $scope.textboxes.closeTime.toString().split(' ')[4];
       newRequest.category = $scope.textboxes.category;
       newRequest.profile = {username: $scope.profile.username, picture: $scope.profile.picture, rating: $scope.profile.rating};
-      newRequest.place = $scope.profile.addresses[$scope.profile.currentAddress];
-      newRequest.value = $scope.requests.length;
-      newRequest.offered = false;
-      newRequest.confirmed = false;
       return newRequest;
     }
 
     $scope.deleteProfile = function() {
       window.localStorage.removeItem('profile');
       window.localStorage.removeItem('chats');
+      $scope.emptyAllFields();
       window.location = "#/login";
     }
 
     $scope.addContact = function(person){
       ProfileService.profile.contacts.push(person);
+      CommunicationService.addContact(person.uid);
+      window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
     }
-
-    $scope.getAllContacts = function() {
-      $cordovaContacts.find().then(function(allContacts) { //omitting parameter to .find() causes all contacts to be returned
-        //var devConts = allContacts;
-        $scope.deviceContacts = allContacts;
-      });
-      for(var i = 0; i < allContacts.length; i++)
-      {
-        //ask Backend, if devConts[i].phoneNumbers already is signed up
-      }
-    };
 
     $scope.phoneContacts = [];
 
-    $scope.checkPhoneNumbers = function(numbers) {
-      for (var i = 0; i < numbers.length; i++)
-        for (var j = 0; j < $scope.phoneContacts.length; j++)
-          for (var k = 0; k < $scope.phoneContacts[j].phoneNumbers.length; k++)
-            if (numbers[i].value == $scope.phoneContacts[j].phoneNumbers[k].value)
-              return true;
+    $scope.checkPhoneNumber = function(allNumbers, contactNumber) {
+      //for (var i = 0; i < allNumbers.length; i++)
+        //if (allNumbers[i].telephone === contactNumber)
+          //return true;
       return false;
     }
 
-    $scope.checkNames = function(name) {
-      for (var j = 0; j < $scope.phoneContacts.length; j++)
-        if (name == $scope.phoneContacts[j].username)
-          return true;
-      return false;
-    }
-
-    $scope.testNumbers1 = ["+2312342342341", "234235235234", "234235245734"];
-
-    $scope.testNumbers2 = ["0ß090988908", "346456456464", "234235235234"];
-
-    //$scope.checkPhoneNumbers($scope.testNumbers1, $scope.testNumbers2);
-
-    $scope.testContacts = [
-      {displayName: "Peter Pan", picture: $scope.images.blackAvatar, phoneNumbers: [{value: "093274230957"}]},
-      {displayName: "Marc", picture: $scope.images.blackAvatar, phoneNumbers: [{value: "2465624562456"}]},
-      {displayName: "Bene", picture: $scope.images.blackAvatar, phoneNumbers: [{value: "234523452466"}]},
-      {displayName: "Dennis", picture: $scope.images.blackAvatar, phoneNumbers: [{value: "76856897976"}]},
-      {displayName: "Test", picture: $scope.images.blackAvatar, phoneNumbers: [{value: "2342523445765"}]},
-      {displayName: "Tada", picture: $scope.images.blackAvatar, phoneNumbers: [{value: "756876975673"}]},
-      {displayName: "Jo", picture: $scope.images.blackAvatar, phoneNumbers: [{value: "23453414534"}]},
-      {displayName: "David", picture: $scope.images.blackAvatar, phoneNumbers: [{value: "093274230957"}]},
-      {displayName: "Tatjana", picture: $scope.images.blackAvatar, phoneNumbers: [{value: "093274230957"}]},
-    ]
-
-    $scope.getContacts = function() {
-      /*for (var i = 0; i < $scope.testContacts.length; i++) {
-        var contact = $scope.testContacts[i];
-        contact.username = contact.displayName;
-        //var alreadyPushed = false;
-        //for (var j = 0; j < $scope.phoneContacts.length; j++) {
-        if (!$scope.checkNames(contact.username)) {
-          //ask Backend, if contact.phoneNumbers already is signed up
-          $scope.phoneContacts.push(contact);
-          //break;
-        }
-        //}
-      }*/
+    $scope.getDeviceContacts = function() {
       function onSuccess(contacts) {
+        var allNumbers = [];
         for (var i = 0; i < contacts.length; i++) {
           var contact = contacts[i];
-          contact.username = contact.displayName;
-          //var alreadyPushed = false;
-          //for (var j = 0; j < $scope.phoneContacts.length; j++) {
-            //if (!$scope.checkPhoneNumbers(contact.phoneNumbers)) {
-          if (!$scope.checkNames(contact.username)) {
-            //ask Backend, if contact.phoneNumbers already is signed up
-            $scope.phoneContacts.push(contact);
-            //break;
+          if (contact.phoneNumbers) {
+            for(var j = 0; j < contact.phoneNumbers.length; j++) {
+              if (!$scope.checkPhoneNumber(allNumbers, contact.phoneNumbers[j].value.replace(" ",""))) {
+                //var number = {}
+                //number.telephone = contact.phoneNumbers[j].value.replace(" ","");
+                allNumbers.push({telephone: contact.phoneNumbers[j].value.replace(" ","")});
+              }
+            }
           }
-            //}
-          //}
         }
+        //var allNumbers = [{telephone: "017634670616"}]
+        var loadedContacts = CommunicationService.getContactsFromDevice(allNumbers);
+        loadedContacts.then(function(result){
+          $scope.phoneContacts = [];
+          for(var i = 0; i < result.length; i++) {
+            if(result[i].username != ProfileService.profile.username)
+              $scope.phoneContacts.push(result[i]);
+          }
+        })
       };
       function onError(contactError) {
-        alert(contactError);
+        ResultService.showError(contactError)
       };
       var options = {};
       options.multiple = true;
@@ -773,24 +758,25 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
       });
     };
 
-
     $scope.logout = function() {
       window.localStorage.removeItem("profile");
+      window.localStorage.removeItem('chats');
+      $scope.emptyAllFields();
+      window.location = "#/";
     };
 
     $scope.emptyAllFields = function() {
       $scope.values = {
         sofort: true,
-        chosenRequest: 0,
-        chosenPerson: 0,
+        currentRequest: {},
+        currentPerson: {},
         chosenSortedBy: "startDate",
         chosenCategory: "all",
-        currentChat: 0,
+        currentChat: {},
         actualizeRequest: false,
         requestOffered: false,
         requestAccepted: false,
-        push: true,
-        location: true
+        useLocationForRequest: true
       };
       $scope.textboxes = {
         startDate: "",
@@ -799,7 +785,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         requestDescription: "",
         endDate: "",
         endTime: "",
-        category: "",
+        category: "kitchen",
         username: "",
         lastname: "",
         firstname: "",
@@ -808,265 +794,210 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         password: "",
         passwordrep: "",
         TextboxEmail: "",
-        TextboxPassword: ""
+        TextboxPassword: "",
+        message: ""
       };
     };
 
     $scope.emptyAllFields();
 
-    $scope.viewRequest = function(request)
+    $scope.viewContact = function(contactid)
     {
-      $scope.values.chosenRequest = request;
-    }
-
-    $scope.viewRequestById = function(requestID)
-    {
-      for(var i = 0; i < $scope.requests.length; i++) {
-        if($scope.requests[i].id == requestID) {
-          $scope.values.chosenRequest = $scope.requests[i].value;
-        }
-      }
-    }
-
-    $scope.viewContact = function(contactname)
-    {
-      for(var i = 0; i < $scope.persons.length; i++)
-      {
-        if(contactname == $scope.persons[i].username) {
-          $scope.values.chosenPerson = i;
-          break;
-        }
-      }
-      window.location = "#/kontakt_profil";
-    }
+      var loadedContact = CommunicationService.getPerson(contactid);
+      loadedContact.then(function(result){
+        $scope.values.currentPerson.username = result.username;
+        $scope.values.currentPerson.picture = result.picture;
+        $scope.values.currentPerson.rating = result.rating;
+        $scope.values.currentPerson.requests = result.requests;
+        $scope.values.currentPerson.uid = contactid;
+        window.location = "#/kontakt_profil";
+      });
+    };
 
     $scope.alreadyContact = function(person)
     {
-      var isContact = false;
-      for(var i = 0; i < $scope.profile.contacts.length; i++)
-      {
-        if($scope.profile.contacts[i].username === person.username)
-        {
-          isContact = true;
-          break;
+      for(var i = 0; i < $scope.profile.contacts.length; i++) {
+        if($scope.profile.contacts[i].username === person.username) {
+          return true;
         }
       }
-      return isContact;
-    }
+      return false;
+    };
 
     $scope.borrowit = function(request) {
-      $scope.requests[request.value].offered = true;
-      $scope.requests[request.value].accepted = false;
-      ProfileService.profile.requests.push($scope.requests[request.value]);
-      window.location = "#/"
-    }
-
-    $scope.actualizeRequest = function(reqID)
-    {
-      var request;
-      for(var i = 0; i < $scope.requests.length; i++) {
-        if ($scope.requests[i].id == reqID) {
-          $scope.values.chosenRequest = i;
-          request = $scope.requests[i];
-          break;
+      message = {
+        text: ProfileService.profile.username + " möchte dir bezüglich deiner Anfrage >>" + request.title  + "<< helfen!",
+        date: new Date(),
+        username: ProfileService.profile.username
+      };
+      var offered = CommunicationService.sendBorrowIt(request);
+      offered.then(function(result) {
+        var chat = $scope.chatExists(request);
+        var chatInformations;
+        if(chat) {
+          chatInformations = getChatInformations(chat.roomid, true);
         }
-      }
+        else {
+          chatInformations = getChatInformations(request.requestid, false);
+        }
+        chatInformations.then(function(result) {
+          CommunicationService.sendMessage($scope.values.currentChat.roomid, message);
+          $scope.values.currentChat.messages.push(message);
+          for(var i = 0; i < $scope.chats.length; i++) {
+            if($scope.chats[i].roomid == $scope.values.currentChat.roomid) {
+              $scope.chats[i] = $scope.values.currentChat;
+            }
+          }
+          window.localStorage.setItem("chats", JSON.stringify($scope.chats));
+          window.location = "#/anfragenchat";
+        });
+        $scope.loadRequests();
+      });
+    };
+
+    $scope.acceptOffer = function(request) {
+      message = {
+        text: ProfileService.profile.username + " hat dein Angebot bezüglich seiner Anfrage >>" + request.title  + "<< angenommen!",
+        date: new Date(),
+        username: ProfileService.profile.username
+      };
+      var accepted = CommunicationService.acceptBorrowIt(request);
+      accepted.then(function(result) {
+        var chat = $scope.chatExists(request);
+        var chatInformations = getChatInformations(chat.roomid, true);
+        chatInformations.then(function(result) {
+          CommunicationService.sendMessage($scope.values.currentChat.roomid, message);
+          $scope.values.currentChat.messages.push(message);
+          for(var i = 0; i < $scope.chats.length; i++) {
+            if($scope.chats[i].roomid == $scope.values.currentChat.roomid) {
+              $scope.chats[i] = $scope.values.currentChat;
+            }
+          }
+          window.localStorage.setItem("chats", JSON.stringify($scope.chats));
+          window.location = "#/anfragenchat";
+        })
+        $scope.loadRequests();
+      });
+    };
+
+    $scope.declineOffer = function(request) {
+      message = {
+        text: ProfileService.profile.username + " hat dein Angebot bezüglich seiner Anfrage >>" + request.title  + "<< abgelehnt!",
+        date: new Date(),
+        username: ProfileService.profile.username
+      };
+      var accepted = CommunicationService.declineBorrowIt(request);
+      accepted.then(function(result) {
+        var chat = $scope.chatExists(request);
+        var chatInformations = getChatInformations(chat.roomid, true);
+        chatInformations.then(function(result) {
+          CommunicationService.sendMessage($scope.values.currentChat.roomid, message);
+          $scope.values.currentChat.messages.push(message);
+          for(var i = 0; i < $scope.chats.length; i++) {
+            if($scope.chats[i].roomid == $scope.values.currentChat.roomid) {
+              $scope.chats[i] = $scope.values.currentChat;
+            }
+          }
+          window.localStorage.setItem("chats", JSON.stringify($scope.chats));
+          window.location = "#/anfragenchat";
+        })
+        $scope.loadRequests();
+      });
+    };
+
+    $scope.actualizeRequest = function()
+    {
+      var request = $scope.values.currentRequest
       $scope.textboxes.requestTitle = request.title;
       $scope.textboxes.requestDescription = request.description;
       $scope.textboxes.closeDate = request.endDate;
       $scope.textboxes.closeTime = request.endTime;
       $scope.textboxes.category = request.category;
       $scope.values.actualizeRequest = true;
-    }
-
-    $scope.viewChat = function(reqID)
-    {
-      var request;
-      for(var i = 0; i < $scope.requests.length; i++) {
-        if ($scope.requests[i].id == reqID) {
-          $scope.values.chosenRequest = i;
-          request = $scope.requests[i];
-          break;
-        }
-      }
-      if(!$scope.checkChatStarted(reqID))
-      {
-        $scope.chats.push({
-          requestid: reqID,
-          title: request.title,
-          profile: request.profile,
-          value: $scope.chats.length,
-          messages: []
-        });
-        $scope.values.currentChat = $scope.chats.length - 1;
-      }
-      $scope.values.requestOffered = request.offered;
-      $scope.values.requestAccepted = request.accepted;
-      ProfileService.toUser.username = request.profile.username;
-      ProfileService.toUser.picture = request.profile.picture;
     };
 
-    $scope.checkChatStarted = function(reqID)
-    {
-      var started = false;
+    $scope.viewChatByRequest = function(request) {
+      var chat = $scope.chatExists(request)
+      if(chat)
+        $scope.viewChat(chat.roomid, true);
+      else
+        $scope.viewChat(request.rid, false);
+    };
+
+    $scope.chatExists = function(request) {
       for(var i = 0; i < $scope.chats.length; i++)
-      {
-        if($scope.chats[i].requestid == reqID)
-        {
-          started = true;
-          $scope.values.currentChat = i;
-          break;
-        }
-      }
-      return started;
+        if($scope.chats[i].request.requestid == request.rid)
+          return $scope.chats[i];
+      return false;
     }
 
-    $scope.persons = [
-      {
-        username: "JennyS",
-        rating: 4,
-        picture: $scope.images.greyWoman,
-        requests: [{id: "igujcgapiudcjksd", title: "Gesucht: Schaufel", username: "JennyS"}, {id: "hf8923ü4whofnüsdioacnce489ogiaehrljg", title: "Pfanne bitte!", username: "JennyS"}],
-        value: 0
-      },
-      {
-        username: "BeneS",
-        rating: 5,
-        picture: $scope.images.blackAvatar,
-        requests: [{id: "puif8657oti8f6tz", title: "Waffeleisen benötigt", username: "BeneS"}],
-        value: 1
-      },
-      {
-        username: "DennisR",
-        rating: 2,
-        picture: $scope.images.blackAvatar,
-        requests: [{id: "oihajsfiohsdfhs", title: "Grillkohle benötigt", username: "DennisR"}],
-        value: 2
-      },
-      {
-        username: "PeterP",
-        rating: 1,
-        picture: $scope.images.blackHome,
-        requests: [{id: "jhfkskdfbcjxkenru", title: "Gesucht: Plastikbesteck", username: "PeterP"},{id: "ioüwhdfioüasdfpjiasdasuidh", title: "Gesucht: Plastikbecher", username: "PeterP"}],
-        value: 3
-      }
-    ]
+    $scope.viewChat = function(roomid, exists)
+    {
+      var loadedChat = getChatInformations(roomid, exists);
+      loadedChat.then(function (result) {
+      });
+    };
 
-    $scope.requests = [
-      {
-        id: "puif8657oti8f6tz",
-        title: "Waffeleisen benötigt",
-        description: "Ich möchte mir ein Waffeleisen ausleihen. Ich habe ein tolles neues Rezept. Sehr gerne kannst du auch eine Waffel haben.",
-        profile: {username: "BeneS", picture: $scope.images.blackAvatar, rating: 5},
-        place: {city: "Düsseldorf"},
-        startDate: "30.06.2016",
-        startTime: "08:30:00",
-        endDate: "31.06.2016",
-        endTime: "08:30:00",
-        category: "food",
-        value: 0,
-        offered: false,
-        accepted: false
-      },
-      {
-        id: "oihajsfiohsdfhs",
-        title: "Grillkohle benötigt",
-        description: "Ich möchte meine Nachbarschaft zum Grillen einladen, habe aber die Grillkohle vergessen. Du kannst gerne dazukommen, wenn du welche mitbringst. Für Grillgut ist gesorgt.",
-        profile: {username: "DennisR", picture: $scope.images.blackAvatar, rating: 2},
-        place: {city: "Saarland"},
-        startDate: "01.07.2016",
-        startTime: "08:30:00",
-        endDate: "01.07.2016",
-        endTime: "18:30:00",
-        category: "food",
-        value: 1,
-        offered: false,
-        accepted: false
-      },
-      {
-        id: "igujcgapiudcjksd",
-        title: "Gesucht: Schaufel",
-        description: "Ich habe festgestellt, dass mein Garten dringend mal umgegraben werden muss. Dafür benötige ich eine Schaufel. Danke im Voraus :)",
-        profile: {username: "JennyS", picture: $scope.images.greyWoman, rating: 4},
-        place: {city: "Irgendwo im Nirgendwo"},
-        startDate: "01.07.2016",
-        startTime: "08:30:00",
-        endDate: "01.07.2016",
-        endTime: "14:30:00",
-        category: "garden",
-        value: 2,
-        offered: false,
-        accepted: false
-      },
-      {
-        id: "jhfkskdfbcjxkenru",
-        title: "Gesucht: Plastikbesteck",
-        description: "Ich habe festgestellt, dass ich für meine Gartenparty kein Besteck habe. Wer kann mir was leihen?",
-        profile: {username: "PeterP", picture: $scope.images.blackHome, rating: 1},
-        place: {city: "Nimmerland"},
-        startDate: "01.06.2016",
-        startTime: "08:30:00",
-        endDate: "01.07.2016",
-        endTime: "08:30:00",
-        category: "kitchen",
-        value: 3,
-        offered: false,
-        accepted: false
-      },
-      {
-        id: "ioüwhdfioüasdfpjiasdasuidh",
-        title: "Gesucht: Plastikbecher",
-        description: "Ich habe festgestellt, dass ich für meine Gartenparty keine Becher habe. Wer kann mir was leihen?",
-        profile: {username: "PeterP", picture: $scope.images.blackHome, rating: 1},
-        place: {city: "Nimmerland"},
-        startDate: "01.06.2016",
-        startTime: "08:30:00",
-        endDate: "01.07.2016",
-        endTime: "08:30:00",
-        category: "kitchen",
-        value: 4,
-        offered: false,
-        accepted: false
-      },
-      {
-        id: "zf889234fhüq03e9uag4",
-        title: "Tischtennisschläger leihen",
-        description: "Ich bräuchte Schläger zum Spielen",
-        profile: {username: ProfileService.profile.username, picture: $scope.images.blackAvatar, rating: 5},
-        place: {city: "Ratingen"},
-        startDate: "01.05.2016",
-        startTime: "08:30:00",
-        endDate: "01.09.2016",
-        endTime: "08:30:00",
-        category: "freetime",
-        value: 5,
-        offered: false,
-        accepted: false
-      },
-      {
-        id: "hf8923ü4whofnüsdioacnce489ogiaehrljg",
-        title: "Pfanne bitte!",
-        description: "Ich möchte gerne kochen",
-        profile: {username: "JennyS", picture: $scope.images.blackAvatar, rating: 4},
-        place: {city: "Stuttgart"},
-        startDate: "14.06.2016",
-        startTime: "08:30:00",
-        endDate: "01.07.2017",
-        endTime: "08:30:00",
-        category: "food",
-        value: 6,
-        offered: true,
-        accepted: false
-      }
-    ];
+    var getChatInformations = function(roomid, exists) {
+      var loadedChat = CommunicationService.openChat(roomid, exists);
+      return loadedChat.then(function (result) {
+        $scope.values.currentChat.profile = result.profile;
+        $scope.values.currentChat.request = result.request;
+        $scope.values.currentChat.messages = [];
+        for (var i = 0; i < result.messages.length; i++) {
+          $scope.values.currentChat.messages.push(result.messages[i]);
+        }
+        $scope.values.currentChat.roomid = result.roomid;
+        if(!exists) {
+          $scope.chats.push($scope.values.currentChat);
+        }
+      });
+    }
+
+    $scope.persons = [];
+
+    $scope.loadContacts = function() {
+      var loadedContacts = CommunicationService.getAllPersons();
+      loadedContacts.then(function(result){
+        $scope.persons = [];
+        for(var i = 0; i < result.length; i++) {
+          if(result[i].username != ProfileService.profile.username)
+            $scope.persons.push(result[i]);
+        }
+      });
+    }
+
+    $scope.loadCurrentRequest = function(reqid) {
+      var loadedRequest = CommunicationService.getCurrentRequest(reqid);
+      loadedRequest.then(function(result){
+        $scope.values.currentRequest = result;
+      })
+    }
+
+    $scope.requests = [];
+
+    $scope.loadRequests = function() {
+      var loadedRequests = CommunicationService.getAllRequests();
+      loadedRequests.then(function(result){
+        $scope.requests = [];
+        for(var i = 0; i < result.length; i++) {
+          $scope.requests.push(result[i]);
+        }
+      })
+    }
 
     if (JSON.parse(window.localStorage.getItem("chats")) != undefined) {
       $scope.chats = JSON.parse(window.localStorage.getItem("chats"));
-      //$scope.chats = [];
-      //window.localStorage.setItem("chats", JSON.stringify($scope.chats));
     }
-    else
-      $scope.chats = [];
+    else {
+      var loadedChats = CommunicationService.getAllChats();
+      loadedChats.then(function(result){
+        $scope.chats = [];
+        for(var i = 0; i < result.length; i++) {
+          $scope.chats.push(result[i]);
+        }
+      })
+    }
 
     $scope.profile = ProfileService.profile;
 
@@ -1101,6 +1032,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
             '<option>Österreich</option>' +
             '<option>Bayern</option>' +
             '<option>Köln</option>' +
+            '<option>Kanada</option>' +
           '</select>' +
         '</label>',
         title: 'Neue Adresse anlegen',
@@ -1119,35 +1051,37 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
                 $scope.popupData.newAddressZIP != null &&
                 $scope.popupData.newAddressCity != null &&
                 $scope.popupData.newAddressCountry != null){
-
-                ProfileService.profile.addresses.push({
-                  text: $scope.popupData.newAddressStreet + " " + $scope.popupData.newAddressNumber,
-                  value: ProfileService.profile.addresses.length,
+                var address = {
                   street: $scope.popupData.newAddressStreet,
-                  number: $scope.popupData.newAddressNumber,
+                  streetnumber: $scope.popupData.newAddressNumber,
                   zip: $scope.popupData.newAddressZIP,
                   city: $scope.popupData.newAddressCity,
                   country: $scope.popupData.newAddressCountry
+                };
+                var addressid = CommunicationService.addAddress(address);
+                addressid.then(function(result){
+                  address.addressid = result;
+                  ProfileService.profile.addresses.push(address);
+                  window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
                 });
-                window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
               }
             }
-          },
+          }
         ]
       });
     };
 
-    $scope.deleteAddress = function(address)
+    $scope.removeAddress = function(address) //change to id
     {
       if(ProfileService.profile.addresses.length > 1) {
-        if (address + 1 == ProfileService.profile.addresses.length) {
-          ProfileService.profile.currentAddress--;
-        }
-        ProfileService.profile.addresses.splice(address, 1);
-        for (var i = 0; i < ProfileService.profile.addresses.length; i++) {
-          ProfileService.profile.addresses[i].value = i;
+        ProfileService.profile.currentAddress = ProfileService.profile.addresses[0].addressid;
+        for(var i = 0; i < ProfileService.profile.addresses.length; i++) {
+          if(ProfileService.profile.addresses[i].addressid == address.addressid) {
+            ProfileService.profile.addresses.splice(i, 1);
+          }
         }
         window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
+        CommunicationService.removeAddress(address.addressid);
       }
       else {
         //Popup ergänzen
@@ -1205,10 +1139,8 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
                 $scope.popupData.newAddressCity != null){
 
                 ProfileService.profile.addresses.push({
-                  text: $scope.popupData.newAddressStreet + " " + $scope.popupData.newAddressNumber,
-                  value: address,
                   street: $scope.popupData.newAddressStreet,
-                  number: $scope.popupData.newAddressNumber,
+                  streetnumber: $scope.popupData.newAddressNumber,
                   zip: $scope.popupData.newAddressZIP,
                   city: $scope.popupData.newAddressCity,
                   country: $scope.popupData.newAddressCountry
@@ -1268,6 +1200,9 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
 
     $scope.changeProfile = function() {
       $scope.popupData = {};
+      popupData.lastname = $scope.profile.lastname;
+      popupData.firstname = $scope.profile.firstname;
+      popupData.telephone = $scope.profile.telephone;
       var promptPopup = $ionicPopup.prompt({
         title: 'Profil ändern',
         template:
@@ -1278,10 +1213,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
             '<input type="text" placeholder="Vorname" ng-model="popupData.firstname">' +
           '</label>' +
           '<label class="item item-input">' +
-          '<input type="email" placeholder="E-Mail" ng-model="popupData.email">' +
-          '</label>' +
-          '<label class="item item-input">' +
-          '<input type="tel" placeholder="Telefonnummer" ng-model="popupData.telephone">' +
+            '<input type="tel" placeholder="Telefonnummer" ng-model="popupData.telephone">' +
           '</label>',
         scope: $scope,
         buttons: [
@@ -1295,14 +1227,12 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
             onTap: function(e) {
               if($scope.popupData.lastname != null &&
                 $scope.popupData.firstname != null &&
-                $scope.popupData.email != null &&
                 $scope.popupData.telephone != null){
                 ProfileService.profile.lastname = $scope.popupData.lastname;
                 ProfileService.profile.firstname = $scope.popupData.firstname;
-                ProfileService.profile.email = $scope.popupData.email;
                 ProfileService.profile.telephone = $scope.popupData.telephone;
                 window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
-                ResultService.changedProfile(0);
+                CommunicationService.changeProfileInfos(ProfileService.profile.lastname, ProfileService.profile.firstname, ProfileService.profile.telephone);
               }
               else
               {
@@ -1327,8 +1257,22 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
     }
 
     $ionicPlatform.ready(function() {
+      document.addEventListener("pause", function() {
+        CommunicationService.sendLocationToServer();
+      }, false);
+      document.addEventListener("resume", function() {
+        //code for action on resume
+        CommunicationService.sendLocationToServer();
+      }, false)
+      if(window.cordova && window.cordova.plugins.Keyboard) {
+        cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+        cordova.plugins.Keyboard.disableScroll(true);
+      }
+      if(window.StatusBar) {
+        StatusBar.styleDefault();
+      }
       $scope.$apply();
-      $scope.getContacts();
+      $scope.getDeviceContacts();
     });
 
     $scope.urlForImage = function(imageName) {
@@ -1429,8 +1373,6 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
 
     if(JSON.parse(window.localStorage.getItem("profile")) != undefined) {
       profile = JSON.parse(window.localStorage.getItem("profile"));
-      profile.push = true;
-      profile.location = true;
     }
     else {
       profile =
@@ -1444,28 +1386,14 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         addresses: [],
         currentAddress: 0,
         picture: "img/icons/black_avatar.png",
-        contacts: [{
-            username: "JennyS",
-            rating: 4,
-            picture: "img/icons/grey_woman.png"
-          },
-          {
-            username: "BeneS",
-            rating: 5,
-            picture: "img/icons/black_avatar.png"
-          }],
+        contacts: [],
         rating: 5,
         salt: 0,
-        requests: [{id: "zf889234fhüq03e9uag4", title: "Tischtennisschläger leihen", username: ""}, {id: "hf8923ü4whofnüsdioacnce489ogiaehrljg", title: "Pfanne bitte!", username: "JennyS"}],
-        access_token: "jskdvsldvks",
+        requests: [],
+        access_token: "",
         push: true,
         location: true
       }
-    }
-
-    toUser = {
-      picture: "img/icons/black_avatar.png",
-      username: 'Unknown'
     }
 
     var image;
@@ -1479,7 +1407,6 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
 
     return {
       profile: profile,
-      toUser: toUser,
       storeImage: addImage
     }
   })
@@ -1554,19 +1481,71 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
       }
     };
 
+    showResult = function(result) {
+      var content = "";
+      switch(result) {
+        case 42:
+          content = "Das Passwort wurde erfolgreich geändert";
+          break;
+        case 242:
+          content = "Die Benutzerdaten wurden erfolgreich geändert";
+          break;
+        case 73:
+          content = "Der Kontakt wurde erfolgreich hinzugefügt";
+          break;
+        case 7399:
+          content = "Danke für deine Hilfe!";
+          break;
+        case 43:
+          content = "Schön, dass deine Anfrage erfolgreich war!";
+          break;
+        case 22:
+          content = "Deine Anfrage wurde veröffentlicht!";
+          break;
+      }
+      var promptPopup = $ionicPopup.prompt({
+        title: content,
+        buttons: [
+          {
+            text: 'OK',
+            type: 'button-borrowitblau'
+          }
+        ]
+      });
+    }
+
+    showError = function(error) {
+      switch(error) {
+        case 400:break; //fehlender Parameter
+        case 401:break; //nicht authorisiert
+        case 404:break; //not found
+        case 500:break; //interner Fehler (DB nicht erreichbar z.B.)
+        case 942:break; //Username vergeben
+        case 943:break; //Telefonnummer vergeben
+        default:break;
+      }
+    }
+
     return {
       changedPassword: changedPassword,
-      changedProfile: changedProfile
+      changedProfile: changedProfile,
+      showError:showError
     }
   })
 
-  .factory('CommunicationService',['$http', '$auth', 'ResultService', 'ProfileService', function($http, $auth, ResultService, ProfileService)
+  .factory('CommunicationService',['$http', '$auth', '$cordovaGeolocation', '$timeout', 'ResultService', 'ProfileService', function($http, $auth, $cordovaGeolocation, $timeout, ResultService, ProfileService)
   {
     var HOST = "https://sb.pftclan.de";
     var PORT = 546;
+    //var HOST = "http://localhost";
+    //var PORT = "3000"
     var URLBACKEND = HOST + ":" + PORT + "/api/smartbackend/";
     var URLBORROWIT = HOST + ":" + PORT + "/api/borrowit/";
     var salt;
+
+    initiateConnection = function(token) {
+      $http.defaults.headers.common['Authorization'] = "Bearer "+ ProfileService.profile.access_token;
+    }
 
     sha512 = function(password, salt){
       var hash = window.CryptoJS.HmacSHA512(password, salt).toString(); /** Hashing algorithm sha512 */
@@ -1581,54 +1560,475 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         text += possible.charAt(Math.floor(Math.random() * possible.length));
       }
       return text;
+    };
+
+    var addAddress = function(address) {
+      return $http({method: "POST", url:URLBORROWIT + "profile/address/add", data:{street: address.street,streetnumber: address.streetnumber,zip: address.zip, city: address.city, country:address.country}})
+        .then(function(result) {
+          //man könnte ne Bestätigung zeigen
+          var addressid = result.data[0].addressid;
+          return addressid;
+        },function(error) {
+          ResultService.showError(error);
+          // toSomething
+        });
+    };
+
+    removeAddress = function(addressid) {
+      $http({method: "POST", url:URLBORROWIT + "profile/address/remove", data:{addressid: addressid}})
+        .then(function(result) {
+          //man könnte ne Bestätigung zeigen
+        },function(error) {
+          ResultService.showError(error);
+          // toSomething
+        });
+    };
+
+    changeCurrentAddress = function(currentaddress) {
+      $http({method: "POST", url:URLBORROWIT + "profile/address/currentaddress", data:{currentaddress:currentaddress}})
+        .then(function(result) {
+          //man könnte ne Bestätigung zeigen
+        },function(error) {
+          ResultService.showError(error);
+          // toSomething
+        });
+    };
+
+    changeProfilePicture = function(currentaddress) {
+      $http({method: "POST", url:URLBORROWIT + "profile/address/currentaddress", data:{currentaddress:currentaddress}})
+        .then(function(result) {
+          //man könnte ne Bestätigung zeigen
+        },function(error) {
+          ResultService.showError(error);
+          // toSomething
+        });
+    };
+
+    var getAllPersons = function() {
+      return $http({method: "GET", url:URLBORROWIT + "user"})
+        .then(function(result) {
+          var contacts = result.data;
+          return contacts;
+          console.log("Juhu");
+        },function(error) {
+          console.log("Mist");
+          ResultService.showError(error);
+          // toSomething
+        });
+    };
+
+    var getContactsFromDevice = function(phoneContacts) {
+      return $http({method: "POST", url:URLBORROWIT + "user", data:{phonenumbers: phoneContacts}})
+        .then(function(result) {
+          var contacts = result.data;
+          return contacts;
+          console.log("Juhu");
+        },function(error) {
+          console.log("Mist");
+          ResultService.showError(error);
+          // toSomething
+        });
+    };
+
+    var getPerson = function(userid) {
+      return $http({method: "GET", url:URLBORROWIT + "profile/" + userid})
+        .then(function(result) {
+          var person = result.data[0];
+          return person;
+          console.log("Juhu");
+        },function(error) {
+          console.log("Mist");
+          ResultService.showError(error);
+          // toSomething
+        });
+    }
+
+    var getAllChats = function() {
+      return $http({method: "GET", url:URLBORROWIT + "chat/rooms"})
+        .then(function(result) {
+          var chats = result.data;
+          return chats;
+          console.log("Juhu");
+        },function(error) {
+          console.log("Mist");
+          ResultService.showError(error);
+          // toSomething
+        });
+    };
+
+    var openChat = function(roomid, exists) {
+      if(exists) {
+        return $http({method: "GET", url: URLBORROWIT + "chat/", data:{roomid:roomid}})
+          .then(function (result) {
+            var chats = result.data[0];
+            return chats;
+            console.log("Juhu");
+          }, function (error) {
+            console.log("Mist");
+            ResultService.showError(error);
+            // toSomething
+          });
+      }
+      else {
+        return $http({method: "GET", url: URLBORROWIT + "chat/", data: {rid:roomid}})
+          .then(function (result) {
+            var chats = result.data[0];
+            return chats;
+            console.log("Juhu");
+          }, function (error) {
+            console.log("Mist");
+            ResultService.showError(error);
+            // toSomething
+          });
+      }
+    };
+
+    sendMessage = function(roomid, message) {
+      $http({method: "PUT", url:URLBORROWIT + "chat/" + roomid, data:{text: message.text, date: message.date}})
+        .then(function(result) {
+          //man könnte ne Bestätigung zeigen
+          //var addressid = result.data[0];
+          //return addressid;
+        },function(error) {
+          ResultService.showError(error);
+          // toSomething
+        });
+    };
+
+    updateChat = function() {
+
+    };
+
+    var sendBorrowIt = function() {
+      return $http({method: "POST", url:URLBORROWIT + "request" + reqid + "/offer"})
+        .then(function(result) {
+          console.log("Juhu");
+        },function(error) {
+          console.log("Mist");
+          ResultService.showError(error);
+          // toSomething
+        });
+    };
+
+    var acceptBorrowIt = function() {
+      return $http({method: "POST", url:URLBORROWIT + "request" + reqid + "/accept"})
+        .then(function(result) {
+          console.log("Juhu");
+        },function(error) {
+          console.log("Mist");
+          ResultService.showError(error);
+          // toSomething
+        });
+    };
+
+    var declineBorrowIt = function() {
+      return $http({method: "POST", url:URLBORROWIT + "decline" + reqid + "/offer"})
+        .then(function(result) {
+          console.log("Juhu");
+        },function(error) {
+          console.log("Mist");
+          ResultService.showError(error);
+          // toSomething
+        });
+    };
+
+    sendLocationToServer = function() {
+      //alle 15 Minuten
+      while(true) {
+        $timeout(function() {
+          if(ProfileService.profile.location) {
+            var location = getGeoLocation();
+            location.then(function (result) {
+              var geolocation = result;
+              $http({method: "PUT", url: URLBORROWIT + "location", data: {location: geolocation}})
+                .then(function (result) {
+                  //man könnte ne Bestätigung zeigen
+                  //var addressid = result.data[0];
+                  //return addressid;
+                }, function (error) {
+                  ResultService.showError(error);
+                  // toSomething
+                });
+            })
+          }
+        },900000)
+      }
+    };
+
+    var getGeoLocation = function() {
+      var posOptions = {timeout: 10000, enableHighAccuracy: true};
+      return $cordovaGeolocation.getCurrentPosition(posOptions)
+        .then(function (position) {
+          var lat  = position.coords.latitude;
+          var long = position.coords.longitude;
+          return lat + ", " + long;
+        }, function(err) {
+          ResultService.showError(err);
+        });
+    };
+
+    getAddressLocation = function() {
+      var location = "";
+      for(var i = 0; i < ProfileService.profile.addresses.length; i++) {
+        if(ProfileService.profile.addresses[i].addressid === ProfileService.profile.currentAddress) {
+          location = ProfileService.profile.addresses[i].street + " " + ProfileService.profile.addresses[i].streetnumber + ", " + ProfileService.profile.addresses[i].zip + " " + ProfileService.profile.addresses[i].city + ", " + ProfileService.profile.addresses[i].country;
+          return location
+        }
+      }
+    }
+
+    var startRequest = function(title, description, location, startdate, enddate, category) {
+      return $http({method: "PUT", url:URLBORROWIT + "request", data:{title: title, description: description, location: location, startdate: startdate, enddate: enddate, category: category}})
+        .then(function(result) {
+          //man könnte ne Bestätigung zeigen
+          var addressid = result.data[0];
+          return addressid;
+        },function(error) {
+          ResultService.showError(error);
+          // toSomething
+        });
+    };
+
+    updateRequest = function(reqid, title, description, location, startdate, enddate, category) {
+      $http({method: "POST", url:URLBORROWIT + "request/" + reqid, data:{title: title, description: description, location: location, startdate: startdate, enddate: enddate, category: category}})
+        .then(function(result) {
+          //man könnte ne Bestätigung zeigen
+        },function(error) {
+          ResultService.showError(error);
+          // toSomething
+        });
+    };
+
+    deleteRequest = function() {
+
+    };
+
+    changeProfileInfos = function(lastname, firstname, telephone) {
+      $http({method: "POST", url:URLBORROWIT + "profile/maindata", data:{lastname:lastname, firstname:firstname, telephone:telephone}})
+        .then(function(result) {
+          //man könnte ne Bestätigung zeigen
+        },function(error) {
+          ResultService.showError(error);
+          // toSomething
+        });
+    };
+
+    changeProfilePicture = function(picture) {
+      //upload picture and get URL
+      var pictureURl
+      $http({method: "POST", url:URLBORROWIT + "profile/picture", data:{picture:pictureURl}})
+        .then(function(result) {
+          //man könnte ne Bestätigung zeigen
+        },function(error) {
+          ResultService.showError(error);
+          // toSomething
+        });
+    };
+
+    addContact = function(contactid) {
+      $http({method: "POST", url:URLBORROWIT + "profile/contact/add", data:{contactid:contactid}})
+        .then(function(result) {
+          //man könnte ne Bestätigung zeigen
+        },function(error) {
+          ResultService.showError(error);
+          // toSomething
+        });
+    };
+
+    changePush = function(push) {
+      $http({method: "POST", url:URLBORROWIT + "profile/push", data:{push: push}})
+        .then(function(result) {
+          //man könnte ne Bestätigung zeigen
+        },function(error) {
+          ResultService.showError(error);
+          // toSomething
+        });
+    };
+
+    changeLocation = function(location) {
+      $http({method: "POST", url:URLBORROWIT + "profile/location", data:{location: location}})
+        .then(function(result) {
+          //man könnte ne Bestätigung zeigen
+        },function(error) {
+          ResultService.showError(error);
+          // toSomething
+        });
+    };
+
+    addRating = function(contactid, reqid, rating) {
+      $http({method: "POST", url:URLBORROWIT + "rating", data:{rated_user:contactid, request:reqid, rating:rating}})
+        .then(function(result) {
+          //man könnte ne Bestätigung zeigen
+        },function(error) {
+          ResultService.showError(error);
+          // toSomething
+        });
+    };
+
+    var getCurrentRequest = function(reqid) {
+      if(ProfileService.profile.location) {
+        var location = getGeoLocation();
+        return location.then(function (result) {
+          var geolocation = result;
+          return $http({method: "POST", url: URLBORROWIT + "request/" + reqid, data: {currentlocation: geolocation}})
+            .then(function (result) {
+              var request = result.data[0];
+              var startdate = request.startdate.split('T')[0].split('-');
+              var starttime = request.startdate.split('T')[1].split('.')[0].split(':');
+              request.startdate = startdate[2] + "." + startdate[1] + "." + startdate[0] + " " + starttime[0] + ":" + starttime[1];
+              var enddate = request.enddate.split('T')[0].split('-');
+              var endtime = request.enddate.split('T')[1].split('.')[0].split(':');
+              request.enddate = enddate[2] + "." + enddate[1] + "." + enddate[0] + " " + endtime[0] + ":" + endtime[1];
+              return request;
+              console.log("Juhu");
+            }, function (error) {
+              console.log("Mist");
+              ResultService.showError(error);
+              // toSomething
+            });
+        })
+      }
+      else {
+        var location = getAddressLocation();
+        return $http({method: "POST", url: URLBORROWIT + "request/" + reqid, data: {currentlocation: location}})
+          .then(function (result) {
+            var request = result.data[0];
+            var startdate = request.startdate.split('T')[0].split('-');
+            var starttime = request.startdate.split('T')[1].split('.')[0].split(':');
+            request.startdate = startdate[2] + "." + startdate[1] + "." + startdate[0] + " " + starttime[0] + ":" + starttime[1];
+            var enddate = request.enddate.split('T')[0].split('-');
+            var endtime = request.enddate.split('T')[1].split('.')[0].split(':');
+            request.enddate = enddate[2] + "." + enddate[1] + "." + enddate[0] + " " + endtime[0] + ":" + endtime[1];
+            return request;
+            console.log("Juhu");
+          }, function (error) {
+            console.log("Mist");
+            ResultService.showError(error);
+            // toSomething
+          });
+      }
+    }
+
+    var getAllRequests = function() {
+      if(ProfileService.profile.location) {
+        var location = getGeoLocation();
+        return location.then(function (result) {
+          var geolocation = result;
+          return $http({method: "POST", url: URLBORROWIT + "request", data: {currentlocation: geolocation}})
+            .then(function (result) {
+              var requests = result.data;
+              return requests;
+              console.log("Juhu");
+            }, function (error) {
+              console.log("Mist");
+              ResultService.showError(error);
+              // toSomething
+            });
+        })
+      }
+      else {
+        var location = getAddressLocation();
+        return $http({method: "POST", url: URLBORROWIT + "request", data: {currentlocation: location}})
+          .then(function (result) {
+            var requests = result.data;
+            return requests;
+            console.log("Juhu");
+          }, function (error) {
+            console.log("Mist");
+            ResultService.showError(error);
+            // toSomething
+          });
+      }
     }
 
     signup = function(provider){
       salt = ProfileService.profile.email;
+      $auth.removeToken();
       ProfileService.profile.password = sha512(ProfileService.profile.password, salt);  // THERE IS NO GUARANTEE THAT THE SALT IS CORRECT MAY ITS A RANDOM SALT FOR SAFTEY IF EMAIL ISNT CORRECT
-      ProfileService.profile.salt = salt;
+      //ProfileService.profile.salt = salt;
       $http({method: "POST", url:URLBACKEND + "auth/signup", params:{email:ProfileService.profile.email,password: ProfileService.profile.password}})
         .then(function(result) {
           ProfileService.profile.access_token = result.data.access_token;
           $http.defaults.headers.common['Authorization'] = "Bearer "+ ProfileService.profile.access_token;
-          $http({method: "PUT", url:URLBORROWIT + "profile", params:{lastname:ProfileService.profile.lastname,firstname: ProfileService.profile.firstname, email: ProfileService.profile.email, username: ProfileService.profile.username, telephone: ProfileService.profile.telephone, picture: ProfileService.profile.picture, currentaddress: ProfileService.profile.currentAddress, addresses: ProfileService.profile.addresses}})
+          $http({method: "PUT", url:URLBORROWIT + "profile", data:{
+            lastname:ProfileService.profile.lastname,
+            firstname: ProfileService.profile.firstname,
+            email: ProfileService.profile.email,
+            username: ProfileService.profile.username,
+            telephone: ProfileService.profile.telephone,
+            picture: ProfileService.profile.picture,
+            currentaddress: ProfileService.profile.currentAddress,
+            addresses: ProfileService.profile.addresses}})
             .then(function(result) {
               console.log("Juhu");
               //ProfileService.profile.access_token = result.data.access_token;
               //$http.defaults.headers.common['Authorization'] = "Bearer "+ ProfileService.profile.access_token;
             },function(error) {
               console.log("Mist");
+              ResultService.showError(error);
               // toSomething
             });
         },function(error) {
+          ResultService.showError(error);
           // toSomething
         });
     }
 
-    login = function(provider){
+    login = function(provider, email, password){
       if(provider==="email"){
         //SENT EMAIL TO SERVER GET A SALT
-        ProfileService.profile.password = sha512(ProfileService.profile.password,  ProfileService.profile.salt);  // THERE IS NO GUARANTEE THAT THE SALT IS CORRECT MAY ITS A RANDOM SALT FOR SAFTEY IF EMAIL ISNT CORRECT
+        $auth.removeToken();
+        var salt = email;
+        ProfileService.profile.password = sha512(password,  salt);  // THERE IS NO GUARANTEE THAT THE SALT IS CORRECT MAY ITS A RANDOM SALT FOR SAFTEY IF EMAIL ISNT CORRECT
+        ProfileService.profile.email = email;
         $http({method: "POST", url:URLBACKEND + "auth/email", params:{email:ProfileService.profile.email,password: ProfileService.profile.password}})
           .then(function(result) {
             ProfileService.profile.access_token = result.data.access_token;
             $http.defaults.headers.common['Authorization'] = "Bearer "+ ProfileService.profile.access_token;
+            $http({method: "GET", url:URLBORROWIT + "profile"})
+              .then(function(result) {
+                console.log("Juhu");
+                ProfileService.profile.username = result.data[0].username;
+                ProfileService.profile.lastname = result.data[0].lastname;
+                ProfileService.profile.firstname = result.data[0].firstname;
+                ProfileService.profile.telephone = result.data[0].telephone;
+                ProfileService.profile.addresses = result.data[0].addresses;
+                ProfileService.profile.currentAddress = result.data[0].currentAddress.addressid;
+                ProfileService.profile.picture = result.data[0].picture;
+                ProfileService.profile.contacts = result.data[0].contacts;
+                ProfileService.profile.rating = result.data[0].rating;
+                ProfileService.profile.requests = result.data[0].requests;
+                ProfileService.profile.push = result.data[0].push;
+                ProfileService.profile.location = result.data[0].location;
+                window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
+              },function(error) {
+                console.log("Mist");
+                ResultService.showError(error);
+                // toSomething
+              });
+            window.location = '#/';
           },function(error) {
-            // toSomething
+            ResultService.showError(error);
+            console.log(error.data);
           })
       }
     }
 
     authenticate = function(provider){
       if(provider==="facebook"){
+        $auth.removeToken();
         $auth.authenticate(provider).then(function(response) {
           console.log($auth.getToken());
           console.log($auth.getPayload());
           $http({method: "GET", url:URLBACKEND + "auth/" + provider + "/", params:{id_token: $auth.getToken()}})
-            .then(function(result) {
+            .then(
+              function(result) {
                 console.log('yes im ok');
+                ProfileService.profile.access_token = $auth.getToken();
+
               },function(error) {
                 console.log('Error: ' + error);
+                ResultService.showError(error);
               }
             )
             .catch(function(response) {
@@ -1641,7 +2041,31 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
     return {
       signup:signup,
       login:login,
-      authenticate:authenticate
+      authenticate:authenticate,
+      initiateConnection:initiateConnection,
+      getAllPersons:getAllPersons,
+      getPerson:getPerson,
+      getContactsFromDevice:getContactsFromDevice,
+      getAllRequests:getAllRequests,
+      getCurrentRequest:getCurrentRequest,
+      addAddress:addAddress,
+      removeAddress:removeAddress,
+      changeCurrentAddress:changeCurrentAddress,
+      addContact: addContact,
+      addRating: addRating,
+      changeProfileInfos:changeProfileInfos,
+      changePush:changePush,
+      changeLocation:changeLocation,
+      startRequest:startRequest,
+      updateRequest:updateRequest,
+      deleteRequest:deleteRequest,
+      sendLocationToServer:sendLocationToServer,
+      getGeoLocation:getGeoLocation,
+      getAllChats:getAllChats,
+      openChat:openChat,
+      sendMessage:sendMessage,
+      sendBorrowIt:sendBorrowIt,
+      acceptBorrowIt:acceptBorrowIt
     }
   }])
 
@@ -2039,7 +2463,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
   ])
 
 function onProfilePicError(ele) {
-  this.ele.src = ''; // set a fallback
+  ele.src = 'img/icons/black_avatar.png'; // set a fallback
 }
 
 function getMockMessages() {

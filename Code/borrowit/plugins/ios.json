@@ -36,6 +36,9 @@
         },
         "cordova-plugin-calendar": {
             "PACKAGE_NAME": "com.ionicframework.borrowit795688"
+        },
+        "cordova-plugin-geolocation": {
+            "PACKAGE_NAME": "com.ionicframework.borrowit795688"
         }
     },
     "dependent_plugins": {

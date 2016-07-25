@@ -45,6 +45,9 @@
     <feature name="Calendar">
         <param name="ios-package" value="Calendar" />
     </feature>
+    <feature name="Geolocation">
+        <param name="ios-package" value="CDVLocation" />
+    </feature>
     <name>borrowit</name>
     <description>
         An Ionic Framework and Cordova project.

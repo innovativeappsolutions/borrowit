@@ -43,6 +43,10 @@
                         {
                             "xml": "<feature name=\"Calendar\"><param name=\"android-package\" value=\"nl.xservices.plugins.Calendar\" /></feature>",
                             "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Geolocation\"><param name=\"android-package\" value=\"org.apache.cordova.geolocation.Geolocation\" /></feature>",
+                            "count": 1
                         }
                     ]
                 }
@@ -64,6 +68,14 @@
                         },
                         {
                             "xml": "<uses-permission android:name=\"android.permission.GET_ACCOUNTS\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.ACCESS_COARSE_LOCATION\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.ACCESS_FINE_LOCATION\" />",
                             "count": 1
                         }
                     ],
@@ -113,6 +125,9 @@
             "PACKAGE_NAME": "com.ionicframework.borrowit795688"
         },
         "cordova-plugin-calendar": {
+            "PACKAGE_NAME": "com.ionicframework.borrowit795688"
+        },
+        "cordova-plugin-geolocation": {
             "PACKAGE_NAME": "com.ionicframework.borrowit795688"
         }
     },
@@ -403,6 +418,18 @@
         {
             "file": "plugins/cordova-plugin-calendar/test/tests.js",
             "id": "cordova-plugin-calendar.tests"
+        },
+        {
+            "file": "plugins/cordova-plugin-geolocation/www/android/geolocation.js",
+            "id": "cordova-plugin-geolocation.geolocation",
+            "clobbers": [
+                "navigator.geolocation"
+            ]
+        },
+        {
+            "file": "plugins/cordova-plugin-geolocation/www/PositionError.js",
+            "id": "cordova-plugin-geolocation.PositionError",
+            "runs": true
         }
     ],
     "plugin_metadata": {
@@ -416,6 +443,7 @@
         "cordova-plugin-camera": "2.2.0",
         "cordova-plugin-file": "4.2.0",
         "cordova-plugin-contacts": "2.1.0",
-        "cordova-plugin-calendar": "4.5.1"
+        "cordova-plugin-calendar": "4.5.1",
+        "cordova-plugin-geolocation": "2.2.0"
     }
 }

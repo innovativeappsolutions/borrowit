@@ -366,7 +366,8 @@ module.exports.metadata =
     "cordova-plugin-camera": "2.2.0",
     "cordova-plugin-file": "4.2.0",
     "cordova-plugin-contacts": "2.1.0",
-    "cordova-plugin-calendar": "4.5.1"
+    "cordova-plugin-calendar": "4.5.1",
+    "cordova-plugin-geolocation": "2.2.0"
 }
 // BOTTOM OF METADATA
 });

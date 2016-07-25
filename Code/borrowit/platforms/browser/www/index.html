@@ -1,972 +1,929 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-
-  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-  <title></title>
-
-  <link href="lib/ionic/css/ionic.css" rel="stylesheet">
-  <link href="css/style.css" rel="stylesheet">
-
-  <script src="lib/ionic/js/ionic.bundle.js"></script>
-
-  <script src="lib/ngCordova/dist/ng-cordova.js"></script>
-  <script src="cordova.js"></script>
-
-  <script src="js/app.js"></script>
-</head>
-<body ng-app="starter">
-
-<ion-pane ng-controller="MainCtrl">
-  <ion-header-bar class="bar-stable">
-    <h1 class="title">Ionic Calendar Demo</h1>
-  </ion-header-bar>
-  <ion-content>
-
-    <div class="card" ng-repeat="event in events">
-      <div class="item item-divider">
-        {{event.title}}
-      </div>
-      <div class="item item-text-wrap">
-        {{ event.description }}
-        <p/>
-        <strong>When: {{ event.date | date:'short' }}</strong>
-
-        <p ng-if="event.status">This event is added to your calendar already!</p>
-        <button ng-if="!event.status" ng-click="addEvent(event,$index)" class="button button-block button-balanced">Add to Calendar</button>
-
-      </div>
-    </div>
-
-  </ion-content>
-</ion-pane>
-</body>
-</html>
 <!--<!DOCTYPE html>-->
-<!--<html ng-app="starter">-->
+<!--<html>-->
 <!--<head>-->
   <!--<meta charset="utf-8">-->
+
   <!--<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">-->
-  <!--<title>BorrowIt!</title>-->
-  <!--<link href="img/favicon/favicon_hYs_9.ico" type="image/x-icon" rel="shortcut icon"/>-->
+  <!--<title></title>-->
 
   <!--<link href="lib/ionic/css/ionic.css" rel="stylesheet">-->
   <!--<link href="css/style.css" rel="stylesheet">-->
+
   <!--<script src="lib/ionic/js/ionic.bundle.js"></script>-->
+
   <!--<script src="lib/ngCordova/dist/ng-cordova.js"></script>-->
   <!--<script src="cordova.js"></script>-->
+
   <!--<script src="js/app.js"></script>-->
-  <!--<script src="lib/satellizer/satellizer.js"></script>-->
-  <!--<script src="lib/angular-cookies/angular-cookies.js"></script>-->
-  <!--<script src="lib/crypto-js/crypto-js.js"></script>-->
-  <!--<script src="lib/crypto-js/hmac-sha512.js"></script>-->
-
-  <!--&lt;!&ndash; Library for SQLite support &ndash;&gt;-->
-  <!--<script type="text/javascript" src="js/SQLitePlugin.js"></script>-->
-  <!--&lt;!&ndash; Library for native storage &ndash;&gt;-->
-  <!--<script type="text/javascript" src="js/NativeStoragePlugin.js"></script>-->
-  <!--&lt;!&ndash; moment &ndash;&gt;-->
-  <!--<script src="js/moment.js"></script>-->
-  <!--&lt;!&ndash; angular moment &ndash;&gt;-->
-  <!--<script src="js/angular-moment.js"></script>-->
 <!--</head>-->
-<!--<body ng-app="starter" ng-controller="ToDoController">-->
-  <!--<div>-->
-    <!--<ion-nav-view animation="slide-left-right"></ion-nav-view>-->
-  <!--</div>-->
+<!--<body ng-app="starter">-->
 
-  <!--<script id="login.html" type="text/ng-template" onload="isLoggedIn()">-->
-    <!--<ion-view view-title="Login">-->
-      <!--<ion-content class="borrowit-blau">-->
-        <!--<div class="list text-center">-->
-          <!--<img src="img/logo.png" width="25%" align="center"/>-->
-          <!--<label class="item item-input">-->
-            <!--<input type="email" placeholder="E-Mail" ng-model="textboxes.TextboxEmail">-->
-          <!--</label>-->
-          <!--<label class="item item-input">-->
-            <!--<input type="password" placeholder="Passwort" ng-model="textboxes.TextboxPassword">-->
-          <!--</label>-->
-          <!--<button class="button button-block button-borrowitgrau" ng-click="checkLogin()">-->
-            <!--Anmelden-->
-          <!--</button>-->
-          <!--<button class="message-wrapper button button-block fb-bg" href="#/">-->
-            <!--<span><img class="facebook-pic left" src="/img/icons/facebook.png" width="80px"/></span>-->
-            <!--<span class="fb-bg">mit facebook anmelden</span>-->
-          <!--</button>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/registrierung">Registrierung</a>-->
-          <!--<div class="button-bar">-->
-            <!--<a class="button button-borrowitgrau button-block">Passwort vergessen</a>-->
-            <!--<a class="button button-borrowitgrau button-block">Hilfe</a>-->
-          <!--</div>-->
-        <!--</div>-->
-      <!--</ion-content>-->
-    <!--</ion-view>-->
-  <!--</script>-->
+<!--<ion-pane ng-controller="MainCtrl">-->
+  <!--<ion-header-bar class="bar-stable">-->
+    <!--<h1 class="title">Ionic Calendar Demo</h1>-->
+  <!--</ion-header-bar>-->
+  <!--<ion-content>-->
 
-  <!--<script id="registrierung.html" type="text/ng-template">-->
-    <!--<ion-view view-title="Registrierung">-->
-      <!--<ion-nav-bar class="bar-borrowitgrau">-->
-        <!--<ion-nav-back-button class="button-clear">-->
-          <!--<i class="ion-chevron-left"></i> Back-->
-        <!--</ion-nav-back-button>-->
-      <!--</ion-nav-bar>-->
-      <!--<ion-content class="borrowit-blau">-->
-        <!--<div class="list text-center">-->
-          <!--<div class="item item-divider">-->
-            <!--Benutzerinformationen-->
-          <!--</div>-->
-          <!--<label class="item item-input">-->
-            <!--<input type="text" placeholder="Benutzername" ng-model="textboxes.username">-->
-          <!--</label>-->
-          <!--<label class="item item-input">-->
-            <!--<input type="text" placeholder="Nachname" ng-model="textboxes.lastname">-->
-          <!--</label>-->
-          <!--<label class="item item-input">-->
-            <!--<input type="text" placeholder="Vorname" ng-model="textboxes.firstname">-->
-          <!--</label>-->
-          <!--<label class="item item-input">-->
-            <!--<input type="email" placeholder="E-Mail" ng-model="textboxes.email">-->
-          <!--</label>-->
-          <!--<label class="item item-input">-->
-            <!--<input type="tel" placeholder="Telefonnummer" ng-model="textboxes.telefon">-->
-          <!--</label>-->
-          <!--<label class="item item-input">-->
-            <!--<input type="password" placeholder="Passwort" ng-model="textboxes.password">-->
-          <!--</label>-->
-          <!--<label class="item item-input">-->
-            <!--<input type="password" placeholder="Passwort wdh." ng-model="textboxes.passwordrep">-->
-          <!--</label>-->
-          <!--<button class="button button-light button-block icon-right ion-chevron-right" ng-click="registerFirstPart()">Weiter</button><br/>-->
-        <!--</div>-->
-      <!--</ion-content>-->
-    <!--</ion-view>-->
-  <!--</script>-->
-
-  <!--<script id="registrierung2.html" type="text/ng-template">-->
-    <!--<ion-view view-title="Registrierung">-->
-      <!--<ion-nav-bar class="bar-borrowitgrau">-->
-        <!--<ion-nav-back-button class="button-clear">-->
-          <!--<i class="ion-chevron-left"></i> Back-->
-        <!--</ion-nav-back-button>-->
-      <!--</ion-nav-bar>-->
-      <!--<ion-content class="borrowit-blau">-->
-        <!--<div class="list text-center">-->
-          <!--<div class="row">-->
-            <!--<div class="col col-100 text-center">-->
-              <!--<h1 style="color: #fff">Hallo {{profile.firstname}}</h1>-->
-              <!--<h3 style="color: #fff">Bitte vervollständige dein Profil</h3>-->
-            <!--</div>-->
-          <!--</div>-->
-          <!--<img class="bigprofile-pic" ng-click="addMedia()" ng-src="{{profile.picture}}">-->
-
-          <!--&lt;!&ndash;<ion-scroll>-->
-            <!--<img ng-repeat="image in images" ng-src="{{urlForImage(image)}}" height="200px"/>-->
-          <!--</ion-scroll>-->
-          <!--&lt;!&ndash;<div class="item item-divider">-->
-            <!--Clientside, Selected Value: {{ profile.actualAddress }}-->
-          <!--</div>&ndash;&gt;-->
-          <!--<ion-radio ng-repeat="item in profile.addresses track by $index"-->
-                     <!--ng-value="item.value"-->
-                     <!--ng-model="profile.actualAddress">-->
-            <!--{{ item.text }}-->
-          <!--</ion-radio>-->
-          <!--<button class="button button-block button-borrowitgrau" ng-click="addAddress()">Addresse ergänzen</button>-->
-          <!--&lt;!&ndash;<div class="row">-->
-            <!--<div class="col col-100 text-center">-->
-              <!--Adresse-->
-            <!--</div>-->
-          <!--</div>-->
-          <!--<div class="item item-input-inset">-->
-            <!--<label class="item item-input-wrapper">-->
-              <!--<input type="text" placeholder="Straße">-->
-            <!--</label>-->
-            <!--<label class="item item-input-wrapper">-->
-              <!--<input type="text" placeholder="Hausnummer">-->
-            <!--</label>-->
-          <!--</div>-->
-          <!--<div class="item item-input-inset">-->
-            <!--<label class="item item-input-wrapper">-->
-              <!--<input type="text" placeholder="PLZ">-->
-            <!--</label>-->
-            <!--<label class="item item-input-wrapper">-->
-              <!--<input type="text" placeholder="Ort">-->
-            <!--</label>-->
-          <!--</div>-->
-          <!--<label class = "item item-input item-select item-light">-->
-            <!--<div class = "input-label">-->
-              <!--Land-->
-            <!--</div>-->
-            <!--<select>-->
-              <!--<option selected>Deutschland</option>-->
-              <!--<option>Schweiz</option>-->
-              <!--<option>Österreich</option>-->
-              <!--<option>Bayern</option>-->
-              <!--<option>Köln</option>-->
-            <!--</select>-->
-          <!--</label>&ndash;&gt;-->
-          <!--<button class="button button-light button-block" ng-click="registerSecondPart()">Los Geht's!</button>-->
-        <!--</div>-->
-      <!--</ion-content>-->
-    <!--</ion-view>-->
-  <!--</script>-->
-
-  <!--<script id="home.html" type="text/ng-template">-->
-    <!--<ion-view>-->
-      <!--<ion-content has-bouncing="true" class="borrowit-blau has-footer">-->
-        <!--<div class="list text-center">-->
-          <!--<div class="row">-->
-            <!--<div class="col col-100 text-center">-->
-              <!--<h1 style="color: #fff">Hallo {{profile.firstname}}</h1>-->
-            <!--</div>-->
-          <!--</div>-->
-          <!--<label class = "item item-input item-select item-light">-->
-            <!--<div class = "input-label col-60">-->
-              <!--Sortieren nach-->
-            <!--</div>-->
-            <!--<select ng-model="values.chosenSortedBy">-->
-              <!--<option value="place">Entfernung</option>-->
-              <!--<option value="startDate">Benötigt ab</option>-->
-              <!--<option value="endDate">Benötigt bis</option>-->
-              <!--<option value="profile.rating">Bewertung</option>-->
-            <!--</select>-->
-          <!--</label>-->
-          <!--<label class = "item item-input item-select item-light">-->
-            <!--<div class = "input-label col-60">-->
-              <!--Kategorie-->
-            <!--</div>-->
-            <!--<select ng-model="values.chosenCategory">-->
-              <!--<option value="all">Alle Kategorien</option>-->
-              <!--<option value="kitchen">Küche und Haushalt</option>-->
-              <!--<option value="food">Lebensmittel</option>-->
-              <!--<option value="sport">Sport und Freizeit</option>-->
-              <!--<option value="car">Auto und Motorrad</option>-->
-              <!--<option value="home">Wohnen und Garten</option>-->
-              <!--<option value="else">Sonstiges</option>-->
-            <!--</select>-->
-          <!--</label>-->
-          <!--&lt;!&ndash;Der Code "request in requests | orderBy:values.chosenSortedBy:$scope.values.chosenSortedBy != 'profile.rating' | filterRequests:values.chosenCategory" holt alle requests sortiert nach Auswahl, wobei je nach Auswahl verkehrt herum gefiltert&ndash;&gt;-->
-          <!--<div class="message-wrapper" ng-repeat="request in requests | orderBy:values.chosenSortedBy:$scope.values.chosenSortedBy != 'profile.rating' | filterRequests:values.chosenCategory track by $index">-->
-            <!--<div class="row" ng-if="!request.borrowed && request.profile.username !== profile.username">-->
-                <!--<a class="item item-borrowitblau" ng-click="watchRequest(request.value)" href="#/anfrage_einsehen">-->
-                  <!--<img class="profile-pic left"-->
-                       <!--ng-src="{{request.profile.picture}}" onerror="onProfilePicError(this)" />-->
-                  <!--<div class="chat-bubble left">-->
-                    <!--<div class="message-detail">-->
-                      <!--<span class="bold">{{request.profile.username}}</span>:-->
-                      <!--<span>{{request.title}}</span>-->
-                    <!--</div>-->
-                  <!--</div>-->
-                <!--</a>-->
-            <!--</div>-->
-          <!--</div>-->
-          <!--&lt;!&ndash;<a class="item" href="#/anfrage_einsehen">-->
-            <!--<div class="row responsive-sm">-->
-              <!--<div class="col col-10">-->
-                <!--<img src="img/icons/grey_man.png" height="80">-->
-              <!--</div>-->
-              <!--<div class="col col-90">-->
-                <!--Waffeleisen benötigt-->
-              <!--</div>-->
-            <!--</div>-->
-          <!--</a>-->
-          <!--<a class="item" href="#/anfrage_einsehen">-->
-            <!--<div class="row responsive-sm">-->
-              <!--<div class="col col-10">-->
-                <!--<img src="img/icons/grey_woman.png" height="80">-->
-              <!--</div>-->
-              <!--<div class="col col-90">-->
-                <!--Fahrradpumpe-->
-              <!--</div>-->
-            <!--</div>-->
-          <!--</a>&ndash;&gt;-->
-        <!--</div>-->
-      <!--</ion-content>-->
-      <!--<div class="bar bar-footer bar-borrowitgrau">-->
-        <!--<div class="button-bar">-->
-          <!--<a class="button button-block button-borrowitblau"><img src="img/icons/white_home.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/chat"><img src="img/icons/white_communication.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/anfrage_erstellen"><img src="img/logo.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/kontakte"><img src="img/icons/white_agenda.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/profil_ansicht"><img src="img/icons/white_profile.png" width="30"></a>-->
-        <!--</div>-->
+    <!--<div class="card" ng-repeat="event in events">-->
+      <!--<div class="item item-divider">-->
+        <!--{{event.title}}-->
       <!--</div>-->
-      <!--&lt;!&ndash;<ion-footer-bar align-title="center">-->
-        <!--<div class="buttons">-->
-          <!--<a class="button button-full button-borrowitgruen ion-home" href="#/"></a>-->
-        <!--</div>-->
-        <!--<div class="buttons">-->
-          <!--<a class="button button-full button-borrowitgrau icon ion-chatbubbles" href="#/chat"></a>-->
-        <!--</div>-->
-        <!--<div class="buttons">-->
-          <!--<a class="button button-full button-borrowitgrau" href="#/anfrage_erstellen">BorrowIt!</a>-->
-        <!--</div>-->
-        <!--<h1 class="title">Moin</h1>-->
-        <!--<div class="buttons">-->
-          <!--<a class="button button-full button-borrowitgrau icon ion-person-stalker" href="#/kontakte"></a>-->
-        <!--</div>-->
-        <!--<div class="buttons">-->
-          <!--<a class="button button-full button-borrowitgrau icon ion-person" href="#/profil_ansicht"></a>-->
-        <!--</div>-->
-      <!--</ion-footer-bar>&ndash;&gt;-->
-    <!--</ion-view>-->
-  <!--</script>-->
+      <!--<div class="item item-text-wrap">-->
+        <!--{{ event.description }}-->
+        <!--<p/>-->
+        <!--<strong>When: {{ event.date | date:'short' }}</strong>-->
 
-  <!--<script id="chat.html" type="text/ng-template">-->
-    <!--<ion-view>-->
-      <!--<ion-content class="borrowit-blau has-footer">-->
-        <!--<div class="list">-->
-          <!--<label class="item item-input">-->
-            <!--<i class="icon ion-search placeholder-icon"></i>-->
-            <!--<input type="search" placeholder="Search" ng-model="search">-->
-          <!--</label>-->
-          <!--<div ng-repeat="chat in chats | searchContent:search track by $index">-->
-            <!--<a class="item item-avatar" ng-click="watchChat(chat.requestid)" href="#/anfragenchat">-->
-              <!--<img class="profile-pic left"-->
-                   <!--ng-src="{{chat.profile.picture}}" onerror="onProfilePicError(this)" />-->
-                <!--<span class="bold">{{chat.profile.username}}</span>:-->
-                <!--<span>{{chat.title}}</span>-->
-            <!--</a>-->
-          <!--</div>-->
-        <!--</div>-->
-      <!--</ion-content>-->
-      <!--<div class="bar bar-footer bar-borrowitgrau">-->
-        <!--<div class="button-bar">-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/"><img src="img/icons/white_home.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitblau"><img src="img/icons/white_communication.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/anfrage_erstellen"><img src="img/logo.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/kontakte"><img src="img/icons/white_agenda.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/profil_ansicht"><img src="img/icons/white_profile.png" width="30"></a>-->
-        <!--</div>-->
+        <!--<p ng-if="event.status">This event is added to your calendar already!</p>-->
+        <!--<button ng-if="!event.status" ng-click="addEvent(event,$index)" class="button button-block button-balanced">Add to Calendar</button>-->
+
       <!--</div>-->
-    <!--</ion-view>-->
-  <!--</script>-->
+    <!--</div>-->
 
-  <!--<script id="anfragenchat.html" type="text/ng-template">-->
-    <!--<ion-view id="userMessagesView"-->
-              <!--cache-view="false"-->
-              <!--view-title="{{toUser.username}}: &raquo;{{requests[values.chosenRequest].title}}&laquo;">-->
-      <!--<div class="loader-center" ng-if="!doneLoading">-->
-        <!--<div class="loader">-->
-          <!--<i class="icon ion-loading-c"></i>-->
-        <!--</div>-->
-      <!--</div>-->
-      <!--<ion-nav-bar class="bar-borrowitgrau">-->
-        <!--<ion-nav-back-button class="button-clear">-->
-          <!--<i class="ion-chevron-left"></i> Back-->
-        <!--</ion-nav-back-button>-->
-      <!--</ion-nav-bar>-->
-      <!--<ion-content has-bouncing="true" class="has-header has-footer has-subfooter" delegate-handle="userMessageScroll">-->
-        <!--<div ng-repeat="message in chats[values.actualChat].messages track by $index" class="message-wrapper" on-hold="onMessageHold($event, $index, message)">-->
-          <!--<div ng-if="profile.username !== message.username">-->
-            <!--<img ng-click="watchContact(message.username)" class="profile-pic left"-->
-                 <!--ng-src="{{toUser.picture}}" onerror="onProfilePicError(this)" />-->
-            <!--<div class="chat-bubble left">-->
-              <!--<div class="message" ng-bind-html="message.text | nl2br" autolinker></div>-->
-              <!--<div class="message-detail">-->
-                <!--<span class="bold">{{toUser.username}}</span>,-->
-                <!--<span am-time-ago="message.date"></span>-->
-              <!--</div>-->
-            <!--</div>-->
-          <!--</div>-->
-          <!--<div ng-if="profile.username === message.username">-->
-            <!--<img ng-click="viewProfile(message)" class="profile-pic right" ng-src="{{profile.picture}}" onerror="onProfilePicError(this)" />-->
-            <!--<div class="chat-bubble right">-->
-              <!--<div class="message" ng-bind-html="message.text | nl2br" autolinker></div>-->
-              <!--<div class="message-detail">-->
-                <!--<span class="bold">Ich</span>,-->
-                <!--<span am-time-ago="message.date"></span>-->
-              <!--</div>-->
-            <!--</div>-->
-          <!--</div>-->
-          <!--<div class="cf"></div>-->
-        <!--</div>-->
-      <!--</ion-content>-->
-      <!--<form name="sendMessageForm" ng-submit="sendMessage(sendMessageForm)" novalidate>-->
-        <!--<ion-footer-bar keyboard-attach class="bar-subfooter bar-borrowitblau item-input-inset">-->
-          <!--<label class="item-input-wrapper">-->
-            <!--<input type="text" ng-model="input.message" value="" placeholder="Sende {{toUser.username}} eine Nachricht..." required minlength="1" maxlength="1500" msd-elastic/>-->
-          <!--</label>-->
-          <!--<button class="button button-clear icon ion-android-send" type="submit" ng-disabled="!input.message || input.message === ''"></button>-->
-        <!--</ion-footer-bar>-->
-        <!--&lt;!&ndash;<ion-footer-bar class="bar-stable item-input-inset message-footer" keyboard-attach>-->
-          <!--<label class="item-input-wrapper">-->
-            <!--<textarea ng-model="input.message" value="" placeholder="Sende {{toUser.username}} eine Nachricht..." required minlength="1" maxlength="1500" msd-elastic></textarea>-->
-          <!--</label>-->
-          <!--<div class="footer-btn-wrap">-->
-            <!--<button class="button button-icon icon ion-android-send footer-btn" type="submit"-->
-                    <!--ng-disabled="!input.message || input.message === ''">-->
-            <!--</button>-->
-          <!--</div>-->
-        <!--</ion-footer-bar>&ndash;&gt;-->
-      <!--</form>-->
-      <!--<div class="bar bar-footer bar-borrowitgrau">-->
-        <!--<div class="button-bar">-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/"><img src="img/icons/white_home.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/chat"><img src="img/icons/white_communication.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/anfrage_erstellen"><img src="img/logo.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/kontakte"><img src="img/icons/white_agenda.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/profil_ansicht"><img src="img/icons/white_profile.png" width="30"></a>-->
-        <!--</div>-->
-      <!--</div>-->
-    <!--</ion-view>-->
-    <!--&lt;!&ndash;<ion-view>&ndash;&gt;-->
-      <!--&lt;!&ndash;<ion-nav-bar class="bar-borrowitgrau">&ndash;&gt;-->
-        <!--&lt;!&ndash;<ion-nav-back-button class="button-clear">&ndash;&gt;-->
-          <!--&lt;!&ndash;<i class="ion-chevron-left"></i> Back&ndash;&gt;-->
-        <!--&lt;!&ndash;</ion-nav-back-button>&ndash;&gt;-->
-      <!--&lt;!&ndash;</ion-nav-bar>&ndash;&gt;-->
-      <!--&lt;!&ndash;<ion-content class="borrowit-blau">&ndash;&gt;-->
-        <!--&lt;!&ndash;<div class="list">&ndash;&gt;-->
-          <!--&lt;!&ndash;<label class="item item-input">&ndash;&gt;-->
-            <!--&lt;!&ndash;<i class="icon ion-search placeholder-icon"></i>&ndash;&gt;-->
-            <!--&lt;!&ndash;<input type="text" placeholder="Search">&ndash;&gt;-->
-          <!--&lt;!&ndash;</label>&ndash;&gt;-->
-          <!--&lt;!&ndash;&lt;!&ndash;<ion-list ng-repeat="message in messages"&ndash;&gt;-->
-                    <!--&lt;!&ndash;ng-value="message.value"&ndash;&gt;-->
-                    <!--&lt;!&ndash;ng-model="messages.message">&ndash;&gt;-->
-            <!--&lt;!&ndash;{{ message.text }}&ndash;&gt;-->
-          <!--&lt;!&ndash;</ion-list>&ndash;&gt;-->
-          <!--&lt;!&ndash;<ion-radio ng-repeat="item in addresses"&ndash;&gt;-->
-                     <!--&lt;!&ndash;ng-value="item.value"&ndash;&gt;-->
-                     <!--&lt;!&ndash;ng-model="data.address">&ndash;&gt;-->
-            <!--&lt;!&ndash;{{ item.text }}&ndash;&gt;-->
-          <!--&lt;!&ndash;</ion-radio>&ndash;&gt;&ndash;&gt;-->
-
-          <!--&lt;!&ndash;<ion-list>&ndash;&gt;-->
-            <!--&lt;!&ndash;<ion-item class="text-right">&ndash;&gt;-->
-              <!--&lt;!&ndash;Hallo f1895, Ich bin gerne bereit, dir ein Waffeleisen zu leihen.&ndash;&gt;-->
-            <!--&lt;!&ndash;</ion-item>&ndash;&gt;-->
-
-            <!--&lt;!&ndash;<ion-item>&ndash;&gt;-->
-              <!--&lt;!&ndash;Hallo MarcShadow, das klingt sehr gut. Wenn du willst, kannst du auch gerne eine Waffel haben. Ich habe ein tolles Rezept, das ich ausprobieren möchte.&ndash;&gt;-->
-            <!--&lt;!&ndash;</ion-item>&ndash;&gt;-->
-
-            <!--&lt;!&ndash;<ion-item class="text-right">&ndash;&gt;-->
-              <!--&lt;!&ndash;Das klingt toll. Sehr gerne!&ndash;&gt;-->
-            <!--&lt;!&ndash;</ion-item>&ndash;&gt;-->
-          <!--&lt;!&ndash;</ion-list>&ndash;&gt;-->
-
-
-
-        <!--&lt;!&ndash;</div>&ndash;&gt;-->
-      <!--&lt;!&ndash;</ion-content>&ndash;&gt;-->
-      <!--&lt;!&ndash;<div class="bar bar-subfooter">&ndash;&gt;-->
-
-      <!--&lt;!&ndash;</div>&ndash;&gt;-->
-      <!--&lt;!&ndash;<div class="bar bar-footer bar-borrowitgrau">&ndash;&gt;-->
-        <!--&lt;!&ndash;<div class="button-bar">&ndash;&gt;-->
-          <!--&lt;!&ndash;<a class="button button-block button-borrowitgrau" href="#/"><img src="img/icons/white_home.png" width="30"></a>&ndash;&gt;-->
-          <!--&lt;!&ndash;<a class="button button-block button-borrowitgrau" href="#/chat"><img src="img/icons/white_communication.png" width="30"></a>&ndash;&gt;-->
-          <!--&lt;!&ndash;<a class="button button-block button-borrowitgrau" href="#/anfrage_erstellen"><img src="img/logo.png" width="30"></a>&ndash;&gt;-->
-          <!--&lt;!&ndash;<a class="button button-block button-borrowitgrau" href="#/kontakte"><img src="img/icons/white_agenda.png" width="30"></a>&ndash;&gt;-->
-          <!--&lt;!&ndash;<a class="button button-block button-borrowitgrau" href="#/profil_ansicht"><img src="img/icons/white_profile.png" width="30"></a>&ndash;&gt;-->
-        <!--&lt;!&ndash;</div>&ndash;&gt;-->
-      <!--&lt;!&ndash;</div>&ndash;&gt;-->
-    <!--&lt;!&ndash;</ion-view>&ndash;&gt;-->
-  <!--</script>-->
-
-  <!--<script id="anfrage_erstellen.html" type="text/ng-template">-->
-    <!--<ion-view>-->
-      <!--<ion-content class="borrowit-blau has-footer">-->
-        <!--<div class="list text-center">-->
-          <!--<img src="img/logo.png" width="25%" align="center"/>-->
-          <!--<div class="item input-label">-->
-            <!--Ich suche / brauche-->
-          <!--</div>-->
-          <!--<label class="item item-input">-->
-            <!--<input type="text" placeholder="Titel eintragen" ng-model="textboxes.requestTitle">-->
-          <!--</label>-->
-          <!--<label class="item item-input">-->
-            <!--<input type="text" placeholder="Beschreibung" ng-model="textboxes.requestDescription">-->
-          <!--</label>-->
-          <!--<label class="item item-input">-->
-            <!--Benötigt:-->
-          <!--</label>-->
-          <!--<ion-checkbox class="borrowit-blau" ng-model="values.sofort">Sofort</ion-checkbox>-->
-          <!--<div ng-hide="values.sofort">-->
-            <!--Ich benötige es ab:-->
-          <!--</div>-->
-          <!--<div class="row" ng-hide="values.sofort">-->
-            <!--<div class="col col 50">-->
-              <!--<input type="date" width="100%" ng-model="textboxes.startDate"/>-->
-            <!--</div>-->
-            <!--<div class="col col 50">-->
-              <!--<input type="time" width="100%" ng-model="textboxes.startTime"/>-->
-            <!--</div>-->
-          <!--</div>-->
-          <!--<div>-->
-            <!--Anfrage schließen:-->
-          <!--</div>-->
-          <!--<div class="row">-->
-            <!--<div class="col col 50">-->
-              <!--<input type="date" width="100%" ng-model="textboxes.closeDate"/>-->
-            <!--</div>-->
-            <!--<div class="col col 50">-->
-              <!--<input type="time" width="100%" ng-model="textboxes.closeTime"/>-->
-            <!--</div>-->
-          <!--</div>-->
-          <!--<label class = "item item-input item-select">-->
-            <!--<div class = "input-label col-60">-->
-              <!--Kategorie-->
-            <!--</div>-->
-            <!--<select ng-model="textboxes.category">-->
-              <!--<option selected>Küche und Haushalt</option>-->
-              <!--<option>Lebensmittel</option>-->
-              <!--<option>Sport und Freizeit</option>-->
-              <!--<option>Auto und Motorrad</option>-->
-              <!--<option>Wohnen und Garten</option>-->
-              <!--<option>Sonstiges</option>-->
-            <!--</select>-->
-          <!--</label>-->
-          <!--<button class="button button-block icon ion-checkmark" ng-click="startRequest()">-->
-          <!--</button>-->
-        <!--</div>-->
-      <!--</ion-content>-->
-      <!--<div class="bar bar-footer bar-borrowitgrau">-->
-        <!--<div class="button-bar">-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/"><img src="img/icons/white_home.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/chat"><img src="img/icons/white_communication.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitblau"><img src="img/logo.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/kontakte"><img src="img/icons/white_agenda.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/profil_ansicht"><img src="img/icons/white_profile.png" width="30"></a>-->
-        <!--</div>-->
-      <!--</div>-->
-    <!--</ion-view>-->
-  <!--</script>-->
-
-  <!--<script id="kontakte.html" type="text/ng-template">-->
-    <!--<ion-view view-title="Kontakte">-->
-      <!--<ion-content class="borrowit-blau has-footer">-->
-        <!--<div class="list text-center">-->
-          <!--<a class="button icon-center ion-plus" href="#/kontakt_hinzufuegen_name">Kontakt hinzufügen</a>-->
-        <!--</div>-->
-        <!--&lt;!&ndash;<button class="button icon-center ion-plus" data-ng-click="createKontakt()">Kontakt hinzufügen</button>&ndash;&gt;-->
-        <!--<div class="list list-inset">-->
-          <!--<label class="item item-input">-->
-            <!--<i class="icon ion-search placeholder-icon"></i>-->
-            <!--<input type="search" placeholder="Search" ng-model="search">-->
-          <!--</label>-->
-          <!--<div ng-repeat="contact in profile.contacts | searchContact:search track by $index">-->
-            <!--<button class="item item-avatar button-block" ng-click="watchContact(contact.username)">-->
-              <!--<img class="profile-pic left"-->
-                   <!--ng-src="{{contact.picture}}" onerror="onProfilePicError(this)" />-->
-              <!--<span class="bold">{{contact.username}}</span>-->
-            <!--</button>-->
-          <!--</div>-->
-        <!--</div>-->
-      <!--</ion-content>-->
-      <!--<div class="bar bar-footer bar-borrowitgrau">-->
-        <!--<div class="button-bar">-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/"><img src="img/icons/white_home.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/chat"><img src="img/icons/white_communication.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/anfrage_erstellen"><img src="img/logo.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitblau"><img src="img/icons/white_agenda.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/profil_ansicht"><img src="img/icons/white_profile.png" width="30"></a>-->
-        <!--</div>-->
-      <!--</div>-->
-    <!--</ion-view>-->
-  <!--</script>-->
-
-  <!--<script id="kontakt_profil.html" type="text/ng-template">-->
-    <!--<ion-view>-->
-      <!--<ion-nav-bar class="bar-borrowitgrau">-->
-        <!--<ion-nav-back-button class="button-clear">-->
-          <!--<i class="ion-chevron-left"></i> Back-->
-        <!--</ion-nav-back-button>-->
-      <!--</ion-nav-bar>-->
-      <!--<ion-content class="borrowit-blau has-footer">-->
-        <!--<div class="list">-->
-          <!--<h1 class="title item text-center">{{persons[values.chosenPerson].username}}</h1>-->
-          <!--</br>-->
-          <!--<div class="item text-center">-->
-            <!--<img src="{{persons[values.chosenPerson].picture}}" width="80" height="80">-->
-          <!--</div>-->
-          <!--<div class="item text-center">-->
-            <!--<i class="icon ion-star"></i>-->
-            <!--<i class="icon ion-star"></i>-->
-            <!--<i class="icon ion-star"></i>-->
-            <!--<i class="icon ion-star"></i>-->
-            <!--<i class="ion-ios-star-half"></i>-->
-          <!--</div>-->
-          <!--<button class="button button button-block button-borrowitgrau ion-plus" ng-hide="alreadyContact(persons[values.chosenPerson])" ng-click="addContact(persons[values.chosenPerson])">-->
-            <!--Als Kontakt hinzufügen-->
-          <!--</button>-->
-          <!--<div class="item item-borrowitblau">-->
-            <!--Aktivitäten:-->
-          <!--</div>-->
-          <!--<div class="item" ng-repeat="request in persons[values.chosenPerson].requests track by $index">-->
-            <!--<a class="item item-icon-right" ng-if="!request.requested" ng-click="watchRequestById(request.id)" href="#/anfrage_einsehen">-->
-              <!--{{request.title}}-->
-              <!--<i class="ion-chevron-right"></i>-->
-              <!--<i class="ion-chevron-right"></i>-->
-            <!--</a>-->
-            <!--<a class="item item-icon-left" ng-if="request.requested" ng-click="watchRequestById(request.id)" href="#/anfrage_einsehen">-->
-              <!--<i class="ion-chevron-left"></i>-->
-              <!--<i class="ion-chevron-left"></i>-->
-              <!--{{request.title}}-->
-            <!--</a>-->
-          <!--</div>-->
-        <!--</div>-->
-      <!--</ion-content>-->
-      <!--<div class="bar bar-footer bar-borrowitgrau">-->
-        <!--<div class="button-bar">-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/"><img src="img/icons/white_home.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/chat"><img src="img/icons/white_communication.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/anfrage_erstellen"><img src="img/logo.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/kontakte"><img src="img/icons/white_agenda.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/profil_ansicht"><img src="img/icons/white_profile.png" width="30"></a>-->
-        <!--</div>-->
-      <!--</div>-->
-    <!--</ion-view>-->
-  <!--</script>-->
-
-  <!--<script id="kontakt_hinzufuegen_name.html" type="text/ng-template">-->
-    <!--<ion-view>-->
-      <!--<ion-nav-bar class="bar-borrowitgrau">-->
-        <!--<ion-nav-back-button class="button-clear">-->
-          <!--<i class="ion-chevron-left"></i> Back-->
-        <!--</ion-nav-back-button>-->
-      <!--</ion-nav-bar>-->
-      <!--<ion-content class="borrowit-blau has-subfooter">-->
-        <!--<div class="list list-inset">-->
-          <!--<label class="item item-input">-->
-            <!--<i class="icon ion-search placeholder-icon"></i>-->
-            <!--<input type="search" placeholder="Search" ng-model="search">-->
-          <!--</label>-->
-          <!--<div ng-repeat="person in persons | searchContact:search track by $index | searchContact:search">-->
-            <!--<button class="item item-avatar button-block" ng-if="!alreadyContact(person)" ng-click="watchContact(person.username)">-->
-              <!--<img class="profile-pic left"-->
-                   <!--ng-src="{{person.picture}}" onerror="onProfilePicError(this)" />-->
-              <!--<span class="bold">{{person.username}}</span>-->
-            <!--</button>-->
-          <!--</div>-->
-        <!--</div>-->
-      <!--</ion-content>-->
-      <!--<ion-footer-bar class="bar bar-subfooter bar-borrowitgrau">-->
-        <!--<div class="button-bar">-->
-          <!--<a class="button button-block button-borrowitblau"><img src="img/icons/white_add_user.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/kontakt_hinzufuegen_ort"><img src="img/icons/white_map.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/kontakt_hinzufuegen_geraet"><img src="img/icons/white_mobile_phone.png" width="30"></a>-->
-        <!--</div>-->
-      <!--</ion-footer-bar>-->
-      <!--<ion-footer-bar class="bar bar-footer bar-borrowitgrau">-->
-        <!--<div class="button-bar">-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/"><img src="img/icons/white_home.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/chat"><img src="img/icons/white_communication.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/anfrage_erstellen"><img src="img/logo.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/kontakte"><img src="img/icons/white_agenda.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/profil_ansicht"><img src="img/icons/white_profile.png" width="30"></a>-->
-        <!--</div>-->
-      <!--</ion-footer-bar>-->
-    <!--</ion-view>-->
-  <!--</script>-->
-
-  <!--<script id="kontakt_hinzufuegen_ort.html" type="text/ng-template">-->
-    <!--<ion-view>-->
-      <!--<ion-nav-bar class="bar-borrowitgrau">-->
-        <!--<ion-nav-back-button class="button-clear">-->
-          <!--<i class="ion-chevron-left"></i> Back-->
-        <!--</ion-nav-back-button>-->
-      <!--</ion-nav-bar>-->
-      <!--<ion-content class="borrowit-blau has-subfooter">-->
-        <!--<div class="list list-inset">-->
-          <!--<label class="item item-input">-->
-            <!--<i class="icon ion-search placeholder-icon"></i>-->
-            <!--<input type="search" placeholder="Search" ng-model="search">-->
-          <!--</label>-->
-          <!--<div ng-repeat="person in persons | searchContact:search track by $index | searchContact:search">-->
-            <!--<button class="item item-avatar button-block" ng-if="!alreadyContact(person)" ng-click="watchContact(person.username)">-->
-              <!--<img class="profile-pic left"-->
-                   <!--ng-src="{{person.picture}}" onerror="onProfilePicError(this)" />-->
-              <!--<span class="bold">{{person.username}}</span>-->
-            <!--</button>-->
-          <!--</div>-->
-        <!--</div>-->
-      <!--</ion-content>-->
-      <!--<ion-footer-bar class="bar bar-subfooter bar-borrowitgrau">-->
-        <!--<div class="button-bar">-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/kontakt_hinzufuegen_name"><img src="img/icons/white_add_user.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitblau"><img src="img/icons/white_map.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/kontakt_hinzufuegen_geraet"><img src="img/icons/white_mobile_phone.png" width="30"></a>-->
-        <!--</div>-->
-      <!--</ion-footer-bar>-->
-      <!--<ion-footer-bar class="bar bar-footer bar-borrowitgrau">-->
-        <!--<div class="button-bar">-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/"><img src="img/icons/white_home.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/chat"><img src="img/icons/white_communication.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/anfrage_erstellen"><img src="img/logo.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/kontakte"><img src="img/icons/white_agenda.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/profil_ansicht"><img src="img/icons/white_profile.png" width="30"></a>-->
-        <!--</div>-->
-      <!--</ion-footer-bar>-->
-    <!--</ion-view>-->
-  <!--</script>-->
-
-  <!--<script id="kontakt_hinzufuegen_geraet.html" type="text/ng-template">-->
-    <!--<ion-view view-title="Kontakt hinzufügen">-->
-      <!--<ion-nav-bar class="bar-borrowitgrau">-->
-        <!--<ion-nav-back-button class="button-clear">-->
-          <!--<i class="ion-chevron-left"></i> Back-->
-        <!--</ion-nav-back-button>-->
-      <!--</ion-nav-bar>-->
-      <!--<ion-content class="borrowit-blau has-footer">-->
-        <!--<div class="list list-inset">-->
-          <!--<label class="item item-input">-->
-            <!--<i class="icon ion-search placeholder-icon"></i>-->
-            <!--<input type="search" placeholder="Search" ng-model="search">-->
-          <!--</label>-->
-          <!--<div ng-repeat="person in deviceContacts | searchContact:search track by $index | searchContact:search">-->
-            <!--<button class="item item-avatar button-block" ng-if="!alreadyContact(person)" ng-click="watchContact(person.username)">-->
-              <!--<img class="profile-pic left"-->
-                   <!--ng-src="{{person.picture}}" onerror="onProfilePicError(this)" />-->
-              <!--<span class="bold">{{person.username}}</span>-->
-            <!--</button>-->
-          <!--</div>-->
-        <!--</div>-->
-      <!--</ion-content>-->
-      <!--<ion-footer-bar class="bar bar-subfooter bar-borrowitgrau">-->
-        <!--<div class="button-bar">-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/kontakt_hinzufuegen_name"><img src="img/icons/white_add_user.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/kontakt_hinzufuegen_ort"><img src="img/icons/white_map.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitblau"><img src="img/icons/white_mobile_phone.png" width="30"></a>-->
-        <!--</div>-->
-      <!--</ion-footer-bar>-->
-      <!--<ion-footer-bar class="bar bar-footer bar-borrowitgrau">-->
-        <!--<div class="button-bar">-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/"><img src="img/icons/white_home.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/chat"><img src="img/icons/white_communication.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/anfrage_erstellen"><img src="img/logo.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/kontakte"><img src="img/icons/white_agenda.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/profil_ansicht"><img src="img/icons/white_profile.png" width="30"></a>-->
-        <!--</div>-->
-      <!--</ion-footer-bar>-->
-    <!--</ion-view>-->
-  <!--</script>-->
-
-  <!--<script id="profil_ansicht.html" type="text/ng-template">-->
-    <!--<ion-view>-->
-      <!--<div class="bar bar-header bar-borrowitgrau">-->
-        <!--<div class="button-bar">-->
-          <!--<a class="button button-block button-borrowitblau"><img src="img/icons/white_circle.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/profil_einstellungen"><img src="img/icons/white_settings.png" width="30"></a>-->
-        <!--</div>-->
-      <!--</div>-->
-      <!--<ion-content class="borrowit-blau has-footer has-header">-->
-        <!--<div class="list">-->
-          <!--<div class="item text-center">-->
-            <!--<img class="bigprofile-pic" ng-click="addMedia()" ng-src="{{profile.picture}}">-->
-          <!--</div>-->
-          <!--<div class="item text-center">-->
-            <!--<i class="icon ion-star"></i>-->
-            <!--<i class="icon ion-star"></i>-->
-            <!--<i class="icon ion-star"></i>-->
-            <!--<i class="icon ion-star"></i>-->
-            <!--<i class="ion-ios-star-half"></i>-->
-          <!--</div>-->
-          <!--<div class="item item-borrowitblau">-->
-            <!--Aktivitäten:-->
-          <!--</div>-->
-          <!--<div class="item" ng-repeat="request in profile.requests track by $index">-->
-            <!--<a class="item item-icon-right" ng-if="!request.requested" ng-click="watchRequestById(request.id)" href="#/anfrage_einsehen">-->
-              <!--{{request.title}}-->
-              <!--<i class="ion-chevron-right"></i>-->
-              <!--<i class="ion-chevron-right"></i>-->
-            <!--</a>-->
-            <!--<a class="item item-icon-left" ng-if="request.requested" ng-click="watchRequestById(request.id)" href="#/anfrage_einsehen">-->
-              <!--<i class="ion-chevron-left"></i>-->
-              <!--<i class="ion-chevron-left"></i>-->
-              <!--{{request.title}}-->
-            <!--</a>-->
-          <!--</div>-->
-        <!--</div>-->
-      <!--</ion-content>-->
-      <!--<div class="bar bar-footer bar-borrowitgrau">-->
-        <!--<div class="button-bar">-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/"><img src="img/icons/white_home.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/chat"><img src="img/icons/white_communication.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/anfrage_erstellen"><img src="img/logo.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/kontakte"><img src="img/icons/white_agenda.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitblau"><img src="img/icons/white_profile.png" width="30"></a>-->
-        <!--</div>-->
-      <!--</div>-->
-    <!--</ion-view>-->
-  <!--</script>-->
-
-  <!--<script id="profil_einstellungen.html" type="text/ng-template">-->
-    <!--<ion-view>-->
-      <!--<div class="bar bar-header bar-borrowitgrau">-->
-        <!--<div class="button-bar">-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/profil_ansicht"><img src="img/icons/white_circle.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitblau"><img src="img/icons/white_settings.png" width="30"></a>-->
-        <!--</div>-->
-      <!--</div>-->
-      <!--<ion-content class="borrowit-blau has-header">-->
-        <!--<div class="list">-->
-          <!--<div class="item item-divider">-->
-            <!--Konto:-->
-          <!--</div>-->
-          <!--<button class="button button-block button-light icon icon-right ion-chevron-right" ng-click="changeProfile()">-->
-            <!--Profil bearbeiten-->
-          <!--</button>-->
-          <!--<button class="button button-block button-light icon icon-right ion-chevron-right" ng-click="changePassword()">-->
-            <!--Passwort ändern-->
-          <!--</button>-->
-          <!--<div class="item item-divider">-->
-            <!--Adresse:-->
-          <!--</div>-->
-          <!--<ion-radio ng-repeat="item in profile.addresses track by $index"-->
-                     <!--ng-value="item.value"-->
-                     <!--ng-model="profile.actualAddress">-->
-            <!--{{ item.text }}-->
-          <!--</ion-radio>-->
-          <!--<a class="button button-block button-borrowitgrau icon icon-right ion-chevron-right" href="#/adressen">Adressen bearbeiten</a>-->
-          <!--<div class="item item-divider">-->
-            <!--Privatsphäre:-->
-          <!--</div>-->
-          <!--<a class="item item-icon-right" href="#">-->
-            <!--Push-Mitteilungen-->
-            <!--<i class="ion-chevron-right"></i>-->
-          <!--</a>-->
-          <!--<a class="item item-icon-right" href="#">-->
-            <!--Datenschutz-->
-            <!--<i class="ion-chevron-right"></i>-->
-          <!--</a>-->
-          <!--<a class="item item-toggle" href="#">-->
-            <!--Privates Konto-->
-            <!--<label class="toggle toggle-assertive">-->
-              <!--<input type="checkbox">-->
-              <!--<div class="track">-->
-                <!--<div class="handle"></div>-->
-              <!--</div>-->
-            <!--</label>-->
-          <!--</a>-->
-          <!--<a class="item item-icon-right" href="#">-->
-            <!--Nutzer einladen-->
-            <!--<i class="ion-chevron-right"></i>-->
-          <!--</a>-->
-          <!--<a class="button button-block button-light icon icon-right ion-chevron-right" href="#/login" ng-click="logout()">-->
-            <!--Abmelden-->
-          <!--</a>-->
-          <!--<button class="button button-block item-icon-right button-assertive" ng-click="deleteProfile()" href="#">-->
-            <!--Konto löschen-->
-            <!--<i class="ion-chevron-right"></i>-->
-          <!--</button>-->
-          <!--<div style="height: 50px"></div>-->
-        <!--</div>-->
-      <!--</ion-content>-->
-      <!--<div class="bar bar-footer bar-borrowitgrau">-->
-        <!--<div class="button-bar">-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/"><img src="img/icons/white_home.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/chat"><img src="img/icons/white_communication.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/anfrage_erstellen"><img src="img/logo.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/kontakte"><img src="img/icons/white_agenda.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitblau"><img src="img/icons/white_profile.png" width="30"></a>-->
-        <!--</div>-->
-      <!--</div>-->
-    <!--</ion-view>-->
-  <!--</script>-->
-
-  <!--<script id="adressen.html" type="text/ng-template">-->
-    <!--<ion-view>-->
-      <!--<ion-nav-bar class="bar-borrowitgrau">-->
-        <!--<ion-nav-back-button class="button-clear">-->
-          <!--<i class="ion-chevron-left"></i> Back-->
-        <!--</ion-nav-back-button>-->
-      <!--</ion-nav-bar>-->
-      <!--<ion-content class="has-footer has-subfooter">-->
-        <!--<ion-radio ng-repeat="item in profile.addresses track by $index"-->
-                   <!--ng-value="item.value"-->
-                   <!--ng-model="profile.actualAddress">-->
-          <!--{{ item.text }}-->
-        <!--</ion-radio>-->
-        <!--&lt;!&ndash;<div class="item item-divider">-->
-          <!--Clientside, Selected Value: {{ data.address }}-->
-        <!--</div>&ndash;&gt;-->
-      <!--</ion-content>-->
-      <!--<ion-footer-bar class="bar-subfooter bar-borrowitblau">-->
-        <!--<div class="button-bar">-->
-          <!--<button class="button button-block button-borrowitblau icon-left ion-plus" data-ng-click="addAddress()">Weitere Adresse hinzufügen</button>-->
-          <!--&lt;!&ndash;<button class="button button-block button-borrowitgrau icon-left ion-cloud" data-ng-click="changeAddress(data.address)">Ausgewählte Adresse bearbeiten</button>&ndash;&gt;-->
-          <!--<button class="button button-block button-borrowitblau icon-left ion-minus" data-ng-click="deleteAddress(profile.actualAddress)">Ausgewählte Adresse löschen</button>-->
-        <!--</div>-->
-      <!--</ion-footer-bar>-->
-      <!--<ion-footer-bar class="bar bar-footer bar-borrowitgrau">-->
-        <!--<div class="button-bar">-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/"><img src="img/icons/white_home.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/chat"><img src="img/icons/white_communication.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/anfrage_erstellen"><img src="img/logo.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/kontakte"><img src="img/icons/white_agenda.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/profil_ansicht"><img src="img/icons/white_profile.png" width="30"></a>-->
-        <!--</div>-->
-      <!--</ion-footer-bar>-->
-    <!--</ion-view>-->
-  <!--</script>-->
-
-  <!--<script id="anfrage_einsehen.html" type="text/ng-template">-->
-    <!--<ion-view view-title="Anfrage einsehen">-->
-      <!--<ion-nav-bar class="bar-borrowitgrau">-->
-        <!--<ion-nav-back-button class="button-clear">-->
-          <!--<i class="ion-chevron-left"></i> Back-->
-        <!--</ion-nav-back-button>-->
-      <!--</ion-nav-bar>-->
-      <!--<ion-content class="borrowit-blau has-footer">-->
-        <!--<div class="list text-center">-->
-          <!--<ion-label class = "item item-light text-center">-->
-            <!--<strong>{{requests[values.chosenRequest].profile.username}}</strong></br>-->
-            <!--{{requests[values.chosenRequest].title}}-->
-          <!--</ion-label>-->
-          <!--<ion-label>-->
-            <!--{{requests[values.chosenRequest].description}}-->
-          <!--</ion-label>-->
-          <!--<div class="row">-->
-            <!--<div class="col col-50 text-right">-->
-              <!--Entfernung-->
-            <!--</div>-->
-            <!--<div class="col col-50 text-left">-->
-              <!--{{requests[values.chosenRequest].place}}-->
-            <!--</div>-->
-          <!--</div>-->
-          <!--<div class="row">-->
-            <!--<div class="col col-50 text-right">-->
-              <!--Ab wann?-->
-            <!--</div>-->
-            <!--<div class="col col-50 text-left">-->
-              <!--{{requests[values.chosenRequest].startDate}}-->
-            <!--</div>-->
-          <!--</div>-->
-          <!--<div class="row">-->
-            <!--<div class="col col-50 text-right">-->
-              <!--Bis wann?-->
-            <!--</div>-->
-            <!--<div class="col col-50 text-left">-->
-              <!--{{requests[values.chosenRequest].endDate}}-->
-            <!--</div>-->
-          <!--</div>-->
-          <!--<div class="button-bar">-->
-            <!--<a class="button button-block button-light" ng-click="watchChat(requests[values.chosenRequest].id)" href="#/anfragenchat">-->
-              <!--Anschreiben-->
-            <!--</a>-->
-            <!--<button class="button button-block button-light" ng-click="borrowit(requests[values.chosenRequest])">-->
-              <!--BorrowIt!-->
-            <!--</button>-->
-          <!--</div>-->
-        <!--</div>-->
-      <!--</ion-content>-->
-      <!--<div class="bar bar-footer bar-borrowitgrau">-->
-        <!--<div class="button-bar">-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/"><img src="img/icons/white_home.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/chat"><img src="img/icons/white_communication.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/anfrage_erstellen"><img src="img/logo.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/kontakte"><img src="img/icons/white_agenda.png" width="30"></a>-->
-          <!--<a class="button button-block button-borrowitgrau" href="#/profil_ansicht"><img src="img/icons/white_profile.png" width="30"></a>-->
-        <!--</div>-->
-      <!--</div>-->
-    <!--</ion-view>-->
-  <!--</script>-->
-
-  <!--<script id="UserMessages.html" type="text/ng-template">-->
-
-  <!--</script>-->
+  <!--</ion-content>-->
+<!--</ion-pane>-->
 <!--</body>-->
 <!--</html>-->
+<!DOCTYPE html>
+<html ng-app="starter">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+  <title>BorrowIt!</title>
+  <link href="img/favicon/favicon_hYs_9.ico" type="image/x-icon" rel="shortcut icon"/>
+
+  <link href="lib/ionic/css/ionic.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+  <script src="lib/ionic/js/ionic.bundle.js"></script>
+  <script src="lib/ngCordova/dist/ng-cordova.js"></script>
+  <script src="cordova.js"></script>
+  <script src="js/app.js"></script>
+  <script src="lib/satellizer/satellizer.js"></script>
+  <script src="lib/angular-cookies/angular-cookies.js"></script>
+  <script src="lib/crypto-js/crypto-js.js"></script>
+  <script src="lib/crypto-js/hmac-sha512.js"></script>
+
+  <!-- Library for SQLite support -->
+  <script type="text/javascript" src="js/SQLitePlugin.js"></script>
+  <!-- Library for native storage -->
+  <script type="text/javascript" src="js/NativeStoragePlugin.js"></script>
+  <!-- moment -->
+  <script src="js/moment.js"></script>
+  <!-- angular moment -->
+  <script src="js/angular-moment.js"></script>
+</head>
+<body ng-app="starter" ng-controller="ToDoController">
+  <div>
+    <ion-nav-view animation="slide-left-right"></ion-nav-view>
+  </div>
+
+  <script id="login.html" type="text/ng-template" onload="isLoggedIn()">
+    <ion-view view-title="Login">
+      <ion-content class="borrowit-blau">
+        <div class="list text-center">
+          <img src="img/logo.png" width="25%" align="center"/>
+          <label class="item item-input">
+            <input type="email" placeholder="E-Mail" ng-model="textboxes.TextboxEmail">
+          </label>
+          <label class="item item-input">
+            <input type="password" placeholder="Passwort" ng-model="textboxes.TextboxPassword">
+          </label>
+          <button class="button button-block button-borrowitgrau" ng-click="checkLogin()">
+            Anmelden
+          </button>
+          <button class="message-wrapper button button-block fb-bg" href="#/">
+            <span><img class="facebook-pic left" src="/img/icons/facebook.png" width="80px"/></span>
+            <span class="fb-bg">mit facebook anmelden</span>
+          </button>
+          <a class="button button-block button-borrowitgrau" href="#/registrierung">Registrierung</a>
+          <div class="button-bar">
+            <a class="button button-borrowitgrau button-block">Passwort vergessen</a>
+            <a class="button button-borrowitgrau button-block">Hilfe</a>
+          </div>
+        </div>
+      </ion-content>
+    </ion-view>
+  </script>
+
+  <script id="registrierung.html" type="text/ng-template">
+    <ion-view view-title="Registrierung">
+      <ion-nav-bar class="bar-borrowitgrau">
+        <ion-nav-back-button class="button-clear">
+          <i class="ion-chevron-left"></i> Back
+        </ion-nav-back-button>
+      </ion-nav-bar>
+      <ion-content class="borrowit-blau">
+        <div class="list text-center">
+          <div class="item item-divider">
+            Benutzerinformationen
+          </div>
+          <label class="item item-input">
+            <input type="text" placeholder="Benutzername" ng-model="textboxes.username">
+          </label>
+          <label class="item item-input">
+            <input type="text" placeholder="Nachname" ng-model="textboxes.lastname">
+          </label>
+          <label class="item item-input">
+            <input type="text" placeholder="Vorname" ng-model="textboxes.firstname">
+          </label>
+          <label class="item item-input">
+            <input type="email" placeholder="E-Mail" ng-model="textboxes.email">
+          </label>
+          <label class="item item-input">
+            <input type="tel" placeholder="Telefonnummer" ng-model="textboxes.telephone">
+          </label>
+          <label class="item item-input">
+            <input type="password" placeholder="Passwort" ng-model="textboxes.password">
+          </label>
+          <label class="item item-input">
+            <input type="password" placeholder="Passwort wdh." ng-model="textboxes.passwordrep">
+          </label>
+          <button class="button button-light button-block icon-right ion-chevron-right" ng-click="registerFirstPart()">Weiter</button><br/>
+        </div>
+      </ion-content>
+    </ion-view>
+  </script>
+
+  <script id="registrierung2.html" type="text/ng-template">
+    <ion-view view-title="Registrierung">
+      <ion-nav-bar class="bar-borrowitgrau">
+        <ion-nav-back-button class="button-clear">
+          <i class="ion-chevron-left"></i> Back
+        </ion-nav-back-button>
+      </ion-nav-bar>
+      <ion-content class="borrowit-blau">
+        <div class="list text-center">
+          <div class="row">
+            <div class="col col-100 text-center">
+              <h1 style="color: #fff">Hallo {{profile.firstname}}</h1>
+              <h3 style="color: #fff">Bitte vervollständige dein Profil</h3>
+            </div>
+          </div>
+          <img class="bigprofile-pic" ng-click="addMedia()" ng-src="{{profile.picture}}">
+
+          <!--<ion-scroll>
+            <img ng-repeat="image in images" ng-src="{{urlForImage(image)}}" height="200px"/>
+          </ion-scroll>
+          <!--<div class="item item-divider">
+            Clientside, Selected Value: {{ profile.currentAddress }}
+          </div>-->
+          <ion-radio ng-repeat="item in profile.addresses track by $index"
+                     ng-value="item.aid"
+                     ng-model="profile.currentAddress"
+                     ng-change="currentAddressChanged()">
+            {{ item.street }} {{ item.streetnumber }}
+          </ion-radio>
+          <button class="button button-block button-borrowitgrau" ng-click="addAddress()">Addresse ergänzen</button>
+          <!--<div class="row">
+            <div class="col col-100 text-center">
+              Adresse
+            </div>
+          </div>
+          <div class="item item-input-inset">
+            <label class="item item-input-wrapper">
+              <input type="text" placeholder="Straße">
+            </label>
+            <label class="item item-input-wrapper">
+              <input type="text" placeholder="Hausnummer">
+            </label>
+          </div>
+          <div class="item item-input-inset">
+            <label class="item item-input-wrapper">
+              <input type="text" placeholder="PLZ">
+            </label>
+            <label class="item item-input-wrapper">
+              <input type="text" placeholder="Ort">
+            </label>
+          </div>
+          <label class = "item item-input item-select item-light">
+            <div class = "input-label">
+              Land
+            </div>
+            <select>
+              <option selected>Deutschland</option>
+              <option>Schweiz</option>
+              <option>Österreich</option>
+              <option>Bayern</option>
+              <option>Köln</option>
+            </select>
+          </label>-->
+          <button class="button button-light button-block" ng-click="registerSecondPart()">Los Geht's!</button>
+        </div>
+      </ion-content>
+    </ion-view>
+  </script>
+
+  <script id="home.html" type="text/ng-template">
+    <ion-view ng-init="loadRequests()">
+      <ion-content has-bouncing="true" class="borrowit-blau has-footer">
+        <div class="list text-center">
+          <div class="row">
+            <div class="col col-100 text-center">
+              <h1 style="color: #fff">Hallo {{profile.firstname}}</h1>
+            </div>
+          </div>
+          <label class = "item item-input item-select item-light">
+            <div class = "input-label col-60">
+              Sortieren nach
+            </div>
+            <select ng-model="values.chosenSortedBy">
+              <option value="place">Entfernung</option>
+              <option value="startDate">Benötigt ab</option>
+              <option value="endDate">Benötigt bis</option>
+              <option value="profile.rating">Bewertung</option>
+            </select>
+          </label>
+          <ion-item class = "item item-input item-select item-light">
+            <ion-label class = "input-label col-60">
+              Kategorie
+            </ion-label>
+            <select ng-model="values.chosenCategory">
+              <option value="all" selected>Alle Kategorien</option>
+              <option value="kitchen">Küche und Haushalt</option>
+              <option value="food">Lebensmittel</option>
+              <option value="sport">Sport</option>
+              <option value="freetime">Freizeit</option>
+              <option value="car">Auto und Motorrad</option>
+              <option value="home">Wohnen</option>
+              <option value="garden">Garten</option>
+              <option value="other">Sonstiges</option>
+            </select>
+          </ion-item>
+          <!--Der Code "request in requests | orderBy:values.chosenSortedBy:$scope.values.chosenSortedBy != 'profile.rating' | filterRequests:values.chosenCategory" holt alle requests sortiert nach Auswahl, wobei je nach Auswahl verkehrt herum sortiert wird-->
+          <div class="message-wrapper" ng-repeat="request in requests | orderBy:values.chosenSortedBy:$scope.values.chosenSortedBy != 'profile.rating' | filterRequests:values.chosenCategory track by $index">
+            <div class="row" ng-show="!request.offered && request.profile.username != profile.username">
+                <a class="item item-borrowitblau" ng-click="loadCurrentRequest(request.requestid)" style="width: 100%;" href="#/anfrage_einsehen">
+                  <span>
+                    <img class="profile-pic-top" ng-src="{{request.profile.picture}}" onerror="onProfilePicError(this)"/>
+                  </span>
+                  <span>
+                    <div ng-switch="request.category">
+                      <div ng-switch-when="kitchen">
+                        <img class="category-pic" ng-src="{{images.whiteKitchen}}">
+                      </div>
+                      <div ng-switch-when="food">
+                        <img class="category-pic" ng-src="{{images.whiteCutlery}}">
+                      </div>
+                      <div ng-switch-when="sport">
+                        <img class="category-pic" ng-src="{{images.whiteSoccerBall}}">
+                      </div>
+                      <div ng-switch-when="freetime">
+                        <img class="category-pic" ng-src="{{images.whiteJoystick}}">
+                      </div>
+                      <div ng-switch-when="car">
+                        <img class="category-pic" ng-src="{{images.whiteCar}}">
+                      </div>
+                      <div ng-switch-when="home">
+                        <img class="category-pic" ng-src="{{images.whiteBed}}">
+                      </div>
+                      <div ng-switch-when="garden">
+                        <img class="category-pic" ng-src="{{images.whiteSprout}}">
+                      </div>
+                      <div ng-switch-when="other">
+                        <img class="category-pic" ng-src="{{images.whiteMedal}}">
+                      </div>
+                    </div>
+                  </span>
+                  <div class="chat-bubble left">
+                    <div class="message-detail">
+                      <span class="bold">{{request.profile.username}}</span>:
+                      <span>{{request.title}}</span>
+                    </div>
+                  </div>
+                </a>
+            </div>
+          </div>
+        </div>
+      </ion-content>
+      <ion-footer-bar class="bar bar-footer bar-borrowitgrau">
+        <div class="button-bar">
+          <a class="button button-block button-borrowitblau"><img src="img/icons/white_home.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/chat"><img src="img/icons/white_communication.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/anfrage_erstellen"><img src="img/logo.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/kontakte"><img src="img/icons/white_agenda.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/profil_ansicht"><img src="img/icons/white_profile.png" width="30"></a>
+        </div>
+      </ion-footer-bar>
+    </ion-view>
+  </script>
+
+  <script id="chat.html" type="text/ng-template">
+    <ion-view>
+      <ion-content class="borrowit-blau has-footer">
+        <div class="list">
+          <label class="item item-input">
+            <i class="icon ion-search placeholder-icon"></i>
+            <input type="search" placeholder="Search" ng-model="search">
+          </label>
+          <div ng-repeat="chat in chats | searchContent:search track by $index">
+            <a class="item item-avatar" ng-click="viewChat(chat.requestid)" href="#/anfragenchat">
+              <img class="profile-pic left"
+                   ng-src="{{chat.profile.picture}}" onerror="onProfilePicError(this)" />
+                <span class="bold">{{chat.profile.username}}</span>:
+                <span>{{chat.title}}</span>
+            </a>
+          </div>
+        </div>
+      </ion-content>
+      <ion-footer-bar keyboard-attach="false" class="bar bar-borrowitgrau">
+        <div class="button-bar">
+          <a class="button button-block button-borrowitgrau" href="#/"><img src="img/icons/white_home.png" width="30"></a>
+          <a class="button button-block button-borrowitblau"><img src="img/icons/white_communication.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/anfrage_erstellen"><img src="img/logo.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/kontakte"><img src="img/icons/white_agenda.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/profil_ansicht"><img src="img/icons/white_profile.png" width="30"></a>
+        </div>
+      </ion-footer-bar>
+    </ion-view>
+  </script>
+
+  <script id="anfragenchat.html" type="text/ng-template">
+    <ion-view id="userMessagesView"
+              cache-view="false"
+              view-title="{{toUser.username}}: &raquo;{{requests[values.currentRequest].title}}&laquo;">
+      <div class="loader-center" ng-show="!doneLoading">
+        <div class="loader">
+          <i class="icon ion-loading-c"></i>
+        </div>
+      </div>
+      <ion-spinner icon="bubbles" ng-show="!doneLoading">
+
+      </ion-spinner>
+      <ion-header-bar class="bar-borrowitgrau text-center">
+        <div ng-show="values.requestOffered && !values.requestAccepted && requests[values.currentRequest].username == profile.username">
+          <h1 class="title">{{ toUser.username }} möchte dir bezüglich deiner Anfrage helfen!</h1>
+          <div class="button-bar col-50">
+            <a class="button button-block button-balanced icon ion-checkmark" onclick=""></a>
+            <a class="button button-block button-assertive icon ion-close" ng-click=""></a>
+          </div>
+        </div>
+        <div class="text-center" ng-hide="values.requestOffered && !values.requestAccepted && requests[values.currentRequest].username == profile.username">
+          <h1 class="title text-center">{{toUser.username}}: &raquo;{{requests[values.currentRequest].title}}&laquo;</h1>
+        </div>
+      </ion-header-bar>
+      <ion-content has-bouncing="true" class="has-header has-footer has-subfooter" delegate-handle="userMessageScroll">
+        <div ng-repeat="message in chats[values.currentChat].messages track by $index" class="message-wrapper" on-hold="onMessageHold($event, $index, message)">
+          <div ng-show="profile.username !== message.username">
+            <img ng-click="viewContact(message.username)" class="profile-pic left"
+                 ng-src="{{toUser.picture}}" onerror="onProfilePicError(this)" />
+            <div class="chat-bubble left">
+              <div class="message" ng-bind-html="message.text | nl2br" autolinker></div>
+              <div class="message-detail">
+                <span class="bold">{{toUser.username}}</span>,
+                <span am-time-ago="message.date"></span>
+              </div>
+            </div>
+          </div>
+          <div ng-show="profile.username === message.username">
+            <img ng-click="viewProfile(message)" class="profile-pic right" ng-src="{{profile.picture}}" onerror="onProfilePicError(this)" />
+            <div class="chat-bubble right">
+              <div class="message" ng-bind-html="message.text | nl2br" autolinker></div>
+              <div class="message-detail">
+                <span class="bold">Ich</span>,
+                <span am-time-ago="message.date"></span>
+              </div>
+            </div>
+          </div>
+          <div class="cf"></div>
+        </div>
+      </ion-content>
+      <form name="sendMessageForm" ng-submit="sendMessage(sendMessageForm)" novalidate>
+        <ion-footer-bar keyboard-attach class="bar-subfooter bar-borrowitblau item-input-inset">
+          <label class="item-input-wrapper">
+            <input type="text" ng-model="input.message" value="" placeholder="Sende {{toUser.username}} eine Nachricht..." required minlength="1" maxlength="1500" msd-elastic/>
+          </label>
+          <button class="button button-clear icon ion-android-send" type="submit" ng-disabled="!input.message || input.message === ''"></button>
+        </ion-footer-bar>
+        <!--<ion-footer-bar class="bar-stable item-input-inset message-footer" keyboard-attach>
+          <label class="item-input-wrapper">
+            <textarea ng-model="input.message" value="" placeholder="Sende {{toUser.username}} eine Nachricht..." required minlength="1" maxlength="1500" msd-elastic></textarea>
+          </label>
+          <div class="footer-btn-wrap">
+            <button class="button button-icon icon ion-android-send footer-btn" type="submit"
+                    ng-disabled="!input.message || input.message === ''">
+            </button>
+          </div>
+        </ion-footer-bar>-->
+      </form>
+      <ion-footer-bar class="bar bar-borrowitgrau">
+        <div class="button-bar">
+          <a class="button button-block button-borrowitgrau" href="#/"><img src="img/icons/white_home.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/chat"><img src="img/icons/white_communication.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/anfrage_erstellen"><img src="img/logo.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/kontakte"><img src="img/icons/white_agenda.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/profil_ansicht"><img src="img/icons/white_profile.png" width="30"></a>
+        </div>
+      </ion-footer-bar>
+    </ion-view>
+    <!--<ion-view>-->
+      <!--<ion-nav-bar class="bar-borrowitgrau">-->
+        <!--<ion-nav-back-button class="button-clear">-->
+          <!--<i class="ion-chevron-left"></i> Back-->
+        <!--</ion-nav-back-button>-->
+      <!--</ion-nav-bar>-->
+      <!--<ion-content class="borrowit-blau">-->
+        <!--<div class="list">-->
+          <!--<label class="item item-input">-->
+            <!--<i class="icon ion-search placeholder-icon"></i>-->
+            <!--<input type="text" placeholder="Search">-->
+          <!--</label>-->
+          <!--&lt;!&ndash;<ion-list ng-repeat="message in messages"-->
+                    <!--ng-value="message.value"-->
+                    <!--ng-model="messages.message">-->
+            <!--{{ message.text }}-->
+          <!--</ion-list>-->
+          <!--<ion-radio ng-repeat="item in addresses"-->
+                     <!--ng-value="item.value"-->
+                     <!--ng-model="data.address">-->
+            <!--{{ item.text }}-->
+          <!--</ion-radio>&ndash;&gt;-->
+
+          <!--<ion-list>-->
+            <!--<ion-item class="text-right">-->
+              <!--Hallo f1895, Ich bin gerne bereit, dir ein Waffeleisen zu leihen.-->
+            <!--</ion-item>-->
+
+            <!--<ion-item>-->
+              <!--Hallo MarcShadow, das klingt sehr gut. Wenn du willst, kannst du auch gerne eine Waffel haben. Ich habe ein tolles Rezept, das ich ausprobieren möchte.-->
+            <!--</ion-item>-->
+
+            <!--<ion-item class="text-right">-->
+              <!--Das klingt toll. Sehr gerne!-->
+            <!--</ion-item>-->
+          <!--</ion-list>-->
+
+
+
+        <!--</div>-->
+      <!--</ion-content>-->
+      <!--<div class="bar bar-subfooter">-->
+
+      <!--</div>-->
+      <!--<div class="bar bar-footer bar-borrowitgrau">-->
+        <!--<div class="button-bar">-->
+          <!--<a class="button button-block button-borrowitgrau" href="#/"><img src="img/icons/white_home.png" width="30"></a>-->
+          <!--<a class="button button-block button-borrowitgrau" href="#/chat"><img src="img/icons/white_communication.png" width="30"></a>-->
+          <!--<a class="button button-block button-borrowitgrau" href="#/anfrage_erstellen"><img src="img/logo.png" width="30"></a>-->
+          <!--<a class="button button-block button-borrowitgrau" href="#/kontakte"><img src="img/icons/white_agenda.png" width="30"></a>-->
+          <!--<a class="button button-block button-borrowitgrau" href="#/profil_ansicht"><img src="img/icons/white_profile.png" width="30"></a>-->
+        <!--</div>-->
+      <!--</div>-->
+    <!--</ion-view>-->
+  </script>
+
+  <script id="anfrage_erstellen.html" type="text/ng-template">
+    <ion-view>
+      <ion-content class="borrowit-blau has-footer">
+        <div class="list text-center">
+          <img src="img/logo.png" width="25%" align="center"/>
+          <div class="item input-label">
+            Ich suche / brauche
+          </div>
+          <label class="item item-input">
+            <input type="text" placeholder="Titel eintragen" ng-model="textboxes.requestTitle">
+          </label>
+          <label class="item item-input">
+            <input type="text" placeholder="Beschreibung" ng-model="textboxes.requestDescription">
+          </label>
+          <label class="item item-input">
+            Benötigt:
+          </label>
+          <ion-checkbox class="borrowit-blau" ng-model="values.sofort">Sofort</ion-checkbox>
+          <div ng-hide="values.sofort">
+            Ich benötige es ab:
+          </div>
+          <div class="row" ng-hide="values.sofort">
+            <div class="col col 50">
+              <input type="date" width="100%" ng-model="textboxes.startDate"/>
+            </div>
+            <div class="col col 50">
+              <input type="time" width="100%" ng-model="textboxes.startTime"/>
+            </div>
+          </div>
+          <div>
+            Anfrage schließen:
+          </div>
+          <div class="row">
+            <div class="col col 50">
+              <input type="date" width="100%" ng-model="textboxes.closeDate"/>
+            </div>
+            <div class="col col 50">
+              <input type="time" width="100%" ng-model="textboxes.closeTime"/>
+            </div>
+          </div>
+          <label class="item item-input item-select">
+            <div class="input-label col-60">
+              Kategorie
+            </div>
+            <select ng-model="textboxes.category">
+              <option value="kitchen" selected>Küche und Haushalt</option>
+              <option value="food">Lebensmittel</option>
+              <option value="sport">Sport</option>
+              <option value="freetime">Freizeit</option>
+              <option value="car">Auto und Motorrad</option>
+              <option value="home">Wohnen</option>
+              <option value="garden">Garten</option>
+              <option value="other">Sonstiges</option>
+            </select>
+          </label>
+          <div class="item" ng-show="profile.location">
+            <ion-toggle ng-model="values.useLocationForRequest">
+              Standort für die Anfrage nutzen
+            </ion-toggle>
+          </div>
+          <div class="button-bar">
+            <button ng-hide="values.actualizeRequest" class="button button-block icon ion-checkmark" ng-click="startRequest()"></button>
+            <button ng-show="values.actualizeRequest" class="button button-block icon ion-checkmark" ng-click="updateRequestInformations(values.currentRequest)"></button>
+            <button class="button button-block icon ion-close" ng-click="emptyAllFields()"></button>
+          </div>
+        </div>
+      </ion-content>
+      <ion-footer-bar class="bar bar-borrowitgrau">
+        <div class="button-bar">
+          <a class="button button-block button-borrowitgrau" href="#/"><img src="img/icons/white_home.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/chat"><img src="img/icons/white_communication.png" width="30"></a>
+          <a class="button button-block button-borrowitblau"><img src="img/logo.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/kontakte"><img src="img/icons/white_agenda.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/profil_ansicht"><img src="img/icons/white_profile.png" width="30"></a>
+        </div>
+      </ion-footer-bar>
+    </ion-view>
+  </script>
+
+  <script id="kontakte.html" type="text/ng-template">
+    <ion-view view-title="Kontakte">
+      <ion-content class="borrowit-blau has-footer">
+        <div class="list text-center">
+          <a class="button button-block icon-center ion-plus" href="#/kontakt_hinzufuegen_name">Kontakt hinzufügen</a>
+        <!--<button class="button icon-center ion-plus" data-ng-click="createKontakt()">Kontakt hinzufügen</button>-->
+          <div class="item list-inset">
+            <label class="item item-input">
+              <i class="icon ion-search placeholder-icon"></i>
+              <input type="search" placeholder="Search" ng-model="search">
+            </label>
+            <div ng-repeat="contact in profile.contacts | searchContact:search track by $index">
+              <button class="item item-avatar button-block" ng-click="viewContact(contact.username)">
+                <img class="profile-pic left"
+                     ng-src="{{contact.picture}}" onerror="onProfilePicError(this)" />
+                <span class="bold">{{contact.username}}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </ion-content>
+      <ion-footer-bar class="bar bar-borrowitgrau">
+        <div class="button-bar">
+          <a class="button button-block button-borrowitgrau" href="#/"><img src="img/icons/white_home.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/chat"><img src="img/icons/white_communication.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/anfrage_erstellen"><img src="img/logo.png" width="30"></a>
+          <a class="button button-block button-borrowitblau"><img src="img/icons/white_agenda.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/profil_ansicht"><img src="img/icons/white_profile.png" width="30"></a>
+        </div>
+      </ion-footer-bar>
+    </ion-view>
+  </script>
+
+  <script id="kontakt_profil.html" type="text/ng-template">
+    <ion-view>
+      <ion-header-bar class="bar-borrowitgrau text-center">
+        <h1 class="title text-center">{{persons[values.chosenPerson].username}}</h1>
+      </ion-header-bar>
+      <ion-content class="borrowit-blau has-footer">
+        <div class="list">
+          <div class="item text-center">
+            <img src="{{persons[values.chosenPerson].picture}}" width="80" height="80">
+          </div>
+          <div class="item text-center">
+            <i class="icon ion-star"></i>
+            <i class="icon ion-star"></i>
+            <i class="icon ion-star"></i>
+            <i class="icon ion-star"></i>
+            <i class="ion-ios-star-half"></i>
+          </div>
+          <button class="button button button-block button-borrowitgrau ion-plus" ng-hide="alreadyContact(persons[values.chosenPerson])" ng-click="addContact(persons[values.chosenPerson])">
+            Als Kontakt hinzufügen
+          </button>
+          <div class="item item-borrowitblau">
+            Aktivitäten:
+          </div>
+          <div class="item" ng-repeat="request in persons[values.chosenPerson].requests track by $index">
+            <a class="item item-icon-right" ng-show="request.username != persons[values.chosenPerson].username" ng-click="viewRequestById(request.requestid)" href="#/anfrage_einsehen">
+              {{request.title}}
+              <i class="ion-chevron-right"></i>
+              <i class="ion-chevron-right"></i>
+            </a>
+            <a class="item item-icon-left" ng-show="request.username == persons[values.chosenPerson].username" ng-click="viewRequestById(request.requestid)" href="#/anfrage_einsehen">
+              <i class="ion-chevron-left"></i>
+              <i class="ion-chevron-left"></i>
+              {{request.title}}
+            </a>
+          </div>
+        </div>
+      </ion-content>
+      <ion-footer-bar class="bar bar-borrowitgrau">
+        <div class="button-bar">
+          <a class="button button-block button-borrowitgrau" href="#/"><img src="img/icons/white_home.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/chat"><img src="img/icons/white_communication.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/anfrage_erstellen"><img src="img/logo.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/kontakte"><img src="img/icons/white_agenda.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/profil_ansicht"><img src="img/icons/white_profile.png" width="30"></a>
+        </div>
+      </ion-footer-bar>
+    </ion-view>
+  </script>
+
+  <script id="kontakt_hinzufuegen_name.html" type="text/ng-template">
+    <ion-view>
+      <ion-header-bar class="bar bar-borrowitgrau">
+        <div class="button-bar">
+          <a class="button button-block button-borrowitblau"><img src="img/icons/white_add_user.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/kontakt_hinzufuegen_geraet"><img src="img/icons/white_mobile_phone.png" width="30"></a>
+        </div>
+      </ion-header-bar>
+      <ion-content class="borrowit-blau has-header">
+        <div class="list list-inset">
+          <label class="item item-input">
+            <i class="icon ion-search placeholder-icon"></i>
+            <input type="search" placeholder="Search" ng-model="search">
+          </label>
+          <div ng-repeat="person in persons | searchContact:search track by $index">
+            <button class="item item-avatar button-block" ng-show="!alreadyContact(person)" ng-click="viewContact(person.username)">
+              <img class="profile-pic left"
+                   ng-src="{{person.picture}}" onerror="onProfilePicError(this)" />
+              <span class="bold">{{person.username}}</span>
+            </button>
+          </div>
+        </div>
+      </ion-content>
+      <ion-footer-bar class="bar bar-borrowitgrau">
+        <div class="button-bar">
+          <a class="button button-block button-borrowitgrau" href="#/"><img src="img/icons/white_home.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/chat"><img src="img/icons/white_communication.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/anfrage_erstellen"><img src="img/logo.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/kontakte"><img src="img/icons/white_agenda.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/profil_ansicht"><img src="img/icons/white_profile.png" width="30"></a>
+        </div>
+      </ion-footer-bar>
+    </ion-view>
+  </script>
+
+  <script id="kontakt_hinzufuegen_geraet.html" type="text/ng-template">
+    <ion-view>
+      <ion-header-bar class="bar bar-borrowitgrau">
+        <div class="button-bar">
+          <a class="button button-block button-borrowitgrau" href="#/kontakt_hinzufuegen_name"><img src="img/icons/white_add_user.png" width="30"></a>
+          <a class="button button-block button-borrowitblau"><img src="img/icons/white_mobile_phone.png" width="30"></a>
+        </div>
+      </ion-header-bar>
+      <ion-content class="borrowit-blau has-footer has-header">
+        <div class="list list-inset">
+          <label class="item item-input">
+            <i class="icon ion-search placeholder-icon"></i>
+            <input type="search" placeholder="Search" ng-model="searchphone">
+          </label>
+          <div ng-repeat="person in phoneContacts | searchContact:searchphone track by $index">
+            <button class="item item-avatar button-block" ng-show="!alreadyContact(person) && person.username != undefined" ng-click="viewContact(person.username)">
+              <!--<img class="profile-pic left"
+                   ng-src="{{person.picture}}" onerror="onProfilePicError(this)" />-->
+              <span class="bold">{{person.username}}</span></br>
+              <span>{{person.phoneNumbers[0].value}}</span>
+            </button>
+          </div>
+        </div>
+      </ion-content>
+      <ion-footer-bar class="bar bar-borrowitgrau">
+        <div class="button-bar">
+          <a class="button button-block button-borrowitgrau" href="#/"><img src="img/icons/white_home.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/chat"><img src="img/icons/white_communication.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/anfrage_erstellen"><img src="img/logo.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/kontakte"><img src="img/icons/white_agenda.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/profil_ansicht"><img src="img/icons/white_profile.png" width="30"></a>
+        </div>
+      </ion-footer-bar>
+    </ion-view>
+  </script>
+
+  <script id="profil_ansicht.html" type="text/ng-template">
+    <ion-view>
+      <ion-header-bar class="bar bar-borrowitgrau">
+        <div class="button-bar">
+          <a class="button button-block button-borrowitblau"><img src="img/icons/white_circle.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/profil_einstellungen"><img src="img/icons/white_settings.png" width="30"></a>
+        </div>
+      </ion-header-bar>
+      <ion-content class="borrowit-blau has-footer has-header">
+        <div class="list">
+          <div class="item text-center">
+            <img class="bigprofile-pic" ng-click="addMedia()" ng-src="{{profile.picture}}">
+          </div>
+          <div class="item text-center">
+            <i class="icon ion-star"></i>
+            <i class="icon ion-star"></i>
+            <i class="icon ion-star"></i>
+            <i class="icon ion-star"></i>
+            <i class="ion-ios-star-half"></i>
+          </div>
+          <div class="item item-borrowitblau">
+            Aktivitäten:
+          </div>
+          <div class="item" ng-repeat="request in profile.requests track by $index">
+            <a class="item item-icon-right" ng-show="request.username != profile.username" ng-click="viewRequestById(request.requestid)" href="#/anfrage_einsehen">
+              {{request.title}}
+              <i class="ion-chevron-right"></i>
+              <i class="ion-chevron-right"></i>
+            </a>
+            <a class="item item-icon-left" ng-show="request.username == profile.username" ng-click="viewRequestById(request.requestid)" href="#/anfrage_einsehen">
+              <i class="ion-chevron-left"></i>
+              <i class="ion-chevron-left"></i>
+              {{request.title}}
+            </a>
+          </div>
+        </div>
+      </ion-content>
+      <ion-footer-bar class="bar bar-borrowitgrau">
+        <div class="button-bar">
+          <a class="button button-block button-borrowitgrau" href="#/"><img src="img/icons/white_home.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/chat"><img src="img/icons/white_communication.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/anfrage_erstellen"><img src="img/logo.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/kontakte"><img src="img/icons/white_agenda.png" width="30"></a>
+          <a class="button button-block button-borrowitblau"><img src="img/icons/white_profile.png" width="30"></a>
+        </div>
+      </ion-footer-bar>
+    </ion-view>
+  </script>
+
+  <script id="profil_einstellungen.html" type="text/ng-template">
+    <ion-view>
+      <ion-header-bar class="bar bar-borrowitgrau">
+        <div class="button-bar">
+          <a class="button button-block button-borrowitgrau" href="#/profil_ansicht"><img src="img/icons/white_circle.png" width="30"></a>
+          <a class="button button-block button-borrowitblau"><img src="img/icons/white_settings.png" width="30"></a>
+        </div>
+      </ion-header-bar>
+      <ion-content class="borrowit-blau has-header">
+        <div class="list">
+          <div class="item item-divider">
+            Konto:
+          </div>
+          <button class="button button-block button-light icon icon-right ion-chevron-right" ng-click="changeProfile()">
+            Profil bearbeiten
+          </button>
+          <button class="button button-block button-light icon icon-right ion-chevron-right" ng-click="changePassword()">
+            Passwort ändern
+          </button>
+          <div class="item item-divider">
+            Adresse:
+          </div>
+          <ion-radio ng-repeat="item in profile.addresses track by $index"
+                     ng-value="item.aid"
+                     ng-model="profile.currentAddress"
+                     ng-change="currentAddressChanged()">
+            {{ item.street }} {{ item.streetnumber }}
+          </ion-radio>
+          <a class="button button-block button-borrowitgrau icon icon-right ion-chevron-right" href="#/adressen">Adressen bearbeiten</a>
+          <div class="item item-divider">
+            Privatsphäre:
+          </div>
+          <ion-toggle ng-model="values.push"
+                      ng-change="pushToggleChange()">
+            Benachrichtigungen bei Anfragen
+          </ion-toggle>
+          <ion-toggle ng-model="values.location"
+                      ng-change="locationToggleChange()">
+            Standort
+          </ion-toggle>
+          <button class="button button-full item-icon-right">
+            Datenschutz
+            <i class="ion-chevron-right"></i>
+          </button>
+          <button class="button button-full item-icon-right">
+            Nutzer einladen
+            <i class="ion-chevron-right"></i>
+          </button>
+          <a class="button button-full item button-light icon icon-right ion-chevron-right" href="#/login" ng-click="logout()">
+            Abmelden
+          </a>
+          <button class="button button-full item item-icon-right text-left button-assertive" ng-click="deleteProfile()">
+            Konto löschen
+            <i class="ion-chevron-right"></i>
+          </button>
+        </div>
+      </ion-content>
+      <ion-footer-bar class="bar bar-borrowitgrau">
+        <div class="button-bar">
+          <a class="button button-block button-borrowitgrau" href="#/"><img src="img/icons/white_home.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/chat"><img src="img/icons/white_communication.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/anfrage_erstellen"><img src="img/logo.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/kontakte"><img src="img/icons/white_agenda.png" width="30"></a>
+          <a class="button button-block button-borrowitblau"><img src="img/icons/white_profile.png" width="30"></a>
+        </div>
+      </ion-footer-bar>
+    </ion-view>
+  </script>
+
+  <script id="adressen.html" type="text/ng-template">
+    <ion-view>
+      <ion-nav-bar class="bar-borrowitgrau">
+        <ion-nav-back-button class="button-clear">
+          <i class="ion-chevron-left"></i> Back
+        </ion-nav-back-button>
+      </ion-nav-bar>
+      <ion-content class="has-footer has-subfooter">
+        <ion-radio ng-repeat="item in profile.addresses track by $index"
+                   ng-value="item.aid"
+                   ng-model="profile.currentAddress"
+                   ng-change="currentAddressChanged()">
+          {{ item.street }} {{ item.streetnumber }}
+        </ion-radio>
+        <!--<div class="item item-divider">
+          Clientside, Selected Value: {{ data.address }}
+        </div>-->
+      </ion-content>
+      <ion-footer-bar class="bar-subfooter bar-borrowitblau">
+        <div class="button-bar">
+          <button class="button button-block button-borrowitblau icon-left ion-plus" data-ng-click="addAddress()">Adresse hinzufügen</button>
+          <!--<button class="button button-block button-borrowitgrau icon-left ion-cloud" data-ng-click="changeAddress(data.address)">Ausgewählte Adresse bearbeiten</button>-->
+          <button class="button button-block button-borrowitblau icon-left ion-minus" data-ng-click="removeAddress(profile.currentAddress)">Adresse löschen</button>
+        </div>
+      </ion-footer-bar>
+      <ion-footer-bar class="bar bar-footer bar-borrowitgrau">
+        <div class="button-bar">
+          <a class="button button-block button-borrowitgrau" href="#/"><img src="img/icons/white_home.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/chat"><img src="img/icons/white_communication.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/anfrage_erstellen"><img src="img/logo.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/kontakte"><img src="img/icons/white_agenda.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/profil_ansicht"><img src="img/icons/white_profile.png" width="30"></a>
+        </div>
+      </ion-footer-bar>
+    </ion-view>
+  </script>
+
+  <script id="anfrage_einsehen.html" type="text/ng-template">
+    <ion-view view-title="Anfrage einsehen">
+      <ion-nav-bar class="bar-borrowitgrau">
+        <ion-nav-back-button class="button-clear">
+          <i class="ion-chevron-left"></i> Back
+        </ion-nav-back-button>
+      </ion-nav-bar>
+      <ion-content class="borrowit-blau has-footer">
+        <div class="list text-center">
+          <ion-label class="item item-light text-center">
+            <strong>{{values.currentRequest.profile.username}}</strong></br>
+            {{values.currentRequest.title}}
+          </ion-label>
+          <ion-label>
+            {{values.currentRequest.description}}
+          </ion-label>
+          <div class="row">
+            <div class="col col-50 text-right">
+              Entfernung
+            </div>
+            <div class="col col-50 text-left">
+              {{values.currentRequest.place.city}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col col-50 text-right">
+              Ab wann?
+            </div>
+            <div class="col col-50 text-left">
+              {{values.currentRequest.startdate}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col col-50 text-right">
+              Bis wann?
+            </div>
+            <div class="col col-50 text-left">
+              {{values.currentRequest.enddate}}
+            </div>
+          </div>
+          <div class="button-bar" ng-hide="values.currentRequest.profile.username == profile.username">
+            <a class="button button-block button-light" ng-click="viewChat(values.currentRequest)" href="#/anfragenchat">
+              Anschreiben
+            </a>
+            <button class="button button-block button-light" ng-hide="values.currentRequest.offered" ng-click="borrowit(values.currentRequest.requestid)">
+              BorrowIt!
+            </button>
+          </div>
+          <a class="button button-block button-light" ng-show="values.currentRequest.profile.username == profile.username" ng-click="actualizeRequest(values.currentRequest.requestid)" href="#/anfrage_erstellen">
+            Anfrage aktualisieren
+          </a>
+        </div>
+      </ion-content>
+      <ion-footer-bar class="bar bar-borrowitgrau">
+        <div class="button-bar">
+          <a class="button button-block button-borrowitgrau" href="#/"><img src="img/icons/white_home.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/chat"><img src="img/icons/white_communication.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/anfrage_erstellen"><img src="img/logo.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/kontakte"><img src="img/icons/white_agenda.png" width="30"></a>
+          <a class="button button-block button-borrowitgrau" href="#/profil_ansicht"><img src="img/icons/white_profile.png" width="30"></a>
+        </div>
+      </ion-footer-bar>
+    </ion-view>
+  </script>
+
+  <script id="UserMessages.html" type="text/ng-template">
+
+  </script>
+</body>
+</html>
