@@ -1,0 +1,63 @@
+{
+  "_args": [
+    [
+      "ionic-datetime-picker",
+      "C:\\BorrowIt\\Code\\borrowit"
+    ]
+  ],
+  "_from": "ionic-datetime-picker@latest",
+  "_id": "ionic-datetime-picker@1.1.1",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/ionic-datetime-picker",
+  "_nodeVersion": "4.2.2",
+  "_npmOperationalInternal": {
+    "host": "packages-12-west.internal.npmjs.com",
+    "tmp": "tmp/ionic-datetime-picker-1.1.1.tgz_1456886949511_0.8517178057227284"
+  },
+  "_npmUser": {
+    "email": "warren@warrenwilson.com.au",
+    "name": "ishryal"
+  },
+  "_npmVersion": "2.14.7",
+  "_phantomChildren": {},
+  "_requested": {
+    "name": "ionic-datetime-picker",
+    "raw": "ionic-datetime-picker",
+    "rawSpec": "",
+    "scope": null,
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/ionic-datetime-picker/-/ionic-datetime-picker-1.1.1.tgz",
+  "_shasum": "77d83ff0ec3bea534d54682739513abb8b6d5791",
+  "_shrinkwrap": null,
+  "_spec": "ionic-datetime-picker",
+  "_where": "C:\\BorrowIt\\Code\\borrowit",
+  "dependencies": {},
+  "description": "A date and time picker for ionic framework, forked from datepicker-for-ionic",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "77d83ff0ec3bea534d54682739513abb8b6d5791",
+    "tarball": "https://registry.npmjs.org/ionic-datetime-picker/-/ionic-datetime-picker-1.1.1.tgz"
+  },
+  "license": "MIT",
+  "main": "",
+  "maintainers": [
+    {
+      "name": "ishryal",
+      "email": "warren@warrenwilson.com.au"
+    }
+  ],
+  "name": "ionic-datetime-picker",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "scripts": {
+    "test": "karma start --single-run"
+  },
+  "version": "1.1.1"
+}
