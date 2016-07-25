@@ -649,7 +649,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
     $scope.startRequest = function(request){
       var newReqId = CommunicationService.startRequest(request.title, request.description, request.location, request.startDate, request.endDate, request.category);
       newReqId.then(function (result) {
-        request.requestid = result.rid;
+        request.requestid = result.requestid;
         ProfileService.profile.requests.push({
           requestid: request.requestid,
           title: request.title,
@@ -921,12 +921,12 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
       if(chat)
         $scope.viewChat(chat.roomid, true);
       else
-        $scope.viewChat(request.rid, false);
+        $scope.viewChat(request.requestid, false);
     };
 
     $scope.chatExists = function(request) {
       for(var i = 0; i < $scope.chats.length; i++)
-        if($scope.chats[i].request.requestid == request.rid)
+        if($scope.chats[i].request.requestid == request.requestid)
           return $scope.chats[i];
       return false;
     }
@@ -1653,7 +1653,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
 
     var openChat = function(roomid, exists) {
       if(exists) {
-        return $http({method: "GET", url: URLBORROWIT + "chat/", data:{roomid:roomid}})
+        return $http({method: "GET", url: URLBORROWIT + "chat/room", data:{roomid:roomid}})
           .then(function (result) {
             var chats = result.data[0];
             return chats;
@@ -1665,7 +1665,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
           });
       }
       else {
-        return $http({method: "GET", url: URLBORROWIT + "chat/", data: {rid:roomid}})
+        return $http({method: "GET", url: URLBORROWIT + "chat/room", data: {requestid:roomid}})
           .then(function (result) {
             var chats = result.data[0];
             return chats;

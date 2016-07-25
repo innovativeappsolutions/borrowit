@@ -250,10 +250,10 @@
           </ion-item>
           <!--Der Code "request in requests | orderBy:values.chosenSortedBy:$scope.values.chosenSortedBy != 'profile.rating' | filterRequests:values.chosenCategory" holt alle requests sortiert nach Auswahl, wobei je nach Auswahl verkehrt herum sortiert wird-->
           <div class="message-wrapper" ng-repeat="request in requests | orderBy:values.chosenSortedBy:$scope.values.chosenSortedBy != 'profile.rating' | filterRequests:values.chosenCategory track by $index">
-            <div class="row" ng-show="!request.offered && request.profile.username != profile.username">
-                <a class="item item-borrowitblau" ng-click="loadCurrentRequest(request.rid)" style="width: 100%;" href="#/anfrage_einsehen">
+            <div class="row" ng-show="!request.offered && request.profile[0].username != profile.username">
+                <a class="item item-borrowitblau" ng-click="loadCurrentRequest(request.requestid)" style="width: 100%;" href="#/anfrage_einsehen">
                   <span>
-                    <img class="profile-pic-top" ng-src="{{request.profile.picture}}" onerror="onProfilePicError(this)"/>
+                    <img class="profile-pic-top" ng-src="{{request.profile[0].picture}}" onerror="onProfilePicError(this)"/>
                   </span>
                   <span>
                     <div ng-switch="request.category">
@@ -285,7 +285,7 @@
                   </span>
                   <div class="chat-bubble left">
                     <div class="message-detail">
-                      <span class="bold">{{request.profile.username}}</span>:
+                      <span class="bold">{{request.profile[0].username}}</span>:
                       <span>{{request.title}}</span>
                     </div>
                   </div>
@@ -609,12 +609,12 @@
             Aktivitäten:
           </div>
           <div class="item" ng-repeat="request in values.currentPerson.requests track by $index">
-            <a class="item item-icon-right" ng-show="request.username != values.currentPerson.username" ng-click="loadCurrentRequest(request.rid)" href="#/anfrage_einsehen">
+            <a class="item item-icon-right" ng-show="request.username != values.currentPerson.username" ng-click="loadCurrentRequest(request.requestid)" href="#/anfrage_einsehen">
               {{request.title}}
               <i class="ion-chevron-right"></i>
               <i class="ion-chevron-right"></i>
             </a>
-            <a class="item item-icon-left" ng-show="request.username == values.currentPerson.username" ng-click="loadCurrentRequest(request.rid)" href="#/anfrage_einsehen">
+            <a class="item item-icon-left" ng-show="request.username == values.currentPerson.username" ng-click="loadCurrentRequest(request.requestid)" href="#/anfrage_einsehen">
               <i class="ion-chevron-left"></i>
               <i class="ion-chevron-left"></i>
               {{request.title}}
@@ -729,12 +729,12 @@
             Aktivitäten:
           </div>
           <div class="item" ng-repeat="request in profile.requests track by $index">
-            <a class="item item-icon-right" ng-show="request.username != profile.username" ng-click="loadCurrentRequest(request.rid)" href="#/anfrage_einsehen">
+            <a class="item item-icon-right" ng-show="request.username != profile.username" ng-click="loadCurrentRequest(request.requestid)" href="#/anfrage_einsehen">
               {{request.title}}
               <i class="ion-chevron-right"></i>
               <i class="ion-chevron-right"></i>
             </a>
-            <a class="item item-icon-left" ng-show="request.username == profile.username" ng-click="loadCurrentRequest(request.rid)" href="#/anfrage_einsehen">
+            <a class="item item-icon-left" ng-show="request.username == profile.username" ng-click="loadCurrentRequest(request.requestid)" href="#/anfrage_einsehen">
               <i class="ion-chevron-left"></i>
               <i class="ion-chevron-left"></i>
               {{request.title}}
@@ -870,7 +870,7 @@
       <ion-content class="borrowit-blau has-footer">
         <div class="list text-center">
           <ion-label class="item item-light text-center">
-            <strong>{{values.currentRequest.profile.username}}</strong></br>
+            <strong>{{values.currentRequest.username}}</strong></br>
             {{values.currentRequest.title}}
           </ion-label>
           <ion-label>
