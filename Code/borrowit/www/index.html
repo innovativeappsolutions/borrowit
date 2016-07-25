@@ -307,7 +307,7 @@
   </script>
 
   <script id="chat.html" type="text/ng-template">
-    <ion-view>
+    <ion-view ng-init="loadChats()">
       <ion-content class="borrowit-blau has-footer">
         <div class="list">
           <label class="item item-input">
@@ -317,8 +317,8 @@
           <div ng-repeat="chat in chats | searchContent:search track by $index">
             <a class="item item-avatar" ng-click="viewChat(chat.roomid, true)" href="#/anfragenchat">
               <img class="profile-pic left"
-                   ng-src="{{chat.profile.picture}}" onerror="onProfilePicError(this)" />
-                <span class="bold">{{chat.profile.username}}</span>:
+                   ng-src="{{chat.profile[0].picture}}" onerror="onProfilePicError(this)" />
+                <span class="bold">{{chat.profile[0].username}}</span>:
                 <span>{{chat.title}}</span>
             </a>
           </div>
@@ -338,8 +338,7 @@
 
   <script id="anfragenchat.html" type="text/ng-template">
     <ion-view id="userMessagesView"
-              cache-view="false"
-              view-title="{{values.currentChat.profile.username}}: &raquo;{{values.currentChat.request.title}}&laquo;">
+              cache-view="false">
       <div class="loader-center" ng-show="!doneLoading">
         <div class="loader">
           <i class="icon ion-loading-c"></i>
@@ -392,7 +391,7 @@
           <label class="item-input-wrapper">
             <input type="text" ng-model="textboxes.message" value="" placeholder="Sende {{values.currentChat.profil.username}} eine Nachricht..." required minlength="1" maxlength="1500" msd-elastic/>
           </label>
-          <button class="button button-clear icon ion-android-send" type="submit" ng-disabled="!input.message || input.message === ''"></button>
+          <button class="button button-clear icon ion-android-send" type="submit" ng-disabled="!textboxes.message || textboxes.message === ''"></button>
         </ion-footer-bar>
         <!--<ion-footer-bar class="bar-stable item-input-inset message-footer" keyboard-attach>
           <label class="item-input-wrapper">
@@ -901,10 +900,10 @@
             </div>
           </div>
           <div class="button-bar" ng-hide="values.currentRequest.profile.username == profile.username">
-            <a class="button button-block button-light" ng-click="viewChatByRequest(values.currentRequest)" href="#/anfragenchat">
+            <a class="button button-block button-light" ng-hide="values.currentRequest.profile[0].username == profile.username" ng-click="viewChatByRequest(values.currentRequest)" href="#/anfragenchat">
               Anschreiben
             </a>
-            <button class="button button-block button-light" ng-hide="values.currentRequest.offered" ng-click="borrowit(values.currentRequest)">
+            <button class="button button-block button-light" ng-hide="values.currentRequest.offered || values.currentRequest.profile[0].username == profile.username" ng-click="borrowit(values.currentRequest)">
               BorrowIt!
             </button>
           </div>

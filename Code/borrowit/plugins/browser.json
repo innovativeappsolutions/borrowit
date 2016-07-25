@@ -39,6 +39,9 @@
         },
         "cordova-plugin-geolocation": {
             "PACKAGE_NAME": "com.ionicframework.borrowit795688"
+        },
+        "onesignal-cordova-plugin": {
+            "PACKAGE_NAME": "com.ionicframework.borrowit795688"
         }
     },
     "dependent_plugins": {

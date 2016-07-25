@@ -59,6 +59,10 @@
                         {
                             "xml": "<feature name=\"Geolocation\"><param name=\"ios-package\" value=\"CDVLocation\" /></feature>",
                             "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"OneSignalPush\"><param name=\"ios-package\" value=\"OneSignalPush\" /></feature>",
+                            "count": 1
                         }
                     ]
                 }
@@ -80,6 +84,12 @@
                     "NSCalendarsUsageDescription": [
                         {
                             "xml": "<string />",
+                            "count": 1
+                        }
+                    ],
+                    "UIBackgroundModes": [
+                        {
+                            "xml": "<array><string>remote-notification</string></array>",
                             "count": 1
                         }
                     ]
@@ -122,6 +132,9 @@
             "PACKAGE_NAME": "com.ionicframework.borrowit795688"
         },
         "cordova-plugin-geolocation": {
+            "PACKAGE_NAME": "com.ionicframework.borrowit795688"
+        },
+        "onesignal-cordova-plugin": {
             "PACKAGE_NAME": "com.ionicframework.borrowit795688"
         }
     },
@@ -518,6 +531,14 @@
             "clobbers": [
                 "navigator.geolocation"
             ]
+        },
+        {
+            "file": "plugins/onesignal-cordova-plugin/www/OneSignal.js",
+            "id": "onesignal-cordova-plugin.OneSignal",
+            "pluginId": "onesignal-cordova-plugin",
+            "clobbers": [
+                "OneSignal"
+            ]
         }
     ],
     "plugin_metadata": {
@@ -532,6 +553,7 @@
         "ionic-plugin-keyboard": "2.2.0",
         "cordova-plugin-contacts": "2.1.0",
         "cordova-plugin-calendar": "4.5.1",
-        "cordova-plugin-geolocation": "2.2.0"
+        "cordova-plugin-geolocation": "2.2.0",
+        "onesignal-cordova-plugin": "1.13.0"
     }
 }

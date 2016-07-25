@@ -57,7 +57,7 @@
   <script src="lib/ngCordova/dist/ng-cordova.js"></script>
   <script src="cordova.js"></script>
   <script src="js/app.js"></script>
-  <script src="lib/satellizer/satellizer.js"></script>
+  <script src="lib/satellizer/dist/satellizer.js"></script>
   <script src="lib/angular-cookies/angular-cookies.js"></script>
   <script src="lib/crypto-js/crypto-js.js"></script>
   <script src="lib/crypto-js/hmac-sha512.js"></script>
@@ -90,7 +90,7 @@
           <button class="button button-block button-borrowitgrau" ng-click="checkLogin()">
             Anmelden
           </button>
-          <button class="message-wrapper button button-block fb-bg" href="#/">
+          <button class="message-wrapper button button-block fb-bg" ng-click="facebookLogin()">
             <span><img class="facebook-pic left" src="/img/icons/facebook.png" width="80px"/></span>
             <span class="fb-bg">mit facebook anmelden</span>
           </button>
@@ -167,7 +167,7 @@
             Clientside, Selected Value: {{ profile.currentAddress }}
           </div>-->
           <ion-radio ng-repeat="item in profile.addresses track by $index"
-                     ng-value="item.aid"
+                     ng-value="item.addressid"
                      ng-model="profile.currentAddress"
                      ng-change="currentAddressChanged()">
             {{ item.street }} {{ item.streetnumber }}
@@ -250,10 +250,10 @@
           </ion-item>
           <!--Der Code "request in requests | orderBy:values.chosenSortedBy:$scope.values.chosenSortedBy != 'profile.rating' | filterRequests:values.chosenCategory" holt alle requests sortiert nach Auswahl, wobei je nach Auswahl verkehrt herum sortiert wird-->
           <div class="message-wrapper" ng-repeat="request in requests | orderBy:values.chosenSortedBy:$scope.values.chosenSortedBy != 'profile.rating' | filterRequests:values.chosenCategory track by $index">
-            <div class="row" ng-show="!request.offered && request.profile.username != profile.username">
-                <a class="item item-borrowitblau" ng-click="loadCurrentRequest(request.rid)" style="width: 100%;" href="#/anfrage_einsehen">
+            <div class="row" ng-show="!request.offered && request.profile[0].username != profile.username">
+                <a class="item item-borrowitblau" ng-click="loadCurrentRequest(request.requestid)" style="width: 100%;" href="#/anfrage_einsehen">
                   <span>
-                    <img class="profile-pic-top" ng-src="{{request.profile.picture}}" onerror="onProfilePicError(this)"/>
+                    <img class="profile-pic-top" ng-src="{{request.profile[0].picture}}" onerror="onProfilePicError(this)"/>
                   </span>
                   <span>
                     <div ng-switch="request.category">
@@ -285,7 +285,7 @@
                   </span>
                   <div class="chat-bubble left">
                     <div class="message-detail">
-                      <span class="bold">{{request.profile.username}}</span>:
+                      <span class="bold">{{request.profile[0].username}}</span>:
                       <span>{{request.title}}</span>
                     </div>
                   </div>
@@ -315,10 +315,10 @@
             <input type="search" placeholder="Search" ng-model="search">
           </label>
           <div ng-repeat="chat in chats | searchContent:search track by $index">
-            <a class="item item-avatar" ng-click="viewChat(chat.requestid)" href="#/anfragenchat">
+            <a class="item item-avatar" ng-click="viewChat(chat.roomid, true)" href="#/anfragenchat">
               <img class="profile-pic left"
-                   ng-src="{{chat.profile.picture}}" onerror="onProfilePicError(this)" />
-                <span class="bold">{{chat.profile.username}}</span>:
+                   ng-src="{{chat.profile[0].picture}}" onerror="onProfilePicError(this)" />
+                <span class="bold">{{chat.profile[0].username}}</span>:
                 <span>{{chat.title}}</span>
             </a>
           </div>
@@ -338,43 +338,43 @@
 
   <script id="anfragenchat.html" type="text/ng-template">
     <ion-view id="userMessagesView"
-              cache-view="false"
-              view-title="{{toUser.username}}: &raquo;{{requests[values.currentRequest].title}}&laquo;">
+              cache-view="false">
       <div class="loader-center" ng-show="!doneLoading">
         <div class="loader">
           <i class="icon ion-loading-c"></i>
         </div>
       </div>
-      <ion-spinner icon="bubbles" ng-show="!doneLoading">
-
-      </ion-spinner>
       <ion-header-bar class="bar-borrowitgrau text-center">
-        <div ng-show="values.requestOffered && !values.requestAccepted && requests[values.currentRequest].username == profile.username">
-          <h1 class="title">{{ toUser.username }} möchte dir bezüglich deiner Anfrage helfen!</h1>
+        <div ng-show="values.currentChat.request.offered && !values.currentChat.request.accepted && values.currentChat.request.borrower != values.currentChat.profile.uid">
+          <h1 class="title">{{ values.currentChat.profile.username }} möchte dir bezüglich deiner Anfrage helfen!</h1>
           <div class="button-bar col-50">
-            <a class="button button-block button-balanced icon ion-checkmark" onclick=""></a>
+            <a class="button button-block button-balanced icon ion-checkmark" onclick="acceptOffer(values.currentChat.request)"></a>
             <a class="button button-block button-assertive icon ion-close" ng-click=""></a>
           </div>
         </div>
-        <div class="text-center" ng-hide="values.requestOffered && !values.requestAccepted && requests[values.currentRequest].username == profile.username">
-          <h1 class="title text-center">{{toUser.username}}: &raquo;{{requests[values.currentRequest].title}}&laquo;</h1>
+        <div ng-show="!values.currentChat.request.offered && values.currentChat.request.borrower == values.currentChat.profile.uid">
+          <h1 class="title">Möchtest du {{ values.currentChat.profile.username }} bezüglich seiner Anfrage helfen?</h1>
+            <a class="button button-block button-balanced" onclick="borrowit(values.currentChat.request)">BorrowIt!</a>
+        </div>
+        <div class="text-center" ng-show="values.currentChat.request.accepted || (!values.currentChat.request.offered && values.currentChat.request.borrower != values.currentChat.profile.uid) || (values.currentChat.request.offered && values.currentChat.request.borrower == values.currentChat.profile.uid)">
+          <h1 class="title text-center">{{values.currentChat.profile.username}}: &raquo;{{values.currentChat.request.title}}&laquo;</h1>
         </div>
       </ion-header-bar>
       <ion-content has-bouncing="true" class="has-header has-footer has-subfooter" delegate-handle="userMessageScroll">
-        <div ng-repeat="message in chats[values.currentChat].messages track by $index" class="message-wrapper" on-hold="onMessageHold($event, $index, message)">
+        <div ng-repeat="message in values.currentChat.messages track by $index" class="message-wrapper" on-hold="onMessageHold($event, $index, message)">
           <div ng-show="profile.username !== message.username">
-            <img ng-click="viewContact(message.username)" class="profile-pic left"
-                 ng-src="{{toUser.picture}}" onerror="onProfilePicError(this)" />
+            <img ng-click="viewContact(values.currentChat.profile.uid)" class="profile-pic left"
+                 ng-src="{{values.currentChat.profile.picture}}" onerror="onProfilePicError(this)" />
             <div class="chat-bubble left">
               <div class="message" ng-bind-html="message.text | nl2br" autolinker></div>
               <div class="message-detail">
-                <span class="bold">{{toUser.username}}</span>,
+                <span class="bold">{{values.currentChat.profile.username}}</span>,
                 <span am-time-ago="message.date"></span>
               </div>
             </div>
           </div>
           <div ng-show="profile.username === message.username">
-            <img ng-click="viewProfile(message)" class="profile-pic right" ng-src="{{profile.picture}}" onerror="onProfilePicError(this)" />
+            <img ng-click="viewProfile()" class="profile-pic right" ng-src="{{profile.picture}}" onerror="onProfilePicError(this)" />
             <div class="chat-bubble right">
               <div class="message" ng-bind-html="message.text | nl2br" autolinker></div>
               <div class="message-detail">
@@ -389,9 +389,9 @@
       <form name="sendMessageForm" ng-submit="sendMessage(sendMessageForm)" novalidate>
         <ion-footer-bar keyboard-attach class="bar-subfooter bar-borrowitblau item-input-inset">
           <label class="item-input-wrapper">
-            <input type="text" ng-model="input.message" value="" placeholder="Sende {{toUser.username}} eine Nachricht..." required minlength="1" maxlength="1500" msd-elastic/>
+            <input type="text" ng-model="textboxes.message" value="" placeholder="Sende {{values.currentChat.profil.username}} eine Nachricht..." required minlength="1" maxlength="1500" msd-elastic/>
           </label>
-          <button class="button button-clear icon ion-android-send" type="submit" ng-disabled="!input.message || input.message === ''"></button>
+          <button class="button button-clear icon ion-android-send" type="submit" ng-disabled="!textboxes.message || textboxes.message === ''"></button>
         </ion-footer-bar>
         <!--<ion-footer-bar class="bar-stable item-input-inset message-footer" keyboard-attach>
           <label class="item-input-wrapper">
@@ -525,7 +525,7 @@
               <option value="other">Sonstiges</option>
             </select>
           </label>
-          <div class="item" ng-show="values.location">
+          <div class="item" ng-show="profile.location">
             <ion-toggle ng-model="values.useLocationForRequest">
               Standort für die Anfrage nutzen
             </ion-toggle>
@@ -561,7 +561,7 @@
               <input type="search" placeholder="Search" ng-model="search">
             </label>
             <div ng-repeat="contact in profile.contacts | searchContact:search track by $index">
-              <button class="item item-avatar button-block" ng-click="viewContact(contact.username)">
+              <button class="item item-avatar button-block" ng-click="viewContact(contact.uid)">
                 <img class="profile-pic left"
                      ng-src="{{contact.picture}}" onerror="onProfilePicError(this)" />
                 <span class="bold">{{contact.username}}</span>
@@ -583,14 +583,16 @@
   </script>
 
   <script id="kontakt_profil.html" type="text/ng-template">
-    <ion-view>
-      <ion-header-bar class="bar-borrowitgrau text-center">
-        <h1 class="title text-center">{{persons[values.chosenPerson].username}}</h1>
-      </ion-header-bar>
+    <ion-view view-title="{{values.currentPerson.username}}">
+      <ion-nav-bar class="bar-borrowitgrau">
+        <ion-nav-back-button class="button-clear">
+          <i class="ion-chevron-left"></i> Back
+        </ion-nav-back-button>
+      </ion-nav-bar>
       <ion-content class="borrowit-blau has-footer">
         <div class="list">
           <div class="item text-center">
-            <img src="{{persons[values.chosenPerson].picture}}" width="80" height="80">
+            <img src="img/icons/black_avatar.png" width="80" height="80">
           </div>
           <div class="item text-center">
             <i class="icon ion-star"></i>
@@ -599,19 +601,19 @@
             <i class="icon ion-star"></i>
             <i class="ion-ios-star-half"></i>
           </div>
-          <button class="button button button-block button-borrowitgrau ion-plus" ng-hide="alreadyContact(persons[values.chosenPerson])" ng-click="addContact(persons[values.chosenPerson])">
+          <button class="button button button-block button-borrowitgrau ion-plus" ng-hide="alreadyContact(values.currentPerson)" ng-click="addContact(values.currentPerson)">
             Als Kontakt hinzufügen
           </button>
           <div class="item item-borrowitblau">
             Aktivitäten:
           </div>
-          <div class="item" ng-repeat="request in persons[values.chosenPerson].requests track by $index">
-            <a class="item item-icon-right" ng-show="request.username != persons[values.chosenPerson].username" ng-click="loadCurrentRequest(request.rid)" href="#/anfrage_einsehen">
+          <div class="item" ng-repeat="request in values.currentPerson.requests track by $index">
+            <a class="item item-icon-right" ng-show="request.username != values.currentPerson.username" ng-click="loadCurrentRequest(request.requestid)" href="#/anfrage_einsehen">
               {{request.title}}
               <i class="ion-chevron-right"></i>
               <i class="ion-chevron-right"></i>
             </a>
-            <a class="item item-icon-left" ng-show="request.username == persons[values.chosenPerson].username" ng-click="loadCurrentRequest(request.rid)" href="#/anfrage_einsehen">
+            <a class="item item-icon-left" ng-show="request.username == values.currentPerson.username" ng-click="loadCurrentRequest(request.requestid)" href="#/anfrage_einsehen">
               <i class="ion-chevron-left"></i>
               <i class="ion-chevron-left"></i>
               {{request.title}}
@@ -646,7 +648,7 @@
             <input type="search" placeholder="Search" ng-model="search">
           </label>
           <div ng-repeat="person in persons | searchContact:search track by $index">
-            <button class="item item-avatar button-block" ng-show="!alreadyContact(person)" ng-click="viewContact(person.username)">
+            <button class="item item-avatar button-block" ng-show="!alreadyContact(person)" ng-click="viewContact(person.uid)">
               <img class="profile-pic left"
                    ng-src="{{person.picture}}" onerror="onProfilePicError(this)" />
               <span class="bold">{{person.username}}</span>
@@ -681,7 +683,7 @@
             <input type="search" placeholder="Search" ng-model="searchphone">
           </label>
           <div ng-repeat="person in phoneContacts | searchContact:searchphone track by $index">
-            <button class="item item-avatar button-block" ng-show="!alreadyContact(person) && person.username != undefined" ng-click="viewContact(person.username)">
+            <button class="item item-avatar button-block" ng-show="!alreadyContact(person) && person.username != undefined" ng-click="viewContact(person.uid)">
               <!--<img class="profile-pic left"
                    ng-src="{{person.picture}}" onerror="onProfilePicError(this)" />-->
               <span class="bold">{{person.username}}</span></br>
@@ -726,12 +728,12 @@
             Aktivitäten:
           </div>
           <div class="item" ng-repeat="request in profile.requests track by $index">
-            <a class="item item-icon-right" ng-show="request.username != profile.username" ng-click="loadCurrentRequest(request.rid)" href="#/anfrage_einsehen">
+            <a class="item item-icon-right" ng-show="request.username != profile.username" ng-click="loadCurrentRequest(request.requestid)" href="#/anfrage_einsehen">
               {{request.title}}
               <i class="ion-chevron-right"></i>
               <i class="ion-chevron-right"></i>
             </a>
-            <a class="item item-icon-left" ng-show="request.username == profile.username" ng-click="loadCurrentRequest(request.rid)" href="#/anfrage_einsehen">
+            <a class="item item-icon-left" ng-show="request.username == profile.username" ng-click="loadCurrentRequest(request.requestid)" href="#/anfrage_einsehen">
               <i class="ion-chevron-left"></i>
               <i class="ion-chevron-left"></i>
               {{request.title}}
@@ -774,7 +776,7 @@
             Adresse:
           </div>
           <ion-radio ng-repeat="item in profile.addresses track by $index"
-                     ng-value="item.aid"
+                     ng-value="item.addressid"
                      ng-model="profile.currentAddress"
                      ng-change="currentAddressChanged()">
             {{ item.street }} {{ item.streetnumber }}
@@ -783,11 +785,11 @@
           <div class="item item-divider">
             Privatsphäre:
           </div>
-          <ion-toggle ng-model="values.push"
+          <ion-toggle ng-model="profile.push"
                       ng-change="pushToggleChange()">
             Benachrichtigungen bei Anfragen
           </ion-toggle>
-          <ion-toggle ng-model="values.location"
+          <ion-toggle ng-model="profile.location"
                       ng-change="locationToggleChange()">
             Standort
           </ion-toggle>
@@ -795,17 +797,17 @@
             Datenschutz
             <i class="ion-chevron-right"></i>
           </button>
-          <button class="button button-full item-icon-right">
+          <!--<button class="button button-full item-icon-right">
             Nutzer einladen
             <i class="ion-chevron-right"></i>
-          </button>
+          </button>-->
           <a class="button button-full item button-light icon icon-right ion-chevron-right" href="#/login" ng-click="logout()">
             Abmelden
           </a>
-          <button class="button button-full item item-icon-right text-left button-assertive" ng-click="deleteProfile()">
+          <!--<button class="button button-full item item-icon-right text-left button-assertive" ng-click="deleteProfile()">
             Konto löschen
             <i class="ion-chevron-right"></i>
-          </button>
+          </button>-->
         </div>
       </ion-content>
       <ion-footer-bar class="bar bar-borrowitgrau">
@@ -829,7 +831,7 @@
       </ion-nav-bar>
       <ion-content class="has-footer has-subfooter">
         <ion-radio ng-repeat="item in profile.addresses track by $index"
-                   ng-value="item.aid"
+                   ng-value="item.addressid"
                    ng-model="profile.currentAddress"
                    ng-change="currentAddressChanged()">
           {{ item.street }} {{ item.streetnumber }}
@@ -867,7 +869,7 @@
       <ion-content class="borrowit-blau has-footer">
         <div class="list text-center">
           <ion-label class="item item-light text-center">
-            <strong>{{values.currentRequest.profile.username}}</strong></br>
+            <strong>{{values.currentRequest.username}}</strong></br>
             {{values.currentRequest.title}}
           </ion-label>
           <ion-label>
@@ -878,7 +880,7 @@
               Entfernung
             </div>
             <div class="col col-50 text-left">
-              {{values.currentRequest.place.city}}
+              {{values.currentRequest.distance}}
             </div>
           </div>
           <div class="row">
@@ -898,10 +900,10 @@
             </div>
           </div>
           <div class="button-bar" ng-hide="values.currentRequest.profile.username == profile.username">
-            <a class="button button-block button-light" ng-click="viewChat(values.currentRequest)" href="#/anfragenchat">
+            <a class="button button-block button-light" ng-hide="values.currentRequest.profile[0].username == profile.username" ng-click="viewChatByRequest(values.currentRequest)" href="#/anfragenchat">
               Anschreiben
             </a>
-            <button class="button button-block button-light" ng-hide="values.currentRequest.offered" ng-click="borrowit(values.currentRequest.requestid)">
+            <button class="button button-block button-light" ng-hide="values.currentRequest.offered || values.currentRequest.profile[0].username == profile.username" ng-click="borrowit(values.currentRequest)">
               BorrowIt!
             </button>
           </div>

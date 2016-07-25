@@ -391,6 +391,14 @@ module.exports = [
         "clobbers": [
             "navigator.geolocation"
         ]
+    },
+    {
+        "file": "plugins/onesignal-cordova-plugin/www/OneSignal.js",
+        "id": "onesignal-cordova-plugin.OneSignal",
+        "pluginId": "onesignal-cordova-plugin",
+        "clobbers": [
+            "OneSignal"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -407,7 +415,8 @@ module.exports.metadata =
     "ionic-plugin-keyboard": "2.2.0",
     "cordova-plugin-contacts": "2.1.0",
     "cordova-plugin-calendar": "4.5.1",
-    "cordova-plugin-geolocation": "2.2.0"
+    "cordova-plugin-geolocation": "2.2.0",
+    "onesignal-cordova-plugin": "1.13.0"
 }
 // BOTTOM OF METADATA
 });

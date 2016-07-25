@@ -338,9 +338,10 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
       keepKeyboardOpen();
 
       //MockService.sendMessage(message).then(function(data) {
-      $scope.emptyAllFields();
+      //$scope.emptyAllFields();
+      $scope.textboxes.message = "";
 
-      CommunicationService.sendMessage(message);
+      CommunicationService.sendMessage($scope.values.currentChat.roomid, message);
       $scope.values.currentChat.messages.push(message); //change to id
       for (var i = 0; i < $scope.chats.length; i++) {
         if ($scope.chats[i].roomid == $scope.values.currentChat.roomid) {
@@ -518,7 +519,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
     };
   }])
 
-  .controller("ToDoController", function ($scope, $ionicPopup, $cordovaVibration, $cordovaCamera, $cordovaDevice, $cordovaFile, $cordovaContacts, $ionicPlatform, $ionicActionSheet, ImageService, ProfileService, ResultService, CommunicationService) {
+  .controller("ToDoController", function ($scope, $ionicPopup, $cordovaKeyboard, $cordovaVibration, $cordovaCamera, $cordovaDevice, $cordovaFile, $cordovaContacts, $ionicPlatform, $ionicActionSheet, ImageService, ProfileService, ResultService, CommunicationService) {
 
     $scope.currentAddressChanged = function () {
       CommunicationService.changeCurrentAddress(ProfileService.profile.currentAddress);
@@ -642,8 +643,8 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
     }
 
     $scope.startRequest = function (request) {
-      var newReqId = CommunicationService.startRequest(request.title, request.description, request.location, request.startDate, request.endDate, request.category);
-      newReqId.then(function (result) {
+      var newrequestid = CommunicationService.startRequest(request.title, request.description, request.location, request.startDate, request.endDate, request.category);
+      newrequestid.then(function (result) {
         request.requestid = result.requestid;
         ProfileService.profile.requests.push({
           requestid: request.requestid,
@@ -821,8 +822,9 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         date: new Date(),
         username: ProfileService.profile.username
       };
-      var offered = CommunicationService.sendBorrowIt(request);
+      var offered = CommunicationService.sendBorrowIt(request.requestid);
       offered.then(function (result) {
+        ProfileService.profile.requests.push(request);
         var chat = $scope.chatExists(request);
         var chatInformations;
         if (chat) {
@@ -836,7 +838,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
           $scope.values.currentChat.messages.push(message);
           for (var i = 0; i < $scope.chats.length; i++) {
             if ($scope.chats[i].roomid == $scope.values.currentChat.roomid) {
-              $scope.chats[i] = $scope.values.currentChat;
+              $scope.chats[i].messages.push(message);
             }
           }
           window.localStorage.setItem("chats", JSON.stringify($scope.chats));
@@ -915,9 +917,10 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
     };
 
     $scope.chatExists = function (request) {
-      for (var i = 0; i < $scope.chats.length; i++)
-        if ($scope.chats[i].request.requestid == request.requestid)
+      for (var i = 0; i < $scope.chats.length; i++) {
+        if ($scope.chats[i].request[0].requestid == request.requestid)
           return $scope.chats[i];
+      }
       return false;
     }
 
@@ -930,8 +933,8 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
     var getChatInformations = function (roomid, exists) {
       var loadedChat = CommunicationService.openChat(roomid, exists);
       return loadedChat.then(function (result) {
-        $scope.values.currentChat.profile = result.profile;
-        $scope.values.currentChat.request = result.request;
+        $scope.values.currentChat.profile = result.profile[0];
+        $scope.values.currentChat.request = result.request[0];
         $scope.values.currentChat.messages = [];
         for (var i = 0; i < result.messages.length; i++) {
           $scope.values.currentChat.messages.push(result.messages[i]);
@@ -956,8 +959,8 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
       });
     };
 
-    $scope.loadCurrentRequest = function (reqid) {
-      var loadedRequest = CommunicationService.getCurrentRequest(reqid);
+    $scope.loadCurrentRequest = function (requestid) {
+      var loadedRequest = CommunicationService.getCurrentRequest(requestid);
       loadedRequest.then(function (result) {
         $scope.values.currentRequest = result;
       })
@@ -975,13 +978,15 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
       })
     };
 
-    var loadedChats = CommunicationService.getAllChats();
-    loadedChats.then(function (result) {
-      $scope.chats = [];
-      for (var i = 0; i < result.length; i++) {
-        $scope.chats.push(result[i]);
-      }
-    });
+    $scope.loadChats = function() {
+      var loadedChats = CommunicationService.getAllChats();
+      loadedChats.then(function (result) {
+        $scope.chats = [];
+        for (var i = 0; i < result.length; i++) {
+          $scope.chats.push(result[i]);
+        }
+      });
+    };
 
     $scope.profile = ProfileService.profile;
 
@@ -1235,9 +1240,9 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
 
     $ionicPlatform.ready(function () {
       // Enable to debug issues.
-      window.plugins.OneSignal.setLogLevel({ logLevel: 4, visualLevel: 4 });
+      //window.plugins.OneSignal.setLogLevel({ logLevel: 4, visualLevel: 4 });
 
-      var notificationOpenedCallback = function (jsonData) {
+      /*var notificationOpenedCallback = function (jsonData) {
         console.log('didReceiveRemoteNotificationCallBack: ' + JSON.stringify(jsonData));
       };
 
@@ -1246,7 +1251,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         notificationOpenedCallback);
 
       // Show an alert box if a notification comes in when the user is in your app.
-      window.plugins.OneSignal.enableInAppAlertNotification(true); // TODO set to false
+      window.plugins.OneSignal.enableInAppAlertNotification(true); // TODO set to false*/
 
       document.addEventListener("pause", function () {
         CommunicationService.sendLocationToServer();
@@ -1255,9 +1260,9 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         //code for action on resume
         CommunicationService.sendLocationToServer();
       }, false)
-      if (window.cordova && window.cordova.plugins.Keyboard) {
-        cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-        cordova.plugins.Keyboard.disableScroll(true);
+      if ($cordovaKeyboard) {
+        $cordovaKeyboard.hideKeyboardAccessoryBar(true);
+        $cordovaKeyboard.disableScroll(true);
       }
       if (window.StatusBar) {
         StatusBar.styleDefault();
@@ -1502,6 +1507,15 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
     }
 
     showError = function (error) {
+      /*var promptPopup = $ionicPopup.prompt({
+        title: error.status + ":" + error.statusText,
+        buttons: [
+          {
+            text: 'OK',
+            type: 'button-borrowitblau'
+          }
+        ]
+      });*/
       switch (error) {
         case 400: break; //fehlender Parameter
         case 401: break; //nicht authorisiert
@@ -1523,8 +1537,8 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
   .factory('CommunicationService', ['$http', '$auth', '$cordovaGeolocation', '$timeout', 'ResultService', 'ProfileService', function ($http, $auth, $cordovaGeolocation, $timeout, ResultService, ProfileService) {
     HOST = "https://sb.pftclan.de";
     PORT = 546;
-    var HOST = "http://localhost";
-    var PORT = "3000"
+    //var HOST = "http://localhost";
+    //var PORT = "3000"
     var URLBACKEND = HOST + ":" + PORT + "/api/smartbackend/";
     var URLBORROWIT = HOST + ":" + PORT + "/api/borrowit/";
     var salt;
@@ -1644,9 +1658,9 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
 
     var openChat = function (roomid, exists) {
       if (exists) {
-        return $http({ method: "GET", url: URLBORROWIT + "chat/room", data: { roomid: roomid } })
+        return $http({ method: "POST", url: URLBORROWIT + "chat/room", data: { roomid: roomid } })
           .then(function (result) {
-            var chats = result.data[0];
+            var chats = result.data;
             console.log("Juhu");
             return chats;
           }, function (error) {
@@ -1656,9 +1670,9 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
           });
       }
       else {
-        return $http({ method: "GET", url: URLBORROWIT + "chat/room", data: { requestid: roomid } })
+        return $http({ method: "POST", url: URLBORROWIT + "chat/room", data: { requestid: roomid } })
           .then(function (result) {
-            var chats = result.data[0];
+            var chats = result.data;
             console.log("Juhu");
             return chats;
           }, function (error) {
@@ -1670,7 +1684,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
     };
 
     sendMessage = function (roomid, message) {
-      $http({ method: "PUT", url: URLBORROWIT + "chat/" + roomid, data: { text: message.text, date: message.date } })
+      $http({ method: "POST", url: URLBORROWIT + "chat/" + roomid+ "/message", data: { text: message.text }})
         .then(function (result) {
           //man könnte ne Bestätigung zeigen
           //var addressid = result.data[0];
@@ -1685,8 +1699,8 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
 
     };
 
-    var sendBorrowIt = function () {
-      return $http({ method: "POST", url: URLBORROWIT + "request" + reqid + "/offer" })
+    var sendBorrowIt = function (requestid) {
+      return $http({ method: "POST", url: URLBORROWIT + "request/" + requestid + "/offer" })
         .then(function (result) {
           console.log("Juhu");
         }, function (error) {
@@ -1696,8 +1710,8 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         });
     };
 
-    var acceptBorrowIt = function () {
-      return $http({ method: "POST", url: URLBORROWIT + "request" + reqid + "/accept" })
+    var acceptBorrowIt = function (requestid) {
+      return $http({ method: "POST", url: URLBORROWIT + "request" + requestid + "/accept" })
         .then(function (result) {
           console.log("Juhu");
         }, function (error) {
@@ -1707,8 +1721,8 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         });
     };
 
-    var declineBorrowIt = function () {
-      return $http({ method: "POST", url: URLBORROWIT + "decline" + reqid + "/offer" })
+    var declineBorrowIt = function (requestid) {
+      return $http({ method: "POST", url: URLBORROWIT + "decline" + requestid + "/offer" })
         .then(function (result) {
           console.log("Juhu");
         }, function (error) {
@@ -1775,8 +1789,8 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         });
     };
 
-    updateRequest = function (reqid, title, description, location, startdate, enddate, category) {
-      $http({ method: "POST", url: URLBORROWIT + "request/" + reqid, data: { title: title, description: description, location: location, startdate: startdate, enddate: enddate, category: category } })
+    updateRequest = function (requestid, title, description, location, startdate, enddate, category) {
+      $http({ method: "POST", url: URLBORROWIT + "request/" + requestid, data: { title: title, description: description, location: location, startdate: startdate, enddate: enddate, category: category } })
         .then(function (result) {
           //man könnte ne Bestätigung zeigen
         }, function (error) {
@@ -1841,8 +1855,8 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         });
     };
 
-    addRating = function (contactid, reqid, rating) {
-      $http({ method: "POST", url: URLBORROWIT + "rating", data: { rated_user: contactid, request: reqid, rating: rating } })
+    addRating = function (contactid, requestid, rating) {
+      $http({ method: "POST", url: URLBORROWIT + "rating", data: { rated_user: contactid, request: requestid, rating: rating } })
         .then(function (result) {
           //man könnte ne Bestätigung zeigen
         }, function (error) {
@@ -1851,12 +1865,12 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         });
     };
 
-    var getCurrentRequest = function (reqid) {
+    var getCurrentRequest = function (requestid) {
       if (ProfileService.profile.location) {
         var location = getGeoLocation();
         return location.then(function (result) {
           var geolocation = result;
-          return $http({ method: "POST", url: URLBORROWIT + "request/" + reqid, data: { currentlocation: geolocation } })
+          return $http({ method: "POST", url: URLBORROWIT + "request/" + requestid, data: { currentlocation: geolocation } })
             .then(function (result) {
               var request = result.data[0];
               var startdate = request.startdate.split('T')[0].split('-');
@@ -1876,7 +1890,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
       }
       else {
         var location = getAddressLocation();
-        return $http({ method: "POST", url: URLBORROWIT + "request/" + reqid, data: { currentlocation: location } })
+        return $http({ method: "POST", url: URLBORROWIT + "request/" + requestid, data: { currentlocation: location } })
           .then(function (result) {
             var request = result.data[0];
             var startdate = request.startdate.split('T')[0].split('-');
@@ -1990,7 +2004,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
                 ProfileService.profile.push = result.data[0].push;
                 ProfileService.profile.location = result.data[0].location;
                 window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
-                window.plugins.OneSignal.getIds(function (ids) {
+                /*window.plugins.OneSignal.getIds(function (ids) {
                   console.log('getIds: ' + JSON.stringify(ids));
                   //alert("userId = " + ids.userId + ", pushToken = " + ids.pushToken);
                   if (ids !== undefined && ids.userId !== undefined) {
@@ -1998,7 +2012,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
                     // TODO send userId (or pushToken?) to backend POST to /api/smartbackend/push/register
                     sendDeviceId(deviceId);
                   }
-                });
+                });*/
               }, function (error) {
                 console.log("Mist");
                 ResultService.showError(error);
