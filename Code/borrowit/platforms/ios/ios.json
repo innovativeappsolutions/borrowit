@@ -63,6 +63,10 @@
                         {
                             "xml": "<feature name=\"OneSignalPush\"><param name=\"ios-package\" value=\"OneSignalPush\" /></feature>",
                             "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"PushNotification\"><param name=\"ios-package\" value=\"PushPlugin\" /></feature>",
+                            "count": 1
                         }
                     ]
                 }
@@ -90,6 +94,18 @@
                     "UIBackgroundModes": [
                         {
                             "xml": "<array><string>remote-notification</string></array>",
+                            "count": 2
+                        }
+                    ],
+                    "GCM_SENDER_ID": [
+                        {
+                            "xml": "<string>40863005073</string>",
+                            "count": 1
+                        }
+                    ],
+                    "IS_GCM_ENABLED": [
+                        {
+                            "xml": "<true />",
                             "count": 1
                         }
                     ]
@@ -135,6 +151,10 @@
             "PACKAGE_NAME": "com.ionicframework.borrowit795688"
         },
         "onesignal-cordova-plugin": {
+            "PACKAGE_NAME": "com.ionicframework.borrowit795688"
+        },
+        "phonegap-plugin-push": {
+            "SENDER_ID": "40863005073",
             "PACKAGE_NAME": "com.ionicframework.borrowit795688"
         }
     },
@@ -539,6 +559,14 @@
             "clobbers": [
                 "OneSignal"
             ]
+        },
+        {
+            "file": "plugins/phonegap-plugin-push/www/push.js",
+            "id": "phonegap-plugin-push.PushNotification",
+            "pluginId": "phonegap-plugin-push",
+            "clobbers": [
+                "PushNotification"
+            ]
         }
     ],
     "plugin_metadata": {
@@ -554,6 +582,7 @@
         "cordova-plugin-contacts": "2.1.0",
         "cordova-plugin-calendar": "4.5.1",
         "cordova-plugin-geolocation": "2.2.0",
-        "onesignal-cordova-plugin": "1.13.0"
+        "onesignal-cordova-plugin": "1.13.0",
+        "phonegap-plugin-push": "1.8.0"
     }
 }

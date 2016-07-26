@@ -1,4 +1,4 @@
-//angular.module('starter', ['ionic','starter.controllers','starter.services','ngCordova'])
+//angular.module('starter', ['ionic','ionic.service.core','starter.controllers','starter.services','ngCordova'])
 //
 //  .run(function($ionicPlatform) {
 //    $ionicPlatform.ready(function() {
@@ -321,8 +321,6 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
       });
     }*/
 
-    $scope.doneLoading = false;
-
     $scope.$watch('input.message', function (newValue, oldValue) {
     });
 
@@ -447,11 +445,11 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
       if ($scope.textboxes.username != null &&
         $scope.textboxes.lastname != null &&
         $scope.textboxes.firstname != null &&
-        $scope.textboxes.email != null &&
         $scope.textboxes.telephone != null &&
+        (($scope.textboxes.email != null &&
         $scope.textboxes.password != null &&
         $scope.textboxes.passwordrep != null &&
-        $scope.textboxes.password == $scope.textboxes.passwordrep) {
+        $scope.textboxes.password == $scope.textboxes.passwordrep) || (ProfileService.profile.access_token && ProfileService.profile.access_token !== ""))) {
           ProfileService.profile.username = $scope.textboxes.username;
           ProfileService.profile.lastname = $scope.textboxes.lastname;
           ProfileService.profile.firstname = $scope.textboxes.firstname;
@@ -475,7 +473,12 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         $scope.profile.addresses.length > 0) {
         ProfileService.profile.push = true;
         ProfileService.profile.location = true;
-        CommunicationService.signup("email");
+        var signedup = CommunicationService.signup("email");
+        $scope.showLoading();
+        signedup.then(function(result) {
+          $scope.hideLoading();
+          $scope.loadRequests();
+        })
         window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
         //signup("email", $scope.profile.email, $scope.profile.password);
         window.location = '#/';
@@ -488,7 +491,11 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
 
     $scope.checkLogin = function () {
       if ($scope.textboxes.TextboxEmail && $scope.textboxes.TextboxPassword) {
-        CommunicationService.login("email", $scope.textboxes.TextboxEmail, $scope.textboxes.TextboxPassword);
+        $scope.showLoading();
+        var loggedin = CommunicationService.login("email", $scope.textboxes.TextboxEmail, $scope.textboxes.TextboxPassword);
+        loggedin.then(function(result) {
+          $scope.hideLoading();
+        });
       }
       else {
         error = {status: 400};
@@ -497,7 +504,10 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
     };
 
     $scope.facebookLogin = function () {
-      CommunicationService.authenticate("facebook");
+      var authenticated = CommunicationService.authenticate("facebook");
+      authenticated.then(function(result) {
+        window.location = "#/registrierung"
+      });
     };
 
     $scope.showLoginError = function (wrongPassword) {
@@ -529,7 +539,42 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
     };
   }])
 
-  .controller("ToDoController", function ($scope, $ionicPopup, $cordovaKeyboard, $cordovaVibration, $cordovaCamera, $cordovaDevice, $cordovaFile, $cordovaContacts, $ionicPlatform, $ionicActionSheet, ImageService, ProfileService, ResultService, CommunicationService) {
+  .controller("ToDoController", function ($scope, $ionicPopup, $ionicLoading, $cordovaKeyboard, $cordovaVibration, $cordovaCamera, $cordovaDevice, $cordovaFile, $cordovaContacts, $ionicPlatform, $ionicActionSheet, ImageService, ProfileService, ResultService, CommunicationService) {
+
+    $scope.showLoading = function() {
+      $ionicLoading.show({
+        content: 'Lädt',
+        animation: 'fade-in',
+        showBackdrop: true,
+        maxWidth: 200,
+        showDelay: 0
+      });
+    };
+
+    $scope.hideLoading = function() {
+      $ionicLoading.hide();
+    };
+
+    $scope.rate = function(person, request) {
+      var ratedvalue = 1;
+      var rating = $ionicPopup.prompt({
+        title: 'Möchtest du ' + person.username + ' bewerten?',
+        template: '<rating ng-model="ratedvalue" max="5" ></rating>',
+        buttons: [
+          {
+            text: 'Abbrechen',
+            type: 'button-borrowitgrau'
+          },
+          {
+            text: '<b>Bewerten</b>',
+            type: 'button-borrowitblau',
+            onTap: function (e) {
+              CommunicationService.addRating(person.uid, request.requestid, ratedvalue);
+            }
+          }
+        ]
+      })
+    };
 
     $scope.currentAddressChanged = function () {
       CommunicationService.changeCurrentAddress(ProfileService.profile.currentAddress);
@@ -603,6 +648,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
     $scope.prepareStartRequest = function () {
       var newRequest = setRequestFields();
       if ($scope.profile.location && $scope.values.useLocationForRequest) {
+        $scope.showLoading();
         var location = CommunicationService.getGeoLocation();
         location.then(function (result) {
           newRequest.location = result;
@@ -610,6 +656,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         })
       }
       else {
+        $scope.showLoading();
         for (var i = 0; i < $scope.profile.addresses.length; i++) {
           if ($scope.profile.addresses[i].addressid === $scope.profile.currentAddress) {
             newRequest.location = $scope.profile.addresses[i].street + " " + $scope.profile.addresses[i].streetnumber + ", " + $scope.profile.addresses[i].zip + " " + $scope.profile.addresses[i].city + ", " + $scope.profile.addresses[i].country;
@@ -663,6 +710,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         });
         window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
         $scope.emptyAllFields();
+        $scope.hideLoading();
       });
     }
 
@@ -709,6 +757,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
 
     $scope.getDeviceContacts = function () {
       function onSuccess(contacts) {
+        $scope.showLoading();
         var allNumbers = [];
         for (var i = 0; i < contacts.length; i++) {
           var contact = contacts[i];
@@ -730,6 +779,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
             if (result[i].username != ProfileService.profile.username)
               $scope.phoneContacts.push(result[i]);
           }
+          $scope.hideLoading();
         })
       };
       function onError(contactError) {
@@ -780,7 +830,8 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         actualizeRequest: false,
         requestOffered: false,
         requestAccepted: false,
-        useLocationForRequest: true
+        useLocationForRequest: true,
+        doneLoading: false
       };
       $scope.textboxes = {
         startDate: "",
@@ -806,6 +857,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
     $scope.emptyAllFields();
 
     $scope.viewContact = function (contactid) {
+      $scope.showLoading();
       var loadedContact = CommunicationService.getPerson(contactid);
       loadedContact.then(function (result) {
         $scope.values.currentPerson.username = result.username;
@@ -814,6 +866,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         $scope.values.currentPerson.requests = result.requests;
         $scope.values.currentPerson.uid = contactid;
         window.location = "#/kontakt_profil";
+        $scope.hideLoading();
       });
     };
 
@@ -832,6 +885,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         date: new Date(),
         username: ProfileService.profile.username
       };
+      $scope.showLoading();
       var offered = CommunicationService.sendBorrowIt(request.requestid);
       offered.then(function (result) {
         ProfileService.profile.requests.push(request);
@@ -860,7 +914,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
 
     $scope.acceptOffer = function (request) {
       message = {
-        text: ProfileService.profile.username + " hat dein Angebot bezüglich seiner Anfrage >>" + request.title + "<< angenommen!",
+        text: ProfileService.profile.username + " hat dein Angebot bezüglich seiner/ihrer Anfrage >>" + request.title + "<< angenommen!",
         date: new Date(),
         username: ProfileService.profile.username
       };
@@ -885,7 +939,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
 
     $scope.declineOffer = function (request) {
       message = {
-        text: ProfileService.profile.username + " hat dein Angebot bezüglich seiner Anfrage >>" + request.title + "<< abgelehnt!",
+        text: ProfileService.profile.username + " hat dein Angebot bezüglich seiner/ihrer Anfrage >>" + request.title + "<< abgelehnt!",
         date: new Date(),
         username: ProfileService.profile.username
       };
@@ -935,9 +989,11 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
     }
 
     $scope.viewChat = function (roomid, exists) {
+      $scope.showLoading();
       var loadedChat = getChatInformations(roomid, exists);
       loadedChat.then(function (result) {
         window.location = "#/anfragenchat";
+        $scope.hideLoading();
       });
     };
 
@@ -971,9 +1027,13 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
     };
 
     $scope.loadCurrentRequest = function (requestid) {
+      $scope.showLoading();
       var loadedRequest = CommunicationService.getCurrentRequest(requestid);
       loadedRequest.then(function (result) {
         $scope.values.currentRequest = result;
+        window.location = "#/anfrage_einsehen";
+        $scope.hideLoading();
+        $scope.rate(result)
       })
     };
 
@@ -1906,7 +1966,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         var location = getGeoLocation();
         return location.then(function (result) {
           var geolocation = result;
-          return $http({ method: "POST", url: URLBORROWIT + "request/" + requestid, data: { currentlocation: geolocation } })
+          return $http({ method: "POST", url: URLBORROWIT + "request/" + requestid + "/details", data: { currentlocation: geolocation } })
             .then(function (result) {
               var request = result.data[0];
               var startdate = request.startdate.split('T')[0].split('-');
@@ -2041,17 +2101,50 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
                 ProfileService.profile.location = result.data[0].location;
                 window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
                 pushObject = new Ionic.Push({
-                  "debug": true
-                });
-                pushObject.register(function (token) {
-                  console.log("Device token:", token.token);
-                  pushObject.saveToken(token);  // persist the token in the Ionic Platform
-                  if (token !== undefined && token.token !== undefined) {
-                    var deviceId = token.token;
-                    sendDeviceId(deviceId); // send token to backend to register for push messages
+                  "debug": true,
+                  "onNotification": function (notification) {
+                    var payload = notification.payload;
+                    var newBenachr = $ionicPopup.prompt({ template: notification, title: "Neue Benachrichtigung" });
+                    console.log(notification, payload);
+                  },
+                  "onRegister": function (data) {
+                    var asdfg = $ionicPopup.prompt({ template: data.token, title: "2" });
+                    console.log("Device token:", data.token);
+                    pushObject.saveToken(data);  // persist the token in the Ionic Platform
+                    if (data !== undefined && data.token !== undefined) {
+                      var asdfgh = $ionicPopup.prompt({ template: data.token, title: "3" });
+                      var deviceId = data.token;
+                      sendDeviceId(deviceId); // send token to backend to register for push messages
+                    }
+
+                    var asdfghi = $ionicPopup.prompt({ template: "Stelle 4", title: "4" });
+                  },
+                  "pluginConfig": {
+                    "ios": {
+                      "badge": true,
+                      "sound": true
+                    },
+                    "android": {
+                      "iconColor": "#343434"
+                    }
                   }
                 });
+                var pushRegistrationCallback = function (data) {
+                  console.log(data.token);
+                  var yx = $ionicPopup.prompt({ template: data.token, title: "11" });
+                  console.log("Device token:", data.token);
+                  pushObject.saveToken(data);  // persist the token in the Ionic Platform
+                  if (data !== undefined && data.token !== undefined) {
+                    var yxc = $ionicPopup.prompt({ template: data.token, title: "12" });
+                    var deviceId = data.token;
+                    sendDeviceId(deviceId); // send token to backend to register for push messages
+                  }
+                  var yxcv = $ionicPopup.prompt({ template: "Stelle 13", title: "13" });
+                }
+                pushObject.register();
+                var asdfghij = $ionicPopup.prompt({ template: "Stelle 5", title: "5" });
               }, function (error) {
+                var asdfghijk = $ionicPopup.prompt({ template: error, title: "6" });
                 console.log("Mist");
                 ResultService.showError(error);
                 // toSomething
@@ -2062,7 +2155,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
             console.log(error.data);
           })
       }
-    }
+    };
 
     sendDeviceId = function (deviceId) {
       $http({ method: "POST", url: URLBACKEND + "push/register", data: { deviceid: deviceId } })

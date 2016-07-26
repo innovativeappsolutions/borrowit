@@ -304,6 +304,13 @@ module.exports = [
         "clobbers": [
             "OneSignal"
         ]
+    },
+    {
+        "file": "plugins/phonegap-plugin-push/www/push.js",
+        "id": "phonegap-plugin-push.PushNotification",
+        "clobbers": [
+            "PushNotification"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -321,7 +328,8 @@ module.exports.metadata =
     "cordova-plugin-contacts": "2.1.0",
     "cordova-plugin-calendar": "4.5.1",
     "cordova-plugin-geolocation": "2.2.0",
-    "onesignal-cordova-plugin": "1.13.0"
+    "onesignal-cordova-plugin": "1.13.0",
+    "phonegap-plugin-push": "1.8.0"
 };
 // BOTTOM OF METADATA
 });

@@ -42,6 +42,10 @@
         },
         "onesignal-cordova-plugin": {
             "PACKAGE_NAME": "com.ionicframework.borrowit795688"
+        },
+        "phonegap-plugin-push": {
+            "SENDER_ID": "40863005073",
+            "PACKAGE_NAME": "com.ionicframework.borrowit795688"
         }
     },
     "dependent_plugins": {

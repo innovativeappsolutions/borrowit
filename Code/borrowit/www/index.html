@@ -49,19 +49,21 @@
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
   <title>BorrowIt!</title>
-  <link href="img/favicon/favicon_hYs_9.ico" type="image/x-icon" rel="shortcut icon"/>
+  <link href="img/favicon/favicon_hYs_9.ico" type="image/x-icon" rel="shortcut icon">
 
   <link href="lib/ionic/css/ionic.css" rel="stylesheet">
   <link href="css/style.css" rel="stylesheet">
   <script src="lib/ionic/js/ionic.bundle.js"></script>
   <script src="lib/ionic-platform-web-client/dist/ionic.io.bundle.js"></script>
   <script src="lib/ngCordova/dist/ng-cordova.js"></script>
-  <script src="cordova.js"></script>
+  <!-- Cordova is bootstrapped by ionic-platform-web-client, uncomment this if you remove ionic-platform-web-client... -->
+<!-- <script src="cordova.js"></script> -->
   <script src="js/app.js"></script>
   <script src="lib/satellizer/dist/satellizer.js"></script>
   <script src="lib/angular-cookies/angular-cookies.js"></script>
   <script src="lib/crypto-js/crypto-js.js"></script>
   <script src="lib/crypto-js/hmac-sha512.js"></script>
+  <script src="lib/ionic-ratings/src/ionic-ratings.js"></script>
 
   <!-- Library for SQLite support -->
   <script type="text/javascript" src="js/SQLitePlugin.js"></script>
@@ -92,7 +94,7 @@
             Anmelden
           </button>
           <button class="message-wrapper button button-block fb-bg" ng-click="facebookLogin()">
-            <span><img class="facebook-pic left" src="/img/icons/facebook.png" width="80px"/></span>
+            <span><img class="facebook-pic left" src="img/icons/facebook.png" width="80px"/></span>
             <span class="fb-bg">mit facebook anmelden</span>
           </button>
           <a class="button button-block button-borrowitgrau" href="#/registrierung">Registrierung</a>
@@ -126,17 +128,17 @@
           <label class="item item-input">
             <input type="text" placeholder="Vorname" ng-model="textboxes.firstname">
           </label>
-          <label class="item item-input">
+          <label class="item item-input" ng-show='!profile.access_token || profile.access_token === ""'>
             <input type="email" placeholder="E-Mail" ng-model="textboxes.email">
           </label>
           <label class="item item-input">
             <input type="tel" placeholder="Telefonnummer" ng-model="textboxes.telephone">
           </label>
           <label class="item item-input">
-            <input type="password" placeholder="Passwort" ng-model="textboxes.password">
+            <input type="password" placeholder="Passwort" ng-model="textboxes.password" ng-show='!profile.access_token || profile.access_token === ""'>
           </label>
           <label class="item item-input">
-            <input type="password" placeholder="Passwort wdh." ng-model="textboxes.passwordrep">
+            <input type="password" placeholder="Passwort wdh." ng-model="textboxes.passwordrep" ng-show='!profile.access_token || profile.access_token === ""'>
           </label>
           <button class="button button-light button-block icon-right ion-chevron-right" ng-click="registerFirstPart()">Weiter</button><br/>
         </div>
@@ -215,6 +217,7 @@
 
   <script id="home.html" type="text/ng-template">
     <ion-view ng-init="loadRequests()">
+      <ion-spinner icon="spiral"></ion-spinner>
       <ion-content has-bouncing="true" class="borrowit-blau has-footer">
         <div class="list text-center">
           <div class="row">
@@ -252,45 +255,45 @@
           <!--Der Code "request in requests | orderBy:values.chosenSortedBy:$scope.values.chosenSortedBy != 'profile.rating' | filterRequests:values.chosenCategory" holt alle requests sortiert nach Auswahl, wobei je nach Auswahl verkehrt herum sortiert wird-->
           <div class="message-wrapper" ng-repeat="request in requests | orderBy:values.chosenSortedBy:$scope.values.chosenSortedBy != 'profile.rating' | filterRequests:values.chosenCategory track by $index">
             <div class="row" ng-show="!request.offered && request.profile[0].username != profile.username">
-                <a class="item item-borrowitblau" ng-click="loadCurrentRequest(request.requestid)" style="width: 100%;" href="#/anfrage_einsehen">
-                  <span>
-                    <img class="profile-pic-top" ng-src="{{request.profile[0].picture}}" onerror="onProfilePicError(this)"/>
-                  </span>
-                  <span>
-                    <div ng-switch="request.category">
-                      <div ng-switch-when="kitchen">
-                        <img class="category-pic" ng-src="{{images.whiteKitchen}}">
-                      </div>
-                      <div ng-switch-when="food">
-                        <img class="category-pic" ng-src="{{images.whiteCutlery}}">
-                      </div>
-                      <div ng-switch-when="sport">
-                        <img class="category-pic" ng-src="{{images.whiteSoccerBall}}">
-                      </div>
-                      <div ng-switch-when="freetime">
-                        <img class="category-pic" ng-src="{{images.whiteJoystick}}">
-                      </div>
-                      <div ng-switch-when="car">
-                        <img class="category-pic" ng-src="{{images.whiteCar}}">
-                      </div>
-                      <div ng-switch-when="home">
-                        <img class="category-pic" ng-src="{{images.whiteBed}}">
-                      </div>
-                      <div ng-switch-when="garden">
-                        <img class="category-pic" ng-src="{{images.whiteSprout}}">
-                      </div>
-                      <div ng-switch-when="other">
-                        <img class="category-pic" ng-src="{{images.whiteMedal}}">
-                      </div>
+              <button class="item button-full item-borrowitblau" ng-click="loadCurrentRequest(request.requestid)" style="width: 100%;">
+                <span>
+                  <img class="profile-pic-top" ng-src="{{request.profile[0].picture}}" onerror="onProfilePicError(this)"/>
+                </span>
+                <span>
+                  <div ng-switch="request.category">
+                    <div ng-switch-when="kitchen">
+                      <img class="category-pic" ng-src="{{images.whiteKitchen}}">
                     </div>
-                  </span>
-                  <div class="chat-bubble left">
-                    <div class="message-detail">
-                      <span class="bold">{{request.profile[0].username}}</span>:
-                      <span>{{request.title}}</span>
+                    <div ng-switch-when="food">
+                      <img class="category-pic" ng-src="{{images.whiteCutlery}}">
+                    </div>
+                    <div ng-switch-when="sport">
+                      <img class="category-pic" ng-src="{{images.whiteSoccerBall}}">
+                    </div>
+                    <div ng-switch-when="freetime">
+                      <img class="category-pic" ng-src="{{images.whiteJoystick}}">
+                    </div>
+                    <div ng-switch-when="car">
+                      <img class="category-pic" ng-src="{{images.whiteCar}}">
+                    </div>
+                    <div ng-switch-when="home">
+                      <img class="category-pic" ng-src="{{images.whiteBed}}">
+                    </div>
+                    <div ng-switch-when="garden">
+                      <img class="category-pic" ng-src="{{images.whiteSprout}}">
+                    </div>
+                    <div ng-switch-when="other">
+                      <img class="category-pic" ng-src="{{images.whiteMedal}}">
                     </div>
                   </div>
-                </a>
+                </span>
+                <div class="chat-bubble left">
+                  <div class="message-detail">
+                    <span class="bold">{{request.profile[0].username}}</span>:
+                    <span>{{request.title}}</span>
+                  </div>
+                </div>
+              </button>
             </div>
           </div>
         </div>
@@ -354,8 +357,8 @@
           </div>
         </div>
         <div ng-show="!values.currentChat.request.offered && values.currentChat.request.borrower == values.currentChat.profile.uid">
-          <h1 class="title">Möchtest du {{ values.currentChat.profile.username }} bezüglich seiner Anfrage helfen?</h1>
-            <a class="button button-block button-balanced" onclick="borrowit(values.currentChat.request)">BorrowIt!</a>
+          <h1 class="title">Möchtest du {{ values.currentChat.profile.username }} bezüglich seiner/ihrer Anfrage helfen?</h1>
+          <a class="button button-block button-balanced" onclick="borrowit(values.currentChat.request)">BorrowIt!</a>
         </div>
         <div class="text-center" ng-show="values.currentChat.request.accepted || (!values.currentChat.request.offered && values.currentChat.request.borrower != values.currentChat.profile.uid) || (values.currentChat.request.offered && values.currentChat.request.borrower == values.currentChat.profile.uid)">
           <h1 class="title text-center">{{values.currentChat.profile.username}}: &raquo;{{values.currentChat.request.title}}&laquo;</h1>
@@ -609,16 +612,16 @@
             Aktivitäten:
           </div>
           <div class="item" ng-repeat="request in values.currentPerson.requests track by $index">
-            <a class="item item-icon-right" ng-show="request.username != values.currentPerson.username" ng-click="loadCurrentRequest(request.requestid)" href="#/anfrage_einsehen">
+            <button class="item button-full item-icon-right" ng-show="request.username != values.currentPerson.username" ng-click="loadCurrentRequest(request.requestid)">
               {{request.title}}
               <i class="ion-chevron-right"></i>
               <i class="ion-chevron-right"></i>
-            </a>
-            <a class="item item-icon-left" ng-show="request.username == values.currentPerson.username" ng-click="loadCurrentRequest(request.requestid)" href="#/anfrage_einsehen">
+            </button>
+            <button class="item button-full item-icon-left" ng-show="request.username == values.currentPerson.username" ng-click="loadCurrentRequest(request.requestid)">
               <i class="ion-chevron-left"></i>
               <i class="ion-chevron-left"></i>
               {{request.title}}
-            </a>
+            </button>
           </div>
         </div>
       </ion-content>
@@ -729,16 +732,16 @@
             Aktivitäten:
           </div>
           <div class="item" ng-repeat="request in profile.requests track by $index">
-            <a class="item item-icon-right" ng-show="request.username != profile.username" ng-click="loadCurrentRequest(request.requestid)" href="#/anfrage_einsehen">
+            <button class="item button-full item-icon-right" ng-show="request.username != profile.username" ng-click="loadCurrentRequest(request.requestid)">
               {{request.title}}
               <i class="ion-chevron-right"></i>
               <i class="ion-chevron-right"></i>
-            </a>
-            <a class="item item-icon-left" ng-show="request.username == profile.username" ng-click="loadCurrentRequest(request.requestid)" href="#/anfrage_einsehen">
+            </button>
+            <button class="item button-full item-icon-left" ng-show="request.username == profile.username" ng-click="loadCurrentRequest(request.requestid)">
               <i class="ion-chevron-left"></i>
               <i class="ion-chevron-left"></i>
               {{request.title}}
-            </a>
+            </button>
           </div>
         </div>
       </ion-content>
@@ -862,6 +865,12 @@
 
   <script id="anfrage_einsehen.html" type="text/ng-template">
     <ion-view view-title="Anfrage einsehen">
+      <div class="loader-center" ng-show="!doneLoading">
+        <div class="loader">
+          <i class="icon ion-loading-c"></i>
+        </div>
+      </div>
+      <ion-spinner ng-show="!doneLoading" icon="spiral"></ion-spinner>
       <ion-nav-bar class="bar-borrowitgrau">
         <ion-nav-back-button class="button-clear">
           <i class="ion-chevron-left"></i> Back
@@ -900,15 +909,15 @@
               {{values.currentRequest.enddate}}
             </div>
           </div>
-          <div class="button-bar" ng-hide="values.currentRequest.profile.username == profile.username">
-            <a class="button button-block button-light" ng-hide="values.currentRequest.profile[0].username == profile.username" ng-click="viewChatByRequest(values.currentRequest)" href="#/anfragenchat">
+          <div class="button-bar" ng-hide="values.currentRequest.username == profile.username">
+            <button class="button button-block button-light" ng-hide="values.currentRequest.username == profile.username" ng-click="viewChatByRequest(values.currentRequest)">
               Anschreiben
-            </a>
-            <button class="button button-block button-light" ng-hide="values.currentRequest.offered || values.currentRequest.profile[0].username == profile.username" ng-click="borrowit(values.currentRequest)">
+            </button>
+            <button class="button button-block button-light" ng-hide="values.currentRequest.offered || values.currentRequest.username == profile.username" ng-click="borrowit(values.currentRequest)">
               BorrowIt!
             </button>
           </div>
-          <a class="button button-block button-light" ng-show="values.currentRequest.profile.username == profile.username" ng-click="actualizeRequest(values.currentRequest.requestid)" href="#/anfrage_erstellen">
+          <a class="button button-block button-light" ng-show="values.currentRequest.username == profile.username" ng-click="actualizeRequest(values.currentRequest.requestid)" href="#/anfrage_erstellen">
             Anfrage aktualisieren
           </a>
         </div>

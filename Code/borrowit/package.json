@@ -22,7 +22,14 @@
     "cordova-plugin-splashscreen",
     "cordova-plugin-statusbar",
     "ionic-plugin-keyboard",
-    "onesignal-cordova-plugin"
+    "onesignal-cordova-plugin",
+    {
+      "variables": {
+        "SENDER_ID": "40863005073"
+      },
+      "locator": "phonegap-plugin-push",
+      "id": "phonegap-plugin-push"
+    }
   ],
   "cordovaPlatforms": [
     {

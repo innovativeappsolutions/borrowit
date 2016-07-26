@@ -49,13 +49,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
   <title>BorrowIt!</title>
-  <link href="img/favicon/favicon_hYs_9.ico" type="image/x-icon" rel="shortcut icon"/>
+  <link href="img/favicon/favicon_hYs_9.ico" type="image/x-icon" rel="shortcut icon">
 
   <link href="lib/ionic/css/ionic.css" rel="stylesheet">
   <link href="css/style.css" rel="stylesheet">
   <script src="lib/ionic/js/ionic.bundle.js"></script>
+  <script src="lib/ionic-platform-web-client/dist/ionic.io.bundle.js"></script>
   <script src="lib/ngCordova/dist/ng-cordova.js"></script>
-  <script src="cordova.js"></script>
+  <!-- Cordova is bootstrapped by ionic-platform-web-client, uncomment this if you remove ionic-platform-web-client... -->
+<!-- <script src="cordova.js"></script> -->
   <script src="js/app.js"></script>
   <script src="lib/satellizer/dist/satellizer.js"></script>
   <script src="lib/angular-cookies/angular-cookies.js"></script>
@@ -96,8 +98,8 @@
           </button>
           <a class="button button-block button-borrowitgrau" href="#/registrierung">Registrierung</a>
           <div class="button-bar">
-            <a class="button button-borrowitgrau button-block">Passwort vergessen</a>
-            <a class="button button-borrowitgrau button-block">Hilfe</a>
+            <!--<a class="button button-borrowitgrau button-block">Passwort vergessen</a>-->
+            <button class="button button-borrowitgrau button-block">Hilfe</button>
           </div>
         </div>
       </ion-content>
@@ -307,7 +309,7 @@
   </script>
 
   <script id="chat.html" type="text/ng-template">
-    <ion-view>
+    <ion-view ng-init="loadChats()">
       <ion-content class="borrowit-blau has-footer">
         <div class="list">
           <label class="item item-input">
@@ -315,12 +317,12 @@
             <input type="search" placeholder="Search" ng-model="search">
           </label>
           <div ng-repeat="chat in chats | searchContent:search track by $index">
-            <a class="item item-avatar" ng-click="viewChat(chat.roomid, true)" href="#/anfragenchat">
+            <button class="item button-full item-avatar" ng-click="viewChat(chat.roomid, true)">
               <img class="profile-pic left"
-                   ng-src="{{chat.profile.picture}}" onerror="onProfilePicError(this)" />
-                <span class="bold">{{chat.profile.username}}</span>:
+                   ng-src="{{chat.profile[0].picture}}" onerror="onProfilePicError(this)" />
+                <span class="bold">{{chat.profile[0].username}}</span>:
                 <span>{{chat.title}}</span>
-            </a>
+            </button>
           </div>
         </div>
       </ion-content>
@@ -391,7 +393,7 @@
           <label class="item-input-wrapper">
             <input type="text" ng-model="textboxes.message" value="" placeholder="Sende {{values.currentChat.profil.username}} eine Nachricht..." required minlength="1" maxlength="1500" msd-elastic/>
           </label>
-          <button class="button button-clear icon ion-android-send" type="submit" ng-disabled="!input.message || input.message === ''"></button>
+          <button class="button button-clear icon ion-android-send" type="submit" ng-disabled="!textboxes.message || textboxes.message === ''"></button>
         </ion-footer-bar>
         <!--<ion-footer-bar class="bar-stable item-input-inset message-footer" keyboard-attach>
           <label class="item-input-wrapper">
@@ -900,10 +902,10 @@
             </div>
           </div>
           <div class="button-bar" ng-hide="values.currentRequest.profile.username == profile.username">
-            <a class="button button-block button-light" ng-click="viewChatByRequest(values.currentRequest)" href="#/anfragenchat">
+            <a class="button button-block button-light" ng-hide="values.currentRequest.profile[0].username == profile.username" ng-click="viewChatByRequest(values.currentRequest)" href="#/anfragenchat">
               Anschreiben
             </a>
-            <button class="button button-block button-light" ng-hide="values.currentRequest.offered" ng-click="borrowit(values.currentRequest)">
+            <button class="button button-block button-light" ng-hide="values.currentRequest.offered || values.currentRequest.profile[0].username == profile.username" ng-click="borrowit(values.currentRequest)">
               BorrowIt!
             </button>
           </div>
