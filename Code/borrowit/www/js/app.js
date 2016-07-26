@@ -343,11 +343,11 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
 
       CommunicationService.sendMessage($scope.values.currentChat.roomid, message);
       $scope.values.currentChat.messages.push(message); //change to id
-      for (var i = 0; i < $scope.chats.length; i++) {
+      /*for (var i = 0; i < $scope.chats.length; i++) {
         if ($scope.chats[i].roomid == $scope.values.currentChat.roomid) {
-          $scope.chats[i] = $scope.values.currentChat;
+          $scope.chats[i].messages.push(message);
         }
-      }
+      }*/
       window.localStorage.setItem("chats", JSON.stringify($scope.chats));
 
       $timeout(function () {
@@ -441,7 +441,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
 
   })
 
-  .controller('LoginCtrl', ['$scope', 'ProfileService', 'CommunicationService', function ($scope, ProfileService, CommunicationService) {
+  .controller('LoginCtrl', ['$scope', '$ionicPopup', 'ProfileService', 'ResultService', 'CommunicationService', function ($scope, $ionicPopup, ProfileService, ResultService, CommunicationService) {
     $scope.registerFirstPart = function () {
       if ($scope.textboxes.username != null &&
         $scope.textboxes.lastname != null &&
@@ -451,18 +451,23 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         $scope.textboxes.password != null &&
         $scope.textboxes.passwordrep != null &&
         $scope.textboxes.password == $scope.textboxes.passwordrep) {
-        ProfileService.profile.username = $scope.textboxes.username;
-        ProfileService.profile.lastname = $scope.textboxes.lastname;
-        ProfileService.profile.firstname = $scope.textboxes.firstname;
-        ProfileService.profile.email = $scope.textboxes.email;
-        ProfileService.profile.telephone = $scope.textboxes.telephone;
-        ProfileService.profile.password = $scope.textboxes.password;
-        ProfileService.profile.addresses = [];
-        ProfileService.profile.currentAddress = 0;
-        ProfileService.profile.requests = [];
-        window.location = '#/registrierung2';
+          ProfileService.profile.username = $scope.textboxes.username;
+          ProfileService.profile.lastname = $scope.textboxes.lastname;
+          ProfileService.profile.firstname = $scope.textboxes.firstname;
+          ProfileService.profile.email = $scope.textboxes.email;
+          ProfileService.profile.telephone = $scope.textboxes.telephone;
+          ProfileService.profile.password = $scope.textboxes.password;
+          ProfileService.profile.addresses = [];
+          ProfileService.profile.currentAddress = 0;
+          ProfileService.profile.requests = [];
+          window.location = '#/registrierung2';
       }
-    }
+      else {
+        error = {};
+        error.status = 442;
+        ResultService.showError(error);
+      }
+    };
 
     $scope.registerSecondPart = function () {
       if ($scope.profile.addresses != null &&
@@ -474,7 +479,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         //signup("email", $scope.profile.email, $scope.profile.password);
         window.location = '#/';
       }
-    }
+    };
 
     $scope.login = function (username, password) {
       ProfileService.profile = JSON.parse(window.localStorage.getItem("profile"));
@@ -484,11 +489,15 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
       if ($scope.textboxes.TextboxEmail && $scope.textboxes.TextboxPassword) {
         CommunicationService.login("email", $scope.textboxes.TextboxEmail, $scope.textboxes.TextboxPassword);
       }
-    }
+      else {
+        error = {status: 400};
+        ResultService.showError(error);
+      }
+    };
 
     $scope.facebookLogin = function () {
       CommunicationService.authenticate("facebook");
-    }
+    };
 
     $scope.showLoginError = function (wrongPassword) {
       $scope.popupData = {};
@@ -927,6 +936,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
     $scope.viewChat = function (roomid, exists) {
       var loadedChat = getChatInformations(roomid, exists);
       loadedChat.then(function (result) {
+        window.location = "#/anfragenchat";
       });
     };
 
@@ -1516,15 +1526,53 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
           }
         ]
       });*/
-      switch (error) {
-        case 400: break; //fehlender Parameter
-        case 401: break; //nicht authorisiert
-        case 404: break; //not found
-        case 500: break; //interner Fehler (DB nicht erreichbar z.B.)
-        case 942: break; //Username vergeben
-        case 943: break; //Telefonnummer vergeben
+      var title = "";
+      var content = "";
+      switch (error.status) {
+        case 400:
+          title = "Fehler bei der Anmeldung";
+          content = "Benutzername und/oder Passwort falsch";
+          break; //fehlender Parameter
+        case 401:
+          title = "Kein Zugriff!";
+          content = "Bitte melde dich an";
+          break; //nicht authorisiert
+        case 404:
+          title = "Fehler beim Laden";
+          content = "Eine oder mehrere Ressourcen konnten nicht geladen werden";
+          break; //not found
+        case 442:
+          title = "Fehlende Eingabe";
+          content = "Eine oder mehrere Felder wurden nicht ausgefüllt";
+          break; //not found
+        case 500:
+          title = "Interner Fehler";
+          content = "Wir kümmern uns um das Problem!";
+          break; //interner Fehler (DB nicht erreichbar z.B.)
+        case 942:
+          title = "Benutzername bereits vorhanden";
+          content = "Bitte verwende einen anderen Benutzernamen";
+          break; //Username vergeben
+        case 943:
+          title = "Telefonnummer bereits verhanden";
+          content = "Bist du vielleicht schon angemeldet? Die angegebene Telefonnummer ist bereits registriert!";
+          break; //Telefonnummer vergeben
+        case 944:
+          title = "E-Mail-Adresse bereits vorhanden";
+          content = "Bist du vielleicht schon angemeldet? Die angegebene E-Mail-Adresse ist bereits registriert!";
+          break; //Email vergeben
         default: break;
       }
+      var showErrorPopup = $ionicPopup.show({
+        template: content,
+        title: title,
+        buttons: [
+          {
+            text: 'OK',
+            type: 'button-borrowitblau'
+          }
+        ]
+      });
     }
 
     return {

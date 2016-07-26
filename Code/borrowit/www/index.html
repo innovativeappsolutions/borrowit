@@ -96,8 +96,8 @@
           </button>
           <a class="button button-block button-borrowitgrau" href="#/registrierung">Registrierung</a>
           <div class="button-bar">
-            <a class="button button-borrowitgrau button-block">Passwort vergessen</a>
-            <a class="button button-borrowitgrau button-block">Hilfe</a>
+            <!--<a class="button button-borrowitgrau button-block">Passwort vergessen</a>-->
+            <button class="button button-borrowitgrau button-block">Hilfe</button>
           </div>
         </div>
       </ion-content>
@@ -315,12 +315,12 @@
             <input type="search" placeholder="Search" ng-model="search">
           </label>
           <div ng-repeat="chat in chats | searchContent:search track by $index">
-            <a class="item item-avatar" ng-click="viewChat(chat.roomid, true)" href="#/anfragenchat">
+            <button class="item button-full item-avatar" ng-click="viewChat(chat.roomid, true)">
               <img class="profile-pic left"
                    ng-src="{{chat.profile[0].picture}}" onerror="onProfilePicError(this)" />
                 <span class="bold">{{chat.profile[0].username}}</span>:
                 <span>{{chat.title}}</span>
-            </a>
+            </button>
           </div>
         </div>
       </ion-content>
