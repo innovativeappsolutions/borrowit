@@ -272,6 +272,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
     var footerBar; // gets set in $ionicView.enter
     var scroller;
     var txtInput; // ^^^
+    var pushObject;
 
     $scope.$on('$ionicView.enter', function () {
       console.log('UserMessages $ionicView.enter');
@@ -1249,19 +1250,6 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
     }
 
     $ionicPlatform.ready(function () {
-      // Enable to debug issues.
-      //window.plugins.OneSignal.setLogLevel({ logLevel: 4, visualLevel: 4 });
-
-      /*var notificationOpenedCallback = function (jsonData) {
-        console.log('didReceiveRemoteNotificationCallBack: ' + JSON.stringify(jsonData));
-      };
-
-      window.plugins.OneSignal.init("c9607961-b043-486d-9449-0587764bb739",
-        { googleProjectNumber: "40863005073" },
-        notificationOpenedCallback);
-
-      // Show an alert box if a notification comes in when the user is in your app.
-      window.plugins.OneSignal.enableInAppAlertNotification(true); // TODO set to false*/
 
       document.addEventListener("pause", function () {
         CommunicationService.sendLocationToServer();
@@ -2052,15 +2040,17 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
                 ProfileService.profile.push = result.data[0].push;
                 ProfileService.profile.location = result.data[0].location;
                 window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
-                /*window.plugins.OneSignal.getIds(function (ids) {
-                  console.log('getIds: ' + JSON.stringify(ids));
-                  //alert("userId = " + ids.userId + ", pushToken = " + ids.pushToken);
-                  if (ids !== undefined && ids.userId !== undefined) {
-                    var deviceId = ids.userId;
-                    // TODO send userId (or pushToken?) to backend POST to /api/smartbackend/push/register
-                    sendDeviceId(deviceId);
+                pushObject = new Ionic.Push({
+                  "debug": true
+                });
+                pushObject.register(function (token) {
+                  console.log("Device token:", token.token);
+                  pushObject.saveToken(token);  // persist the token in the Ionic Platform
+                  if (token !== undefined && token.token !== undefined) {
+                    var deviceId = token.token;
+                    sendDeviceId(deviceId); // send token to backend to register for push messages
                   }
-                });*/
+                });
               }, function (error) {
                 console.log("Mist");
                 ResultService.showError(error);
