@@ -541,6 +541,14 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'ionic-ratings', 'ang
 
   .controller("ToDoController", function ($scope, $ionicPopup, $ionicLoading, $cordovaKeyboard, $cordovaVibration, $cordovaCamera, $cordovaDevice, $cordovaFile, $cordovaContacts, $ionicPlatform, $ionicActionSheet, ImageService, ProfileService, ResultService, CommunicationService) {
 
+    $scope.getStars = function(rating) {
+      // Get the value
+      var val = parseFloat(rating);
+      // Turn value into number/100
+      var size = val/5*100;
+      return size + '%';
+    }
+
     $scope.showLoading = function() {
       $ionicLoading.show({
         content: 'Lädt',
@@ -1612,7 +1620,10 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'ionic-ratings', 'ang
           title = "E-Mail-Adresse bereits vorhanden";
           content = "Bist du vielleicht schon angemeldet? Die angegebene E-Mail-Adresse ist bereits registriert!";
           break; //Email vergeben
-        default: break;
+        default:
+          title = "Unerwarteter Fehler";
+          content = "Ja die anderen Fehler erwarten wir ;)";
+          break;
       }
       var showErrorPopup = $ionicPopup.show({
         template: content,
@@ -2173,6 +2184,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'ionic-ratings', 'ang
         $auth.authenticate(provider).then(function (response) {
           console.log($auth.getToken());
           console.log($auth.getPayload());
+          var token = $auth.getToken();
           return $http({ method: "GET", url: URLBACKEND + "auth/" + provider + "/", params: { id_token: $auth.getToken() } }).then(
             function (result) {
               console.log('yes im ok');
@@ -2367,6 +2379,40 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'ionic-ratings', 'ang
   })
 
   // directives
+  .directive('starRating', function () {
+    return {
+      restrict: 'A',
+      template: '<ul class="rating"><li ng-repeat="star in stars" ng-class="star" class="icon ion-ios7-star" ng-click="toggle($index)"></li></ul>',
+      scope: {
+        ratingValue: '=',
+        max: '=',
+        readonly: '@',
+        onRatingSelected: '&'
+      },
+      link: function (scope) {
+        var updateStars = function () {
+          scope.stars = [];
+          for (var i = 0; i < scope.max; i++) {
+            scope.stars.push({
+              energized: i < scope.ratingValue,
+              'ion-ios7-star-half': scope.ratingValue % 1 > 0 && i === Math.floor(scope.ratingValue)
+            });
+          }
+        };
+        scope.toggle = function (index) {
+          if (angular.isUndefined(scope.readonly)) {
+            scope.ratingValue = index + 1;
+            scope.onRatingSelected({rating: index + 1});
+          }
+        };
+        scope.$watch('ratingValue', function () {
+            updateStars();
+          }
+        );
+      }
+    };
+  })
+
   .directive('autolinker', ['$timeout',
     function ($timeout) {
       return {

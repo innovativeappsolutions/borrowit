@@ -595,15 +595,13 @@
       </ion-nav-bar>
       <ion-content class="borrowit-blau has-footer">
         <div class="list">
-          <div class="item text-center">
-            <img src="img/icons/black_avatar.png" width="80" height="80">
-          </div>
-          <div class="item text-center">
-            <i class="icon ion-star"></i>
-            <i class="icon ion-star"></i>
-            <i class="icon ion-star"></i>
-            <i class="icon ion-star"></i>
-            <i class="ion-ios-star-half"></i>
+          <div class="item button-full text-center">
+            <img src="img/icons/black_avatar.png" width="80" height="80"></br>
+            <div class="item text-center">
+              <div class="stars aligncenter">
+                <div ng-style="{ 'width': getStars(values.currentPerson.rating) }"></div>
+              </div>
+            </div>
           </div>
           <button class="button button button-block button-borrowitgrau ion-plus" ng-hide="alreadyContact(values.currentPerson)" ng-click="addContact(values.currentPerson)">
             Als Kontakt hinzufügen
