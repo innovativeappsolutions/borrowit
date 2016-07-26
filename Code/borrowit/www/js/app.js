@@ -159,7 +159,7 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'satellizer', 'ngCookies'])
+var app = angular.module('starter', ['ionic', 'ngCordova', 'ionic-ratings', 'angularMoment', 'satellizer', 'ngCookies'])
 
   .run(function ($ionicPlatform, CommunicationService) {
     CommunicationService.initiateConnection();
@@ -559,7 +559,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
       var ratedvalue = 1;
       var rating = $ionicPopup.prompt({
         title: 'Möchtest du ' + person.username + ' bewerten?',
-        template: '<rating ng-model="ratedvalue" max="5" ></rating>',
+        template: '<div class="item"><rating ng-model="ratedvalue" max="5" ></rating></div>',
         buttons: [
           {
             text: 'Abbrechen',
@@ -783,7 +783,8 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         })
       };
       function onError(contactError) {
-        ResultService.showError(contactError)
+        ResultService.showError(contactError);
+        $scope.hideLoading();
       };
       var options = {};
       options.multiple = true;
@@ -1040,12 +1041,14 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
     $scope.requests = [];
 
     $scope.loadRequests = function () {
+      $scope.showLoading();
       var loadedRequests = CommunicationService.getAllRequests();
       loadedRequests.then(function (result) {
         $scope.requests = [];
         for (var i = 0; i < result.length; i++) {
           $scope.requests.push(result[i]);
         }
+        $scope.hideLoading();
       })
     };
 
@@ -2037,13 +2040,12 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
       }
     }
 
-    signup = function (provider) {
+    var signup = function (provider) {
       salt = ProfileService.profile.email;
       $auth.removeToken();
       ProfileService.profile.password = sha512(ProfileService.profile.password, salt);  // THERE IS NO GUARANTEE THAT THE SALT IS CORRECT MAY ITS A RANDOM SALT FOR SAFTEY IF EMAIL ISNT CORRECT
       //ProfileService.profile.salt = salt;
-      $http({ method: "POST", url: URLBACKEND + "auth/signup", params: { email: ProfileService.profile.email, password: ProfileService.profile.password } })
-        .then(function (result) {
+      return $http({ method: "POST", url: URLBACKEND + "auth/signup", params: { email: ProfileService.profile.email, password: ProfileService.profile.password } }).then(function (result) {
           ProfileService.profile.access_token = result.data.access_token;
           $http.defaults.headers.common['Authorization'] = "Bearer " + ProfileService.profile.access_token;
           $http({
@@ -2073,15 +2075,14 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         });
     }
 
-    login = function (provider, email, password) {
+    var login = function (provider, email, password) {
       if (provider === "email") {
         //SENT EMAIL TO SERVER GET A SALT
         $auth.removeToken();
         var salt = email;
         ProfileService.profile.password = sha512(password, salt);  // THERE IS NO GUARANTEE THAT THE SALT IS CORRECT MAY ITS A RANDOM SALT FOR SAFTEY IF EMAIL ISNT CORRECT
         ProfileService.profile.email = email;
-        $http({ method: "POST", url: URLBACKEND + "auth/email", params: { email: ProfileService.profile.email, password: ProfileService.profile.password } })
-          .then(function (result) {
+        return $http({method: "POST", url: URLBACKEND + "auth/email", params: {email: ProfileService.profile.email, password: ProfileService.profile.password}}).then(function (result) {
             ProfileService.profile.access_token = result.data.access_token;
             $http.defaults.headers.common['Authorization'] = "Bearer " + ProfileService.profile.access_token;
             $http({ method: "GET", url: URLBORROWIT + "profile" })
@@ -2164,16 +2165,15 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         }, function (error) {
           ResultService.showError(error);
         })
-    }
+    };
 
-    authenticate = function (provider) {
+    var authenticate = function (provider) {
       if (provider === "facebook") {
         $auth.removeToken();
         $auth.authenticate(provider).then(function (response) {
           console.log($auth.getToken());
           console.log($auth.getPayload());
-          $http({ method: "GET", url: URLBACKEND + "auth/" + provider + "/", params: { id_token: $auth.getToken() } })
-            .then(
+          return $http({ method: "GET", url: URLBACKEND + "auth/" + provider + "/", params: { id_token: $auth.getToken() } }).then(
             function (result) {
               console.log('yes im ok');
               ProfileService.profile.access_token = $auth.getToken();
@@ -2188,7 +2188,7 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
             });
         })
       }
-    }
+    };
 
     return {
       signup: signup,

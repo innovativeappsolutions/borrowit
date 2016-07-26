@@ -2073,15 +2073,14 @@ var app = angular.module('starter', ['ionic', 'ngCordova', 'angularMoment', 'sat
         });
     }
 
-    login = function (provider, email, password) {
+    var login = function (provider, email, password) {
       if (provider === "email") {
         //SENT EMAIL TO SERVER GET A SALT
         $auth.removeToken();
         var salt = email;
         ProfileService.profile.password = sha512(password, salt);  // THERE IS NO GUARANTEE THAT THE SALT IS CORRECT MAY ITS A RANDOM SALT FOR SAFTEY IF EMAIL ISNT CORRECT
         ProfileService.profile.email = email;
-        $http({ method: "POST", url: URLBACKEND + "auth/email", params: { email: ProfileService.profile.email, password: ProfileService.profile.password } })
-          .then(function (result) {
+        return $http({method: "POST", url: URLBACKEND + "auth/email", params: {email: ProfileService.profile.email, password: ProfileService.profile.password}}).then(function (result) {
             ProfileService.profile.access_token = result.data.access_token;
             $http.defaults.headers.common['Authorization'] = "Bearer " + ProfileService.profile.access_token;
             $http({ method: "GET", url: URLBORROWIT + "profile" })
