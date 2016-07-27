@@ -883,6 +883,25 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.servic
     $scope.logout = function () {
       window.localStorage.removeItem("profile");
       window.localStorage.removeItem('chats');
+      ProfileService.profile =
+        {
+          username: "",
+          lastname: "",
+          firstname: "",
+          email: "",
+          telephone: "",
+          password: "",
+          addresses: [],
+          currentAddress: 0,
+          picture: "img/icons/black_avatar.png",
+          contacts: [],
+          rating: 5,
+          salt: 0,
+          requests: [],
+          access_token: "",
+          push: true,
+          location: true
+        }
       $scope.emptyAllFields();
       window.location = "#/";
     };
@@ -1464,14 +1483,17 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.servic
     };
 
     $ionicPlatform.ready(function () {
-      $ionicPush.register(CommunicationService.config);
-      document.addEventListener("pause", function () {
+      if(ProfileService.profile.access_token && ProfileService.profile.access_token != "")
         $ionicPush.register(CommunicationService.config);
+      document.addEventListener("pause", function () {
+        if(ProfileService.profile.access_token && ProfileService.profile.access_token != "")
+          $ionicPush.register(CommunicationService.config);
         CommunicationService.sendLocationToServer();
       }, false);
       document.addEventListener("resume", function () {
         //code for action on resume
-        $ionicPush.register(CommunicationService.config);
+        if(ProfileService.profile.access_token && ProfileService.profile.access_token != "")
+          $ionicPush.register(CommunicationService.config);
         CommunicationService.sendLocationToServer();
       }, false)
       if ($cordovaKeyboard) {
@@ -1740,7 +1762,7 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.servic
     var URLBORROWIT = HOST + ":" + PORT + "/api/borrowit/";
     var salt;
 
-    var config = null;
+    var config = {};
 
     initiateConnection = function () {
       $http.defaults.headers.common['Authorization'] = "Bearer " + ProfileService.profile.access_token;
@@ -1750,6 +1772,21 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.servic
           var payload = notification.payload;
           console.log(notification, payload);
           $cordovaDialogs.alert(notification.payload, "BorrowIt!");
+          // TODO delete:
+
+          // send notification to server for debugging reasons
+          ///"api/borrowit/chat/debug" POST mit eins=payload und zwei = notification
+          $http({ method: "POST", url: URLBORROWIT + "chat/debug", data: { eins: payload, zwei: notification } })
+            .then(function (result) {
+              // erfolgreich an backend geschickt
+              var asdjasdfpahs = "";
+            }, function (error) {
+              ResultService.showError(error);
+              // toSomething
+            });
+
+          // END OF TODO delete
+
         },
         "onRegister": function (data) {
           console.log("Device token:", data.token);

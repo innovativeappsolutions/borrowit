@@ -1,0 +1,10 @@
+npm install -g bower
+bower install -g satellizer
+bower install -g angular-cookies
+bower install -g crypto-js
+bower install --save-dev ionic-platform-web-client
+bower install ionic-ratings --save
+ionic add ionic-platform-web-client
+ionic plugin add phonegap-plugin-push --variable SENDER_ID="40863005073"
+bower install angularjs-socialshare --save
+bower install ionic-toast --save

@@ -159,7 +159,7 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.service.core', 'ionic.service.push', 'ngCordova', 'ionic-rating-stars', 'ionic-ratings', 'angularMoment', 'satellizer', 'ngCookies'])
+var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast', 'ionic.service.core', 'ionic.service.push', 'ngCordova', 'ionic-rating-stars', 'ionic-ratings', 'angularMoment', 'satellizer', 'ngCookies'])
 
   .run(function ($ionicPlatform, CommunicationService) {
     CommunicationService.initiateConnection();
@@ -1643,7 +1643,7 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.servic
     }
   })
 
-  .factory('ResultService', function ($ionicPopup) {
+  .factory('ResultService', function (ionicToast) {
     showResult = function (result) {
       var content = "";
       switch (result) {
@@ -1666,6 +1666,8 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.servic
           content = "Deine Anfrage wurde veröffentlicht!";
           break;
       }
+      <!-- ionicToast.show(message, position, stick, time); -->
+      ionicToast.show(content, 'bottom', false, 2500);
       /*var promptPopup = $ionicPopup.prompt({
         title: content,
         buttons: [
@@ -1730,11 +1732,16 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.servic
           title = "E-Mail-Adresse bereits vorhanden";
           content = "Bist du vielleicht schon angemeldet? Die angegebene E-Mail-Adresse ist bereits registriert!";
           break; //Email vergeben
+        case -1:
+          title = "Server nicht erreichbar";
+          content = "Verbindung zum Server Fehlgeschlagen";
+          break;
         default:
           title = "Unerwarteter Fehler";
           content = "Ja die anderen Fehler erwarten wir ;)";
           break;
       }
+      ionicToast.show(error.status + title + ": " + content, 'bottom', false, 2500);
       /*var showErrorPopup = $ionicPopup.show({
         template: content,
         title: title,
@@ -1756,8 +1763,8 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.servic
   .factory('CommunicationService', ['$http', '$auth', '$cordovaDialogs', '$ionicPush', '$cordovaGeolocation', '$timeout', 'ResultService', 'ProfileService', function ($http, $auth, $cordovaDialogs, $ionicPush, $cordovaGeolocation, $timeout, ResultService, ProfileService) {
     HOST = "https://sb.pftclan.de";
     PORT = 546;
-    //var HOST = "http://localhost";
-    //var PORT = "3000"
+    var HOST = "http://localhost";
+    var PORT = "3000"
     var URLBACKEND = HOST + ":" + PORT + "/api/smartbackend/";
     var URLBORROWIT = HOST + ":" + PORT + "/api/borrowit/";
     var salt;

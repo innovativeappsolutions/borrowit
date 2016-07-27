@@ -8,7 +8,8 @@
   "dependencies": {
     "crypto-js": "^3.1.6",
     "ionic-ratings": "^0.2.0",
-    "angular-socialshare": "angularjs-socialshare#^2.2.3"
+    "angular-socialshare": "angularjs-socialshare#^2.2.3",
+    "ionic-toast": "^0.4.1"
   },
   "resolutions": {
     "angular-animate": "1.5.3",

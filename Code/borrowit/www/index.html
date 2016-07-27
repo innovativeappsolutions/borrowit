@@ -66,6 +66,7 @@
   <script src="lib/ionic-ratings/src/ionic-ratings.js"></script>
   <script src="lib/ionic-rating-stars/dist/js/ionic-rating-stars.min.js"></script>
   <script src="lib/angular-socialshare/dist/angular-socialshare.js"></script>
+  <script src="lib/ionic-toast/dist/ionic-toast.bundle.min.js"></script>
 
   <!-- Library for SQLite support -->
   <script type="text/javascript" src="js/SQLitePlugin.js"></script>
@@ -102,7 +103,11 @@
           <a class="button button-block button-borrowitgrau" href="#/registrierung">Registrierung</a>
           <div class="button-bar">
             <!--<a class="button button-borrowitgrau button-block">Passwort vergessen</a>-->
-            <button class="button button-borrowitgrau button-block">Hilfe</button>
+            <!--<button class="button button-borrowitgrau button-block">Hilfe</button>-->
+            <a class="button button-borrowitgrau button-block"
+               socialshare
+               socialshare-provider="email">Hilfe
+            </a>
           </div>
         </div>
       </ion-content>
@@ -837,6 +842,13 @@
           <a class="button button-full item button-light icon icon-right ion-chevron-right" href="#/login" ng-click="logout()">
             Abmelden
           </a>
+
+          <!--<button class="button button-borrowitgrau button-block">Hilfe</button>-->
+
+          <a class="button button-borrowitgrau button-block"
+             socialshare
+             socialshare-provider="email">Hilfe
+          </a>
           <!--<button class="button button-full item item-icon-right text-left button-assertive" ng-click="deleteProfile()">
             Konto löschen
             <i class="ion-chevron-right"></i>
@@ -1000,7 +1012,7 @@
         Sie dürfen personenbezogene Daten von BorrowIt! ausschließlich dazu verwenden, um sich mit einem anderen Nutzer bezüglich einer bestimmten Anzeige in Verbindung zu setzen. Insbesondere dürfen personenbezogene Daten BorrowIt! keinesfalls genutzt werden, um Spam zu versenden oder ohne vorherige Zustimmung des jeweiligen Nutzers gesammelt werden.
 
         Zugriff, Änderung und Löschung
-        Durch Aufrufen Ihrer Anzeigen- oder Kontostatusseite können Sie Ihre bei BorrowIt! gespeicherten personenbezogenen Daten einsehen, ändern oder löschen. Wenden Sie sich bitte unter innovativeappsolutions@web.de an den Kundenservice, um sämtliche personenbezogenen Daten zu überprüfen, die wir gespeichert haben und die nicht BorrowIt! angezeigt werden. Unter Umständen ist diese Auskunft kostenpflichtig, höchstens jedoch in Höhe der gesetzlich erlaubten Entgelte. Bitte korrigieren Sie etwaige falsche Daten. Wir löschen Ihre personenbezogenen Daten, wenn wir sie nicht mehr für die in dieser Datenschutzbestimmung aufgeführten Zwecke benötigen und gesetzliche Aufbewahrungspflichten dem nicht entgegenstehen. Im Rahmen der gesetzlichen Vorschriften speichern wir personenbezogene Daten, um Streitigkeiten beizulegen, unsere Bestimmungen durchzusetzen und um zu verhindern, dass sich Personen, die wir von der Nutzung unserer Dienstleistungen ausgeschlossen haben, erneut bei uns anmelden.
+        Durch Aufrufen Ihrer Anzeigen- oder Kontostatusseite können Sie Ihre bei BorrowIt! gespeicherten personenbezogenen Daten einsehen, ändern oder löschen. Wenden Sie sich bitte unter <a socialshare socialshare-provider="email" socialshare-to="innovativeappsolutions@web.de">innovativeappsolutions@web.de</a> an den Kundenservice, um sämtliche personenbezogenen Daten zu überprüfen, die wir gespeichert haben und die nicht BorrowIt! angezeigt werden. Unter Umständen ist diese Auskunft kostenpflichtig, höchstens jedoch in Höhe der gesetzlich erlaubten Entgelte. Bitte korrigieren Sie etwaige falsche Daten. Wir löschen Ihre personenbezogenen Daten, wenn wir sie nicht mehr für die in dieser Datenschutzbestimmung aufgeführten Zwecke benötigen und gesetzliche Aufbewahrungspflichten dem nicht entgegenstehen. Im Rahmen der gesetzlichen Vorschriften speichern wir personenbezogene Daten, um Streitigkeiten beizulegen, unsere Bestimmungen durchzusetzen und um zu verhindern, dass sich Personen, die wir von der Nutzung unserer Dienstleistungen ausgeschlossen haben, erneut bei uns anmelden.
 
         Datensicherheit
         Wir haben technische und organisatorische Sicherheitsmaßnahmen getroffen, um unser Datenverarbeitungssystem vor unbefugtem Zugang und personenbezogene Daten vor unbefugtem Zugriff zu schützen.
@@ -1008,7 +1020,7 @@
         Unter Umständen werden wir bzw. unsere Dienstleister bei Ihrem Besuch bestimmter Webseiten von BorrowIt! auf Ihrem Computer "Cookies" speichern (ein "Cookie" ist eine kleine Datei, die auf der Festplatte ihres Computers abgespeichert wird). Die meisten Cookies sind sogenannte "Sitzungscookies", die am Ende einer Sitzung automatisch von Ihrer Festplatte gelöscht werden, zum Beispiel, wenn Sie Ihren Browser schließen. Es kann sein, dass wir für die Zwecke einer Analyse unseres Webseitenverlaufs sowohl dauerhafte Cookies als auch Sitzungscookies einsetzen, um unsere Dienste, Inhalte und Werbung genauer auf unsere Nutzer abzustimmen, die Wirksamkeit von Werbeaktionen zu messen und um Vertrauen und Sicherheit zu fördern. Bestimmte der von uns angebotenen Funktionen können nur unter Zulassung der Cookies genutzt werden. Sie können unsere Cookies sperren, indem Sie die Einstellungen Ihres Browsers in "keine Cookies akzeptieren“ ändern. Sie können Ihren Browser auch so einstellen, dass dieser Sie vor dem Setzen von Cookies fragt, ob Sie einverstanden sind. Schließlich können Sie auch einmal gesetzte Cookies jederzeit wieder löschen. Wie all das im Einzelnen funktioniert, entnehmen Sie bitte der Anleitung Ihres Browser-Herstellers. Für Informationen dazu, wie Sie diese Einstellungen auf dem Browser Ihres mobilen Endgeräts vornehmen können, ziehen Sie bitte die entsprechende Bedienungsanleitung heran. Wenn Sie keine Cookies akzeptieren, kann dies im Einzelfall zu Funktionseinschränkungen unserer Websites führen (z.B. müssen Sie Ihr Passwort ggf. häufiger eingeben). Nähere Informationen über die Gründe, aus denen wir Cookies verwenden, finden sie oben unter „Datenerhebung“. Informationen zur Verwendung von Cookies durch Dritte finden Sie nachfolgend.
 
         Allgemeines
-        Diese Bestimmungen können jederzeit von uns aktualisiert werden. Die Aktualisierungen werden jeweils mit Ihrer nächsten Anzeige bei BorrowIt! wirksam. Falls wir oder unsere Tochterunternehmen mit einem anderen Unternehmen fusionieren bzw. von einem anderen Unternehmen übernommen werden, dürfen wir personenbezogene Daten mit diesem anderen Unternehmen gemeinsam verarbeiten und nutzen, wobei diese Bestimmungen ihre Gültigkeit behalten. Bei Fragen zu diesen Bestimmungen wenden Sie sich bitte an <a href="mailto:innovativeappsolutions@web.de">innovativeappsolutions@web.de</a>.
+        Diese Bestimmungen können jederzeit von uns aktualisiert werden. Die Aktualisierungen werden jeweils mit Ihrer nächsten Anzeige bei BorrowIt! wirksam. Falls wir oder unsere Tochterunternehmen mit einem anderen Unternehmen fusionieren bzw. von einem anderen Unternehmen übernommen werden, dürfen wir personenbezogene Daten mit diesem anderen Unternehmen gemeinsam verarbeiten und nutzen, wobei diese Bestimmungen ihre Gültigkeit behalten. Bei Fragen zu diesen Bestimmungen wenden Sie sich bitte an <a socialshare socialshare-provider="email" socialshare-to="innovativeappsolutions@web.de">innovativeappsolutions@web.de</a>.
       </ion-content>
     </ion-view>
   </script>
