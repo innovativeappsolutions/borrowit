@@ -173,8 +173,7 @@
           </div>-->
           <ion-radio ng-repeat="item in profile.addresses track by $index"
                      ng-value="item.addressid"
-                     ng-model="profile.currentAddress"
-                     ng-change="currentAddressChanged()">
+                     ng-model="profile.currentAddress">
             {{ item.street }} {{ item.streetnumber }}
           </ion-radio>
           <button class="button button-block button-borrowitgrau" ng-click="addAddress()">Addresse ergänzen</button>
@@ -532,7 +531,7 @@
           </div>
           <div class="button-bar">
             <button ng-hide="values.actualizeRequest" class="button button-block icon ion-checkmark" ng-click="prepareStartRequest()"></button>
-            <button ng-show="values.actualizeRequest" class="button button-block icon ion-checkmark" ng-click="updateRequestInformations(values.currentRequest)"></button>
+            <button ng-show="values.actualizeRequest" class="button button-block icon ion-checkmark" ng-click="updateRequestInformations(values.currentRequest.requestid)"></button>
             <button class="button button-block icon ion-close" ng-click="emptyAllFields()"></button>
           </div>
         </div>
@@ -724,12 +723,12 @@
             Aktivitäten:
           </div>
           <div class="item" ng-repeat="request in profile.requests | orderBy:requestid:true track by $index">
-            <button class="item button-full item-icon-right" ng-show="request.username != profile.username" ng-click="loadCurrentRequest(request.requestid)">
+            <button class="item button-full item-icon-right" ng-show="request.profile.username != profile.username" ng-click="loadCurrentRequest(request.requestid)">
               {{request.title}}
               <i class="ion-chevron-right"></i>
               <i class="ion-chevron-right"></i>
             </button>
-            <button class="item button-full item-icon-left" ng-show="request.username == profile.username" ng-click="loadCurrentRequest(request.requestid)">
+            <button class="item button-full item-icon-left" ng-show="request.profile.username == profile.username" ng-click="loadCurrentRequest(request.requestid)">
               <i class="ion-chevron-left"></i>
               <i class="ion-chevron-left"></i>
               {{request.title}}

@@ -494,8 +494,11 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.servic
         ProfileService.profile.addresses = [];
         ProfileService.profile.currentAddress = 0;
         ProfileService.profile.requests = [];
-        $scope.registerSecondPart();
-        //window.location = '#/registrierung2';
+        $scope.showLoading();
+        CommunicationService.signup("email", $scope.profile.email, $scope.profile.password).then(function(result) {
+          window.location = '#/registrierung2';
+          $scope.hideLoading();
+        })
       }
       else {
         error = {};
@@ -505,22 +508,16 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.servic
     };
 
     $scope.registerSecondPart = function () {
-      /*if ($scope.profile.addresses != null &&
-        $scope.profile.addresses.length > 0) {*/
+      if ($scope.profile.addresses != null &&
+        $scope.profile.addresses.length > 0) {
         ProfileService.profile.push = true;
         ProfileService.profile.location = true;
-        var signedup = CommunicationService.signup("email");
-        $scope.showLoading();
-        signedup.then(function (result) {
-          $scope.hideLoading();
-          $scope.loadRequests();
-        }), function(error) {
-          $scope.hideLoading();
-        };
+        CommunicationService.createProfile();
+        $scope.loadRequests();
         window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
-        //signup("email", $scope.profile.email, $scope.profile.password);
+
         window.location = '#/';
-      //}
+      }
     };
 
     $scope.login = function (username, password) {
@@ -731,13 +728,13 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.servic
       var requestToUpdate;
       for (var i = 0; i < $scope.profile.requests.length; i++) {
         if ($scope.profile.requests[i].requestid === requestid) {
-          requestToUpdate = $scope.setRequestFields();
+          requestToUpdate = setRequestFields();
           requestToUpdate.requestid = requestid;
           if ($scope.profile.location && $scope.values.useLocationForRequest) {
             var location = CommunicationService.getGeoLocation();
             location.then(function (result) {
               requestToUpdate.location = result;
-              CommunicationService.updateRequest(requestid, requestToUpdate.title, requestToUpdate.description, requestToUpdate.location, requestToUpdate.startdate, requestToUpdate.enddate, requestToUpdate.category)
+              CommunicationService.updateRequest(requestid, requestToUpdate.title, requestToUpdate.description, requestToUpdate.location, requestToUpdate.startDate, requestToUpdate.endDate, requestToUpdate.category)
               ProfileService.profile.requests[i] = requestToUpdate;
               window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
             })
@@ -746,7 +743,7 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.servic
             for (var i = 0; i < $scope.profile.addresses.length; i++) {
               if ($scope.profile.addresses[i].addressid === $scope.profile.currentAddress) {
                 requestToUpdate.location = $scope.profile.addresses[i].street + " " + $scope.profile.addresses[i].streetnumber + ", " + $scope.profile.addresses[i].zip + " " + $scope.profile.addresses[i].city + ", " + $scope.profile.addresses[i].country;
-                CommunicationService.updateRequest(requestid, requestToUpdate.title, requestToUpdate.description, requestToUpdate.location, requestToUpdate.startdate, requestToUpdate.enddate, requestToUpdate.category)
+                CommunicationService.updateRequest(requestid, requestToUpdate.title, requestToUpdate.description, requestToUpdate.location, requestToUpdate.startDate, requestToUpdate.endDate, requestToUpdate.category)
                 ProfileService.profile.requests[i] = requestToUpdate;
                 window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
                 break;
@@ -2185,32 +2182,68 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.servic
       return $http({ method: "POST", url: URLBACKEND + "auth/signup", params: { email: ProfileService.profile.email, password: ProfileService.profile.password } }).then(function (result) {
         ProfileService.profile.access_token = result.data.access_token;
         $http.defaults.headers.common['Authorization'] = "Bearer " + ProfileService.profile.access_token;
-        $http({
-          method: "PUT", url: URLBORROWIT + "profile", data: {
-            lastname: ProfileService.profile.lastname,
-            firstname: ProfileService.profile.firstname,
-            email: ProfileService.profile.email,
-            username: ProfileService.profile.username,
-            telephone: ProfileService.profile.telephone,
-            picture: ProfileService.profile.picture,
-            currentaddress: 0,
-            addresses: []
-          }
-        })
-          .then(function (result) {
-            console.log("Juhu");
-            //ProfileService.profile.access_token = result.data.access_token;
-            //$http.defaults.headers.common['Authorization'] = "Bearer "+ ProfileService.profile.access_token;
-          }, function (error) {
-            console.log("Mist");
-            ResultService.showError(error);
-            // toSomething
-          });
       }, function (error) {
         ResultService.showError(error);
         // toSomething
       });
-    }
+    };
+
+    createProfile = function() {
+      $http({method: "PUT", url: URLBORROWIT + "profile", data: {
+          lastname: ProfileService.profile.lastname,
+          firstname: ProfileService.profile.firstname,
+          email: ProfileService.profile.email,
+          username: ProfileService.profile.username,
+          telephone: ProfileService.profile.telephone,
+          picture: ProfileService.profile.picture,
+          currentaddress: ProfileService.profile.currentAddress,
+          currentlocation: getAddressLocation()
+        }
+      }).then(function (result) {
+          console.log("Juhu");
+          //ProfileService.profile.access_token = result.data.access_token;
+          //$http.defaults.headers.common['Authorization'] = "Bearer "+ ProfileService.profile.access_token;
+        }, function (error) {
+          console.log("Mist");
+          ResultService.showError(error);
+          // toSomething
+        });
+    };
+
+    getProfile = function() {
+      $http({ method: "GET", url: URLBORROWIT + "profile" })
+        .then(function (result) {
+          console.log("Juhu");
+          ProfileService.profile.username = result.data[0].username;
+          ProfileService.profile.lastname = result.data[0].lastname;
+          ProfileService.profile.firstname = result.data[0].firstname;
+          ProfileService.profile.telephone = result.data[0].telephone;
+          ProfileService.profile.addresses = result.data[0].addresses;
+          ProfileService.profile.currentAddress = result.data[0].currentaddress;
+          ProfileService.profile.picture = result.data[0].picture;
+          ProfileService.profile.contacts = result.data[0].contacts;
+          ProfileService.profile.rating = result.data[0].rating;
+          ProfileService.profile.requests = result.data[0].requests;
+          ProfileService.profile.push = result.data[0].push;
+          ProfileService.profile.location = result.data[0].location;
+          window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
+
+          $ionicPush.register(config)/*.then(function (result) {
+           console.log("Register success " + result);
+
+           // ** NOTE: Android regid result comes back in the pushNotificationReceived, only iOS returned here
+           if (ionic.Platform.isIOS()) {
+           sendDeviceId(result, "ios");
+           }
+           }, function (err) {
+           console.log("Register error " + err)
+           })*/;
+
+        }, function (error) {
+          console.log("Mist");
+          ResultService.showError(error);
+        });
+    };
 
     var login = function (provider, email, password) {
       if (provider === "email") {
@@ -2222,38 +2255,7 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.servic
         return $http({ method: "POST", url: URLBACKEND + "auth/email", params: { email: ProfileService.profile.email, password: ProfileService.profile.password } }).then(function (result) {
           ProfileService.profile.access_token = result.data.access_token;
           $http.defaults.headers.common['Authorization'] = "Bearer " + ProfileService.profile.access_token;
-          $http({ method: "GET", url: URLBORROWIT + "profile" })
-            .then(function (result) {
-              console.log("Juhu");
-              ProfileService.profile.username = result.data[0].username;
-              ProfileService.profile.lastname = result.data[0].lastname;
-              ProfileService.profile.firstname = result.data[0].firstname;
-              ProfileService.profile.telephone = result.data[0].telephone;
-              ProfileService.profile.addresses = result.data[0].addresses;
-              ProfileService.profile.currentAddress = result.data[0].currentaddress;
-              ProfileService.profile.picture = result.data[0].picture;
-              ProfileService.profile.contacts = result.data[0].contacts;
-              ProfileService.profile.rating = result.data[0].rating;
-              ProfileService.profile.requests = result.data[0].requests;
-              ProfileService.profile.push = result.data[0].push;
-              ProfileService.profile.location = result.data[0].location;
-              window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
-
-              $ionicPush.register(config)/*.then(function (result) {
-                console.log("Register success " + result);
-
-                // ** NOTE: Android regid result comes back in the pushNotificationReceived, only iOS returned here
-                if (ionic.Platform.isIOS()) {
-                  sendDeviceId(result, "ios");
-                }
-              }, function (err) {
-                console.log("Register error " + err)
-              })*/;
-
-            }, function (error) {
-              console.log("Mist");
-              ResultService.showError(error);
-            });
+          getProfile();
           window.location = '#/';
         }, function (error) {
           ResultService.showError(error);
@@ -2322,6 +2324,7 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.servic
 
     return {
       signup: signup,
+      createProfile:createProfile,
       login: login,
       authenticate: authenticate,
       initiateConnection: initiateConnection,
