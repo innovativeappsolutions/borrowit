@@ -46,6 +46,9 @@
         "phonegap-plugin-push": {
             "SENDER_ID": "40863005073",
             "PACKAGE_NAME": "com.ionicframework.borrowit795688"
+        },
+        "cordova-plugin-x-socialsharing": {
+            "PACKAGE_NAME": "de.dhbw.kanada16"
         }
     },
     "dependent_plugins": {

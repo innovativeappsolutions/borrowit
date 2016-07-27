@@ -159,7 +159,7 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.service.push', 'ngCordova', 'ionic-rating-stars', 'ionic-ratings', 'angularMoment', 'satellizer', 'ngCookies'])
+var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.service.core', 'ionic.service.push', 'ngCordova', 'ionic-rating-stars', 'ionic-ratings', 'angularMoment', 'satellizer', 'ngCookies'])
 
   .run(function ($ionicPlatform, CommunicationService) {
     CommunicationService.initiateConnection();
@@ -244,6 +244,14 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
         url: '/anfragenchat',
         templateUrl: 'anfragenchat.html',
         controller: 'UserMessagesCtrl'
+      })
+      .state('agb', {
+        url: '/agb',
+        templateUrl: 'agb.html'
+      })
+      .state('datenschutz', {
+        url: '/datenschutz',
+        templateUrl: 'datenschutz.html'
       });
     //profile = JSON.parse(window.localStorage.getItem("profile"));
     var profileexists = JSON.parse(window.localStorage.getItem("profile"));
@@ -550,12 +558,42 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
       // Turn value into number/100
       var size = val / 5 * 100;
       return size + '%';
-    }
+    };
+
+    $scope.rate = function(request, borrower) {
+      var ratedUsername, ratedUserid;
+      if(!borrower) {
+        ratedUsername = request.username;
+        ratedUserid = request.borrower;
+      }
+      else {
+        ratedUsername = "deinen Helfer";
+        ratedUserid = request.lendor;
+      }
+      var rating = $ionicPopup.prompt({
+        title: 'Möchtest du ' + ratedUsername + ' bewerten?',
+        template: '<div class="item"><rating-stars class="aligncenter" ng-model="$scope.values.ratedvalue" max="5"></rating-stars></div>',
+        buttons: [
+          {
+            text: 'Abbrechen',
+            type: 'button-borrowitgrau'
+          },
+          {
+            text: '<b>Bewerten</b>',
+            type: 'button-borrowitblau',
+            onTap: function (e) {
+              CommunicationService.addRating(ratedUserid, request.requestid, $scope.values.ratedvalue);
+            }
+          }
+        ]
+      })
+    };
 
     $scope.showLoading = function () {
       $ionicLoading.show({
         content: 'Lädt',
         animation: 'fade-in',
+        template: '<ion-spinner class="spinner-borrowitblau" icon="bubbles"></ion-spinner>',
         showBackdrop: true,
         maxWidth: 200,
         showDelay: 0
@@ -566,29 +604,9 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
       $ionicLoading.hide();
     };
 
-    $scope.rate = function(person, request) {
-      var ratedvalue = 1;
-      var rating = $ionicPopup.prompt({
-        title: 'Möchtest du ' + person.username + ' bewerten?',
-        template: '<div class="item"><rating-stars ng-model="ratedvalue" max="5"></rating-stars></div>',
-        buttons: [
-          {
-            text: 'Abbrechen',
-            type: 'button-borrowitgrau'
-          },
-          {
-            text: '<b>Bewerten</b>',
-            type: 'button-borrowitblau',
-            onTap: function (e) {
-              CommunicationService.addRating(person.uid, request.requestid, ratedvalue);
-            }
-          }
-        ]
-      })
-    };
-
     $scope.currentAddressChanged = function () {
       CommunicationService.changeCurrentAddress(ProfileService.profile.currentAddress);
+      window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
     };
 
     $scope.pushToggleChange = function () {
@@ -722,6 +740,10 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
         window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
         $scope.emptyAllFields();
         $scope.hideLoading();
+        var result = {status: 22};
+        ResultService.showResult(result);
+      }, function(error) {
+        $scope.hideLoading();
       });
     }
 
@@ -791,6 +813,8 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
               $scope.phoneContacts.push(result[i]);
           }
           $scope.hideLoading();
+        }, function(error) {
+          $scope.hideLoading();
         })
       };
       function onError(contactError) {
@@ -836,14 +860,15 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
         sofort: true,
         currentRequest: {},
         currentPerson: {},
-        chosenSortedBy: "startDate",
+        chosenSortedBy: "profile[0].rating",
         chosenCategory: "all",
         currentChat: {},
         actualizeRequest: false,
         requestOffered: false,
         requestAccepted: false,
         useLocationForRequest: true,
-        doneLoading: false
+        doneLoading: false,
+        ratedValue: 1
       };
       $scope.textboxes = {
         startDate: "",
@@ -878,6 +903,8 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
         $scope.values.currentPerson.requests = result.requests;
         $scope.values.currentPerson.uid = contactid;
         window.location = "#/kontakt_profil";
+        $scope.hideLoading();
+      }, function(error) {
         $scope.hideLoading();
       });
     };
@@ -1006,6 +1033,8 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
       loadedChat.then(function (result) {
         window.location = "#/anfragenchat";
         $scope.hideLoading();
+      }, function(error) {
+        $scope.hideLoading();
       });
     };
 
@@ -1045,8 +1074,8 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
         $scope.values.currentRequest = result;
         window.location = "#/anfrage_einsehen";
         $scope.hideLoading();
-        var person = {username: result.username, uid: result.uid};
-        $scope.rate(person, result);
+      }, function(error) {
+        $scope.hideLoading();
       })
     };
 
@@ -1060,6 +1089,8 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
         for (var i = 0; i < result.length; i++) {
           $scope.requests.push(result[i]);
         }
+        $scope.hideLoading();
+      }, function(error) {
         $scope.hideLoading();
       })
     };
@@ -1148,14 +1179,17 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
     $scope.removeAddress = function (address) //change to id
     {
       if (ProfileService.profile.addresses.length > 1) {
-        ProfileService.profile.currentAddress = ProfileService.profile.addresses[0].addressid;
+        if(ProfileService.profile.currentAddress !== ProfileService.profile.addresses[0].addressid)
+          ProfileService.profile.currentAddress = ProfileService.profile.addresses[0].addressid;
+        else
+          ProfileService.profile.currentAddress = ProfileService.profile.addresses[1].addressid
         for (var i = 0; i < ProfileService.profile.addresses.length; i++) {
-          if (ProfileService.profile.addresses[i].addressid == address.addressid) {
+          if (ProfileService.profile.addresses[i].addressid == address) {
             ProfileService.profile.addresses.splice(i, 1);
           }
         }
         window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
-        CommunicationService.removeAddress(address.addressid);
+        CommunicationService.removeAddress(address);
       }
       else {
         //Popup ergänzen
@@ -1244,18 +1278,21 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
             text: '<b>Ändern</b>',
             type: 'button-borrowitblau',
             onTap: function (e) {
-              if ($scope.popupData.oldPW == ProfileService.profile.password) {
+              if (CommunicationService.sha512($scope.popupData.oldPW, ProfileService.profile.email) == ProfileService.profile.password) {
                 if ($scope.popupData.newPW != null && $scope.popupData.newPWrep != null && $scope.popupData.newPW === $scope.popupData.newPWrep) {
-                  ProfileService.profile.password = $scope.popupData.newPW;
+                  ProfileService.profile.password = CommunicationService.sha512($scope.popupData.newPW, ProfileService.profile.email);
                   window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
-                  ResultService.changedPassword(0);
+                  result = {status: 42};
+                  ResultService.showResult(result);
                 }
                 else {
-                  ResultService.changedPassword(2);
+                  result = {status: 443};
+                  ResultService.showError(result);
                 }
               }
               else {
-                ResultService.changedPassword(1);
+                result = {status: 444};
+                ResultService.showError(result);
               }
             }
           },
@@ -1269,10 +1306,11 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
     };
 
     $scope.changeProfile = function () {
-      $scope.popupData = {};
-      popupData.lastname = $scope.profile.lastname;
-      popupData.firstname = $scope.profile.firstname;
-      popupData.telephone = $scope.profile.telephone;
+      $scope.popupData = {
+        lastname: $scope.profile.lastname,
+        firstname: $scope.profile.firstname,
+        telephone: $scope.profile.telephone
+      };
       var promptPopup = $ionicPopup.prompt({
         title: 'Profil ändern',
         template:
@@ -1305,7 +1343,8 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
                 CommunicationService.changeProfileInfos(ProfileService.profile.lastname, ProfileService.profile.firstname, ProfileService.profile.telephone);
               }
               else {
-                ResultService.changedProfile(1);
+                var error = {status: 442}
+                ResultService.showError(error);
               }
             }
           },
@@ -1325,7 +1364,6 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
     };
 
     $ionicPlatform.ready(function () {
-
       $ionicPush.register(config);
       document.addEventListener("pause", function () {
         $ionicPush.register(config);
@@ -1484,71 +1522,6 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
   })
 
   .factory('ResultService', function ($ionicPopup) {
-    changedPassword = function (result) {
-      switch (result) {
-        case 0:
-          var promptPopup = $ionicPopup.prompt({
-            title: 'Passwort erfolgreich geändert',
-            buttons: [
-              {
-                text: 'OK',
-                type: 'button-borrowitblau'
-              }
-            ]
-          });
-          break;
-        case 1:
-          var promptPopup = $ionicPopup.prompt({
-            title: 'Altes Passwort falsch',
-            buttons: [
-              {
-                text: 'OK',
-                type: 'button-borrowitblau'
-              }
-            ]
-          });
-          break;
-        case 2:
-          var promptPopup = $ionicPopup.prompt({
-            title: 'Die Passwörter sind nicht gleich',
-            buttons: [
-              {
-                text: 'OK',
-                type: 'button-borrowitblau'
-              }
-            ]
-          });
-          break;
-      }
-    }
-
-    changedProfile = function (result) {
-      switch (result) {
-        case 0:
-          var promptPopup = $ionicPopup.prompt({
-            title: 'Profil erfolgreich geändert',
-            buttons: [
-              {
-                text: 'OK',
-                type: 'button-borrowitblau'
-              }
-            ]
-          });
-          break;
-        case 1:
-          var promptPopup = $ionicPopup.prompt({
-            title: 'Mindestens ein Feld ist falsch ausgefüllt',
-            buttons: [
-              {
-                text: 'OK',
-                type: 'button-borrowitblau'
-              }
-            ]
-          });
-          break;
-      }
-    };
-
     showResult = function (result) {
       var content = "";
       switch (result) {
@@ -1609,8 +1582,16 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
           break; //not found
         case 442:
           title = "Fehlende Eingabe";
-          content = "Eine oder mehrere Felder wurden nicht ausgefüllt";
-          break; //not found
+          content = "Ein oder mehrere Felder wurden nicht ausgefüllt";
+          break; //Leeres Feld
+        case 443:
+          title = "Fehler bei der Eingabe";
+          content = "Die Passwörter sind nicht gleich";
+          break; //Passwörter nicht gleich
+        case 444:
+          title = "Fehler bei der Eingabe";
+          content = "Das Alte Passwort ist falsch";
+          break; //Altes Passwort falsch
         case 500:
           title = "Interner Fehler";
           content = "Wir kümmern uns um das Problem!";
@@ -1645,8 +1626,7 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
     }
 
     return {
-      changedPassword: changedPassword,
-      changedProfile: changedProfile,
+      showResult: showResult,
       showError: showError
     }
   })
@@ -1654,8 +1634,8 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
   .factory('CommunicationService', ['$http', '$auth', '$cordovaDialogs', '$ionicPush', '$cordovaGeolocation', '$timeout', 'ResultService', 'ProfileService', function ($http, $auth, $cordovaDialogs, $ionicPush, $cordovaGeolocation, $timeout, ResultService, ProfileService) {
     HOST = "https://sb.pftclan.de";
     PORT = 546;
-    //var HOST = "http://localhost";
-    //var PORT = "3000"
+    var HOST = "http://localhost";
+    var PORT = "3000"
     var URLBACKEND = HOST + ":" + PORT + "/api/smartbackend/";
     var URLBORROWIT = HOST + ":" + PORT + "/api/borrowit/";
     var salt;
@@ -1750,6 +1730,8 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
     changeProfilePicture = function (currentaddress) {
       $http({ method: "POST", url: URLBORROWIT + "profile/address/currentaddress", data: { currentaddress: currentaddress } })
         .then(function (result) {
+          result = {status: 242}
+          ResultService.showResult(result);
           //man könnte ne Bestätigung zeigen
         }, function (error) {
           ResultService.showError(error);
@@ -1959,7 +1941,7 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
     changeProfileInfos = function (lastname, firstname, telephone) {
       $http({ method: "POST", url: URLBORROWIT + "profile/maindata", data: { lastname: lastname, firstname: firstname, telephone: telephone } })
         .then(function (result) {
-          //man könnte ne Bestätigung zeigen
+
         }, function (error) {
           ResultService.showError(error);
           // toSomething
@@ -2264,7 +2246,8 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
       openChat: openChat,
       sendMessage: sendMessage,
       sendBorrowIt: sendBorrowIt,
-      acceptBorrowIt: acceptBorrowIt
+      acceptBorrowIt: acceptBorrowIt,
+      sha512: sha512
     }
   }])
 

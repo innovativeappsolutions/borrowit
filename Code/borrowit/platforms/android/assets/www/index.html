@@ -65,6 +65,7 @@
   <script src="lib/crypto-js/hmac-sha512.js"></script>
   <script src="lib/ionic-ratings/src/ionic-ratings.js"></script>
   <script src="lib/ionic-rating-stars/dist/js/ionic-rating-stars.min.js"></script>
+  <script src="lib/angular-socialshare/dist/angular-socialshare.js"></script>
 
   <!-- Library for SQLite support -->
   <script type="text/javascript" src="js/SQLitePlugin.js"></script>
@@ -217,8 +218,7 @@
   </script>
 
   <script id="home.html" type="text/ng-template">
-    <ion-view ng-init="loadRequests()">
-      <ion-spinner icon="spiral"></ion-spinner>
+    <ion-view ng-init="loadRequests();loadChats();">
       <ion-content has-bouncing="true" class="borrowit-blau has-footer">
         <div class="list text-center">
           <div class="row">
@@ -231,10 +231,10 @@
               Sortieren nach
             </div>
             <select ng-model="values.chosenSortedBy">
-              <option value="place">Entfernung</option>
-              <option value="startDate">Benötigt ab</option>
-              <option value="endDate">Benötigt bis</option>
-              <option value="profile.rating">Bewertung</option>
+              <option value="distance">Entfernung</option>
+              <option value="startdate">Benötigt ab</option>
+              <option value="enddate">Benötigt bis</option>
+              <option value="profile[0].rating">Bewertung</option>
             </select>
           </label>
           <ion-item class = "item item-input item-select item-light">
@@ -344,21 +344,16 @@
   <script id="anfragenchat.html" type="text/ng-template">
     <ion-view id="userMessagesView"
               cache-view="false">
-      <div class="loader-center" ng-show="!doneLoading">
-        <div class="loader">
-          <i class="icon ion-loading-c"></i>
-        </div>
-      </div>
       <ion-header-bar class="bar-borrowitgrau text-center">
         <div ng-show="values.currentChat.request.offered && !values.currentChat.request.accepted && values.currentChat.request.borrower != values.currentChat.profile.uid">
-          <h1 class="title">{{ values.currentChat.profile.username }} möchte dir bezüglich deiner Anfrage helfen!</h1>
+          <h1 class="title">{{ values.currentChat.profile.username }} möchte dir helfen!</h1>
           <div class="button-bar col-50">
             <a class="button button-block button-balanced icon ion-checkmark" onclick="acceptOffer(values.currentChat.request)"></a>
             <a class="button button-block button-assertive icon ion-close" ng-click=""></a>
           </div>
         </div>
         <div ng-show="!values.currentChat.request.offered && values.currentChat.request.borrower == values.currentChat.profile.uid">
-          <h1 class="title">Möchtest du {{ values.currentChat.profile.username }} bezüglich seiner/ihrer Anfrage helfen?</h1>
+          <h1 class="title">Möchtest du helfen?</h1>
           <a class="button button-block button-balanced" onclick="borrowit(values.currentChat.request)">BorrowIt!</a>
         </div>
         <div class="text-center" ng-show="values.currentChat.request.accepted || (!values.currentChat.request.offered && values.currentChat.request.borrower != values.currentChat.profile.uid) || (values.currentChat.request.offered && values.currentChat.request.borrower == values.currentChat.profile.uid)">
@@ -610,7 +605,7 @@
           <div class="item item-borrowitblau">
             Aktivitäten:
           </div>
-          <div class="item" ng-repeat="request in values.currentPerson.requests track by $index">
+          <div class="item" ng-repeat="request in values.currentPerson.requests | orderBy:requestid:true track by $index">
             <button class="item button-full item-icon-right" ng-show="request.username != values.currentPerson.username" ng-click="loadCurrentRequest(request.requestid)">
               {{request.title}}
               <i class="ion-chevron-right"></i>
@@ -719,18 +714,16 @@
         <div class="list">
           <div class="item text-center">
             <img class="bigprofile-pic" ng-click="addMedia()" ng-src="{{profile.picture}}">
-          </div>
-          <div class="item text-center">
-            <i class="icon ion-star"></i>
-            <i class="icon ion-star"></i>
-            <i class="icon ion-star"></i>
-            <i class="icon ion-star"></i>
-            <i class="ion-ios-star-half"></i>
+            <div class="item text-center">
+              <div class="stars aligncenter">
+                <div ng-style="{ 'width': getStars(profile.rating) }"></div>
+              </div>
+            </div>
           </div>
           <div class="item item-borrowitblau">
             Aktivitäten:
           </div>
-          <div class="item" ng-repeat="request in profile.requests track by $index">
+          <div class="item" ng-repeat="request in profile.requests | orderBy:requestid:true track by $index">
             <button class="item button-full item-icon-right" ng-show="request.username != profile.username" ng-click="loadCurrentRequest(request.requestid)">
               {{request.title}}
               <i class="ion-chevron-right"></i>
@@ -788,6 +781,37 @@
           <div class="item item-divider">
             Privatsphäre:
           </div>
+          <div class="button-bar">
+            <a class="button ion-social-facebook"
+               socialshare
+               socialshare-provider="facebook"
+               socialshare-text="BorrowIt!"
+               socialshare-url="https://github.com/innovativeappsolutions/borrowit">
+            </a>
+            <a class="button ion-social-whatsapp"
+               socialshare
+               socialshare-provider="whatsapp"
+               socialshare-text="BorrowIt!"
+               socialshare-url="https://github.com/innovativeappsolutions/borrowit">
+            </a>
+            <a class="button ion-social-twitter"
+               socialshare
+               socialshare-provider="twitter"
+               socialshare-text="BorrowIt!"
+               socialshare-url="https://github.com/innovativeappsolutions/borrowit">
+            </a>
+            <a class="button ion-social-yen"
+               socialshare
+               socialshare-provider="email"
+               socialshare-text="BorrowIt!"
+               socialshare-url="https://github.com/innovativeappsolutions/borrowit">
+            </a>
+            <a class="button ion-social-googleplus"
+               socialshare
+               socialshare-provider="google"
+               socialshare-url="https://github.com/innovativeappsolutions/borrowit">
+            </a>
+          </div>
           <ion-toggle ng-model="profile.push"
                       ng-change="pushToggleChange()">
             Benachrichtigungen bei Anfragen
@@ -796,10 +820,13 @@
                       ng-change="locationToggleChange()">
             Standort
           </ion-toggle>
-          <button class="button button-full item-icon-right">
+          <a class="button button-full item button-light icon icon-right ion-chevron-right" href="#/datenschutz">
             Datenschutz
             <i class="ion-chevron-right"></i>
-          </button>
+          </a>
+          <a class="button button-full item button-light icon icon-right ion-chevron-right" href="#/agb">
+            AGB
+          </a>
           <!--<button class="button button-full item-icon-right">
             Nutzer einladen
             <i class="ion-chevron-right"></i>
@@ -864,12 +891,6 @@
 
   <script id="anfrage_einsehen.html" type="text/ng-template">
     <ion-view view-title="Anfrage einsehen">
-      <div class="loader-center" ng-show="!doneLoading">
-        <div class="loader">
-          <i class="icon ion-loading-c"></i>
-        </div>
-      </div>
-      <ion-spinner ng-show="!doneLoading" icon="spiral"></ion-spinner>
       <ion-nav-bar class="bar-borrowitgrau">
         <ion-nav-back-button class="button-clear">
           <i class="ion-chevron-left"></i> Back
@@ -884,7 +905,7 @@
           <ion-label>
             {{values.currentRequest.description}}
           </ion-label>
-          <div class="row">
+          <div ng-hide="values.currentRequest.username == profile.username" class="row">
             <div class="col col-50 text-right">
               Entfernung
             </div>
@@ -916,9 +937,15 @@
               BorrowIt!
             </button>
           </div>
-          <a class="button button-block button-light" ng-show="values.currentRequest.username == profile.username" ng-click="actualizeRequest(values.currentRequest.requestid)" href="#/anfrage_erstellen">
+          <a class="button button-block button-light" ng-show="values.currentRequest.username == profile.username && !values.currentRequest.ended" ng-click="actualizeRequest(values.currentRequest.requestid)" href="#/anfrage_erstellen">
             Anfrage aktualisieren
           </a>
+          <button class="button button-block button-light" ng-hide="values.currentRequest.rated || values.currentRequest.username == profile.username" ng-click="rate(values.currentRequest, false)">
+            Bewerten
+          </button>
+          <button class="button button-block button-light" ng-show="!values.currentRequest.rated && values.currentRequest.username == profile.username && values.currentRequest.accepted" ng-click="rate(values.currentRequest, true)">
+            Bewerten
+          </button>
         </div>
       </ion-content>
       <ion-footer-bar class="bar bar-borrowitgrau">
@@ -933,8 +960,153 @@
     </ion-view>
   </script>
 
-  <script id="UserMessages.html" type="text/ng-template">
+  <script id="datenschutz.html" type="text/ng-template">
+    <ion-view view-title="Datenschutz">
+      <ion-nav-bar class="bar-borrowitgrau">
+        <ion-nav-back-button class="button-clear">
+          <i class="ion-chevron-left"></i> Back
+        </ion-nav-back-button>
+      </ion-nav-bar>
+      <ion-content class="borrowit-blau">
+        Datenschutzerklärung
+        Diese Datenschutzbestimmungen erläutern, wie wir mit Ihren personenbezogenen Daten umgehen. Wir erheben, verarbeiten und nutzen Ihre personenbezogenen Daten, um unsere in der BorrowIt! Applikation und Webanwendung angebotenen Dienstleistungen zu erbringen und um deren rechtswidrige und missbräuchliche Nutzung zu verhindern und dagegen vorzugehen. Diese Bestimmungen treten in Kraft am 1. Juli 2016.
 
+        Datenerhebung
+        Anzeigen bei BorrowIt! sind nicht öffentlich zugänglich. Unsere Server befinden sich innerhalb der EU. Wenn Sie sich daher entscheiden, uns Ihre personenbezogenen Daten mitzuteilen, stimmen Sie der Übermittlung und Speicherung dieser Daten auf unseren Servern in der EU zu.
+
+        Wir erheben und speichern folgende personenbezogenen Daten:
+        •	E-Mail-Adresse, Adresse
+        •	Anmeldedaten, Statistiken zu Seitenaufrufen, Datenverkehr zu und von BorrowIt! sowie Werbedaten (zu diesem Zweck nutzen wir unter anderem Cookies, Sie können die Annahme von Cookies in Ihrem Browser deaktivieren, was unter Umständen zu Einschränkungen der Nutzbarkeit der Seite führen kann, siehe hierzu auch unten unter Cookies und Verwendung von Cookies durch Dritte)
+        •	Weitere Daten, einschließlich IP-Adressen der Nutzer und Standard-Internetprotokolldaten.
+        Datennutzung
+
+        Wir verwenden die personenbezogenen Daten der Nutzer, um:
+        •	unsere Dienstleistungen zu erbringen;
+        •	Streitigkeiten beizulegen, Entgelte einzuziehen und technische Probleme zu beheben;
+        •	rechtswidrige und missbräuchliche Nutzung unserer Dienstleistungen zu verhindern und dagegen vorzugehen und um unsere Nutzungsbestimmungen durchzusetzen.
+        •	auf Basis des Nutzungsverhaltens der Nutzer BorrowIt! bedarfsgerecht zu gestalten, das Interesse an unseren Dienstleistungen zu messen, unsere Dienstleistungen zu verbessern und Nutzer über Dienstleistungen und Neuerungen zu informieren.
+        •	Ihnen Informationen mit werbendem Inhalt zu übermitteln es sei denn Sie widersprechen
+        •	andere Dinge zu tun, auf die wir Sie vorher ausdrücklich bei der Datenerhebung hinweisen.
+        Zum Schutz unserer Nutzer filtern wir Spam und andere verdächtige Nachrichten. Wir behalten uns vor, bei konkretem Verdacht auf betrügerische Aktivitäten oder Verstößen gegen unsere Nutzungsbedingungen die Übermittlung von Nachrichten zu verzögern oder zu verweigern.
+
+        Datenübermittlung
+        Wir übermitteln Ihre personenbezogenen Daten ohne die ausdrückliche Zustimmung des Nutzers nicht für Marketingzwecke an Dritte. Wir dürfen personenbezogene Daten offen legen, um rechtlichen Anforderungen zu entsprechen, unsere Bestimmungen durchzusetzen, auf Behauptungen zu reagieren, dass eine Anzeige oder ein anderer Inhalt die Rechte Dritter verletzt, oder um die Rechte, das Eigentum und die Sicherheit Dritter zu schützen.
+
+        Verwendung von Informationen von BorrowIt!
+
+        Sie dürfen personenbezogene Daten von BorrowIt! ausschließlich dazu verwenden, um sich mit einem anderen Nutzer bezüglich einer bestimmten Anzeige in Verbindung zu setzen. Insbesondere dürfen personenbezogene Daten BorrowIt! keinesfalls genutzt werden, um Spam zu versenden oder ohne vorherige Zustimmung des jeweiligen Nutzers gesammelt werden.
+
+        Zugriff, Änderung und Löschung
+        Durch Aufrufen Ihrer Anzeigen- oder Kontostatusseite können Sie Ihre bei BorrowIt! gespeicherten personenbezogenen Daten einsehen, ändern oder löschen. Wenden Sie sich bitte unter innovativeappsolutions@web.de an den Kundenservice, um sämtliche personenbezogenen Daten zu überprüfen, die wir gespeichert haben und die nicht BorrowIt! angezeigt werden. Unter Umständen ist diese Auskunft kostenpflichtig, höchstens jedoch in Höhe der gesetzlich erlaubten Entgelte. Bitte korrigieren Sie etwaige falsche Daten. Wir löschen Ihre personenbezogenen Daten, wenn wir sie nicht mehr für die in dieser Datenschutzbestimmung aufgeführten Zwecke benötigen und gesetzliche Aufbewahrungspflichten dem nicht entgegenstehen. Im Rahmen der gesetzlichen Vorschriften speichern wir personenbezogene Daten, um Streitigkeiten beizulegen, unsere Bestimmungen durchzusetzen und um zu verhindern, dass sich Personen, die wir von der Nutzung unserer Dienstleistungen ausgeschlossen haben, erneut bei uns anmelden.
+
+        Datensicherheit
+        Wir haben technische und organisatorische Sicherheitsmaßnahmen getroffen, um unser Datenverarbeitungssystem vor unbefugtem Zugang und personenbezogene Daten vor unbefugtem Zugriff zu schützen.
+        Cookies
+        Unter Umständen werden wir bzw. unsere Dienstleister bei Ihrem Besuch bestimmter Webseiten von BorrowIt! auf Ihrem Computer "Cookies" speichern (ein "Cookie" ist eine kleine Datei, die auf der Festplatte ihres Computers abgespeichert wird). Die meisten Cookies sind sogenannte "Sitzungscookies", die am Ende einer Sitzung automatisch von Ihrer Festplatte gelöscht werden, zum Beispiel, wenn Sie Ihren Browser schließen. Es kann sein, dass wir für die Zwecke einer Analyse unseres Webseitenverlaufs sowohl dauerhafte Cookies als auch Sitzungscookies einsetzen, um unsere Dienste, Inhalte und Werbung genauer auf unsere Nutzer abzustimmen, die Wirksamkeit von Werbeaktionen zu messen und um Vertrauen und Sicherheit zu fördern. Bestimmte der von uns angebotenen Funktionen können nur unter Zulassung der Cookies genutzt werden. Sie können unsere Cookies sperren, indem Sie die Einstellungen Ihres Browsers in "keine Cookies akzeptieren“ ändern. Sie können Ihren Browser auch so einstellen, dass dieser Sie vor dem Setzen von Cookies fragt, ob Sie einverstanden sind. Schließlich können Sie auch einmal gesetzte Cookies jederzeit wieder löschen. Wie all das im Einzelnen funktioniert, entnehmen Sie bitte der Anleitung Ihres Browser-Herstellers. Für Informationen dazu, wie Sie diese Einstellungen auf dem Browser Ihres mobilen Endgeräts vornehmen können, ziehen Sie bitte die entsprechende Bedienungsanleitung heran. Wenn Sie keine Cookies akzeptieren, kann dies im Einzelfall zu Funktionseinschränkungen unserer Websites führen (z.B. müssen Sie Ihr Passwort ggf. häufiger eingeben). Nähere Informationen über die Gründe, aus denen wir Cookies verwenden, finden sie oben unter „Datenerhebung“. Informationen zur Verwendung von Cookies durch Dritte finden Sie nachfolgend.
+
+        Allgemeines
+        Diese Bestimmungen können jederzeit von uns aktualisiert werden. Die Aktualisierungen werden jeweils mit Ihrer nächsten Anzeige bei BorrowIt! wirksam. Falls wir oder unsere Tochterunternehmen mit einem anderen Unternehmen fusionieren bzw. von einem anderen Unternehmen übernommen werden, dürfen wir personenbezogene Daten mit diesem anderen Unternehmen gemeinsam verarbeiten und nutzen, wobei diese Bestimmungen ihre Gültigkeit behalten. Bei Fragen zu diesen Bestimmungen wenden Sie sich bitte an <a href="mailto:innovativeappsolutions@web.de">innovativeappsolutions@web.de</a>.
+      </ion-content>
+    </ion-view>
+  </script>
+
+  <script id="agb.html" type="text/ng-template">
+    <ion-view view-title="AGB">
+      <ion-nav-bar class="bar-borrowitgrau">
+        <ion-nav-back-button class="button-clear">
+          <i class="ion-chevron-left"></i> Back
+        </ion-nav-back-button>
+      </ion-nav-bar>
+      <ion-content class="borrowit-blau">
+        Allgemeine Nutzungsbedingungen für BorrowIt!
+        Willkommen bei BorrowIt! BorrowIt! ist eine mobile Angebotsplattform der Innovative App Solutions, Coblitzallee 1-9, 68163 Mannheim. Diese Nutzungsbedingungen regeln das Vertragsverhältnis zwischen Innovative App Solutions und den Nutzern, welche die Dienstleistungen von Innovative App Solutions in Anspruch nehmen. Diese Nutzungsbedingungen gelten ab dem 1.Juli 2016.
+
+        Sofern Sie als Verbraucher handeln, haben Sie folgendes Widerrufsrecht:
+
+        WIDERRUFSBELEHRUNG
+
+        Widerrufsrecht
+        Sie haben das Recht, binnen vierzehn Tagen ohne Angabe von Gründen diesen Vertrag zu widerrufen. Die Widerrufsfrist beträgt vierzehn Tage ab dem Tag des Vertragsschlusses.
+        Um Ihr Widerrufsrecht auszuüben, müssen Sie uns (Innovative App Solutions, Coblitzallee 1-9, 68163 Mannheim) mittels einer eindeutigen Erklärung (z.B. ein mit der Post versandter Brief, Telefax oder E-Mail) über Ihren Entschluss, diesen Vertrag zu widerrufen, informieren.
+        Zur Wahrung der Widerrufsfrist reicht es aus, dass Sie die Mitteilung über die Ausübung des Widerrufsrechts vor Ablauf der Widerrufsfrist absenden.
+
+        Widerrufsfolgen
+        Wenn Sie diesen Vertrag widerrufen, haben wir Ihnen alle Zahlungen, die wir von Ihnen erhalten haben, einschließlich der Lieferkosten (mit Ausnahme der zusätzlichen Kosten, die sich daraus ergeben, dass Sie eine andere Art der Lieferung als die von uns angebotene, günstigste Standardlieferung gewählt haben), unverzüglich und spätestens binnen vierzehn Tagen ab dem Tag zurückzuzahlen, an dem die Mitteilung über Ihren Widerruf dieses Vertrags bei uns eingegangen ist. Für diese Rückzahlung verwenden wir dasselbe Zahlungsmittel, das Sie bei der ursprünglichen Transaktion eingesetzt haben, es sei denn, mit Ihnen wurde ausdrücklich etwas anderes vereinbart; in keinem Fall werden Ihnen wegen dieser Rückzahlung Entgelte berechnet.
+        Haben Sie verlangt, dass die Dienstleistungen während der Widerrufsfrist beginnen sollen, so haben Sie uns einen angemessenen Betrag zu zahlen, der dem Anteil der bis zu dem Zeitpunkt, zu dem Sie uns von der Ausübung des Widerrufsrechts hinsichtlich dieses Vertrags unterrichten, bereits erbrachten Dienstleistungen im Vergleich zum Gesamtumfang der im Vertrag vorgesehenen Dienstleistungen entspricht.
+
+
+        § 1 Registrierung und Nutzerkonto
+
+        1	Die Nutzung der BorrowIt! Applikation oder Webanwendung setzt eine Registrierung voraus. Mit der Aufgabe einer Anzeige kommt zwischen Innovative App Solutions und dem Nutzer ein Vertrag über die Nutzung der BorrowIt! Applikation oder Webanwendung (im Folgenden: "Nutzungsvertrag") zustande. Ein Anspruch auf Abschluss eines Nutzungsvertrags besteht nicht.
+        2	Die von Innovative App Solutions bei der Registrierung abgefragten Daten sind vollständig und korrekt anzugeben. Die Registrierung erfolgt unter Angabe einer gültigen E-Mail-Adresse und der Wahl eines persönlichen Passworts. Das persönliche Passwort ist geheim zu halten und darf nicht an Dritte weitergegeben werden.
+        3	Ein Nutzer kann den Nutzungsvertrag jederzeit kündigen. Dazu genügt eine E-Mail an den Kundenservice oder schriftlich an: Innovative App Solutions – User Inquiries, Coblitzallee 1-9, 68163 Mannheim. Innovative App Solutions kann den Nutzungsvertrag jederzeit mit einer Frist von 14 Tagen kündigen. Das Recht zur Sperrung nach § 3 bleibt davon unberührt.
+        4	Innovative App Solutions behält sich das Recht vor, nicht vollständig angemeldete Nutzerkonten und Nutzerkonten, welche für einen längeren Zeitraum inaktiv waren, zu löschen.
+
+        § 2 Nutzung der BorrowIt! Applikation und Webanwendung
+
+        1	Nutzer sind verpflichtet Gesuche in die passende Kategorie einzustellen und mit Worten und Bildern vollständig und wahrheitsgemäß zu beschreiben.
+        2	Es ist verboten Anzeigen oder sonstige Inhalte auf BorrowIt! zu veröffentlichen, die gegen gesetzliche Vorschriften, Rechte Dritter oder gegen die guten Sitten verstoßen. Beachten Sie dabei, dass es verboten ist:
+
+        •	gegen Gesetze und unsere Grundsätze bezüglich verbotener Inhalte zu verstoßen
+        •	unehrlich oder irreführend zu handeln
+        •	die Rechte Dritter zu verletzen
+        •	Spam, Kettenbriefe oder Schneeballsysteme zu verteilen oder zu bewerben
+        •	Viren oder andere Technologien zu versenden, die die BorrowIt! Anwendung oder die Interessen bzw. das Eigentum von Benutzern der Website schädigen könnten
+        •	die Infrastruktur der BorrowIt! Anwendung einer übermäßigen Belastung auszusetzen oder auf andere Weise das problemlose Funktionieren der Website zu stören
+        •	die Inhalte anderer Anzeigen zu kopieren, zu ändern oder zu verbreiten
+        •	Roboter, Crawler, Spider, Scraper oder andere automatisierte Mechanismen zu nutzen, um auf die BorrowIt! Anwendung zuzugreifen und Inhalte zu sammeln, egal zu welchem Zweck, ohne unsere ausdrückliche schriftliche Zustimmung
+        •	Informationen, insbesondere E-Mail-Adressen, über andere Nutzer zu sammeln oder in irgendeiner Art sich zu verschaffen, ohne Einwilligung des jeweiligen Nutzers
+        •	Maßnahmen zu umgehen, die dazu dienen, den Zugriff auf die BorrowIt! Anwendung zu verhindern oder einzuschränken
+        4. Innovative App Solutions behält sich trotz nicht bestehender gesetzlicher Verpflichtung das Recht vor, die Veröffentlichung von Anzeigen und sonstigen Inhalten in der BorrowIt! Applikation und Webanwendung aus Sicherheitsgründen zu verzögern.
+
+
+
+
+
+        § 3 Missbrauch von BorrowIt!; Löschen von Anzeigen, Sperrung und sonstige Maßnahmen
+
+        Innovative App Solutions kann seinen Service einschränken oder beenden, auf der BorrowIt! Anwendung eingestellte Anzeigen oder sonstige Inhalte löschen, Nutzer verwarnen und vorläufig oder dauerhaft sperren, wenn konkrete Anhaltspunkte dafür vorliegen, dass ein Nutzer gesetzliche Vorschriften, Rechte Dritter oder diese Nutzungsbedingungen verletzt.
+
+
+        § 4 Gebühren und Leistungen
+
+        Die Nutzung der BorrowIt! Anwendung ist grundsätzlich kostenlos.
+        § 5 Inhalte und Nutzungsrechte
+
+        1	Die BorrowIt! Anwendung enthält sowohl Inhalte von uns als auch Anzeigen und andere Informationen von anderen Nutzern. Sie willigen ein, Inhalte nicht zu kopieren, zu ändern oder zu verbreiten. Wenn Sie glauben, dass Ihre Rechte verletzt wurden, informieren Sie uns bitte. Wir behalten uns vor, Inhalte von unserer Website zu entfernen, wenn wir Anhaltspunkte für die Verletzung unserer Nutzungsbedingungen, unserer Grundsätze oder die Verletzung von Rechten Dritter haben.
+        2	Für die Inhalte, die Sie mit Ihrer Anzeige auf BorrowIt! einstellen (Bilder und Artikelbeschreibungen), räumen Sie Innovative App Solutions und den mit Innovative App Solutions verbundenen Unternehmen das nicht ausschließliche, weltweite, unbefristete, unbegrenzte, unwiderrufliche, übertragbare und unterlizenzierbare, unentgeltliche Nutzungsrecht in allen bekannten und noch nicht bekannten Nutzungsarten ein bezüglich aller Urheberrechte, Datenbankrechte, gewerblicher, immaterieller oder sonstiger Schutzrechte.
+
+        § 6 Schutz geistigen Eigentums
+
+        Berechtigte, insbesondere Inhaber von Urheberrechten, Warenzeichenrechten oder anderen Schutzrechten, können Angebote, die ihre Rechte verletzen, melden und deren Entfernung beantragen. Wenn ein Rechtsvertreter der berechtigten Person uns dies auf korrekte Art und Weise meldet, werden die Angebote, die die Schutz- oder Urheberrechte verletzen, von uns entfernt.
+        Melden einer Rechtsverletzung
+
+        Für die Teilnahme am Programm zur Mitteilung über eine mögliche Rechtsverletzung genügt es, das Formular zur Mitteilung über eine mögliche Rechtsverletzung auszufüllen, zu unterschreiben und per Fax an uns zu senden. Sie können dieses Formular verwenden, um Anzeigen zu melden, die Ihre Schutz- oder Urheberrechte verletzen. Die Angaben im Formular zur Mitteilung über eine mögliche Rechtsverletzung werden verwendet, um sicherzustellen, dass die Partei, die diese Anzeige(n) meldet, entweder der Rechteinhaber selbst oder ein offizieller bevollmächtigter Vertreter ist. Diese Angaben müssen auch Auskunft darüber geben, welche Anzeige entfernt werden soll.
+
+        Hinweis: Dieses Formular darf nur vom rechtmäßigen Inhaber der Schutz- und Urheberrechte verwendet werden. Mit der Möglichkeit zur „Mitteilung über eine mögliche Rechtsverletzung“ soll dafür gesorgt werden, dass die Produktangebote bei BorrowIt! keine Urheberrechte, Warenzeichenrechte oder anderen Schutzrechte Dritter verletzen. Für die Kontaktaufnahme bei anderen Fragen steht Besuchern und Inserenten das Kontaktformular zur Verfügung.
+
+        § 7 Haftungsbeschränkung
+
+        1	Die Anzeigen auf BorrowIt! stammen von Nutzern. Innovative App Solutions übernimmt keine Garantie oder Gewährleistung für die Richtigkeit der Anzeigen oder der Nutzerkommunikation sowie für die Qualität, Sicherheit oder Legalität der angebotenen Waren oder Dienstleistungen.
+        2	Gegenüber Unternehmern haftet Innovative App Solutions für Schäden, außer im Fall der Verletzung solcher Pflichten aus dem Schuldverhältnis, deren Erfüllung die ordnungsgemäße Durchführung des Vertrags überhaupt erst ermöglicht, auf deren Einhaltung der Vertragspartner regelmäßig vertrauen darf und deren Verletzung die Erreichung des Vertragszwecks gefährdet (wesentliche Vertragspflichten), nur, wenn und soweit Innovative App Solutions, ihren gesetzlichen Vertretern, leitenden Angestellten oder sonstigen Erfüllungsgehilfen Vorsatz oder grobe Fahrlässigkeit zur Last fällt. Im Fall der Verletzung wesentlicher Vertragspflichten haftet Innovative App Solutions für jedes schuldhafte Verhalten ihrer gesetzlichen Vertreter, leitenden Angestellten oder sonstigen Erfüllungsgehilfen.
+        3	Gegenüber Verbrauchern haftet Innovative App Solutions nur für Vorsatz und grobe Fahrlässigkeit. Im Falle der Verletzung wesentlicher Vertragspflichten, des Schuldnerverzugs oder der von Innovative App Solutions zu vertretenden Unmöglichkeit der Leistungserbringung haftet Innovative App Solutions jedoch für jedes schuldhafte Verhalten ihrer Mitarbeiter und Erfüllungsgehilfen.
+        4	Außer bei Vorsatz oder grober Fahrlässigkeit gesetzlicher Vertreter, leitender Angestellter oder sonstiger Erfüllungsgehilfen von Innovative App Solutions, ist die Haftung der Höhe nach auf die bei Vertragsschluss typischerweise vorhersehbaren Schäden begrenzt.
+
+        5	Eine Haftung für den Ersatz mittelbarer Schäden, insbesondere für entgangenen Gewinn, besteht nur bei Vorsatz oder grober Fahrlässigkeit gesetzlicher Vertreter, leitender Angestellte oder sonstiger Erfüllungsgehilfen von Innovative App Solutions.
+        6	Die vorgenannten Haftungsausschlüsse und Beschränkungen gegenüber Unternehmern oder Verbrauchern gelten nicht im Fall der Übernahme ausdrücklicher Garantien durch Innovative App Solutions und für Schäden aus der Verletzung des Lebens, des Körpers oder der Gesundheit sowie im Fall zwingender gesetzlicher Regelungen.
+
+        § 8 Datenschutz
+
+        Durch die Nutzung der BorrowIt! Anwendung stimmen Sie der Erhebung, Verarbeitung und Nutzung Ihrer persönlichen Daten durch Innovative App Solutions als verantwortlicher speichernder Stelle auf Servern zu, die sich in den USA und in der Europäischen Union befinden. Näheres hierzu finden Sie in unserer Datenschutzerklärung.
+
+        § 9 Schlußbestimmungen
+
+        1	Diese Bedingungen und die anderen in der BorrowIt! Anwendung hinterlegten Bestimmungen und Grundsätze stellen die gesamte Vereinbarung zwischen Innovative App Solutions und den Nutzern dar und ersetzen alle vorherigen Vereinbarungen.
+        2	Diese Vereinbarung unterliegt den Gesetzen der Bundesrepublik Deutschland und sämtliche Streitigkeiten in Zusammenhang mit diesen Nutzungsbedingungen sollen von den Gerichten in Deutschland. Von diesen Regelungen unberührt bleiben die Rechte, die Ihnen möglicherweise als Verbraucher kraft Gesetz zustehen und die unter Umständen die Anwendbarkeit einer anderen Rechtsordnung (zum Beispiel der Ihres Wohnsitzes) vorschreiben. Falls wir bestimmte Vorschriften nicht durchsetzen, verzichten wir damit nicht auf das Recht, dies zu einem späteren Zeitpunkt zu tun. Falls eine dieser Bedingungen unwirksam sein sollte, behalten die anderen Bedingungen weiterhin ihre Wirksamkeit.
+        3	Innovative App Solutions ist berechtigt, mit einer Ankündigungsfrist von vier Wochen seine Rechte und Pflichten aus diesem Vertragsverhältnis ganz oder teilweise auf einen Dritten zu übertragen.
+        Innovative App Solutions behält sich vor, diese Nutzungsbedingungen jederzeit und ohne Nennung von Gründen zu ändern. Die geänderten Bedingungen werden dem Nutzer vor dem Einstellen einer neuen Anzeige bekannt gegeben. Die geänderten Nutzungsbedingungen werden wirksam, sobald der Nutzer diesen bei der Aufgabe einer neuen Anzeige zustimmt.
+      </ion-content>
+    </ion-view>
   </script>
 </body>
 </html>

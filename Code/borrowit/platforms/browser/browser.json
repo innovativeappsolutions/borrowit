@@ -64,6 +64,9 @@
         "phonegap-plugin-push": {
             "SENDER_ID": "40863005073",
             "PACKAGE_NAME": "com.ionicframework.borrowit795688"
+        },
+        "cordova-plugin-x-socialsharing": {
+            "PACKAGE_NAME": "com.ionicframework.borrowit795688"
         }
     },
     "dependent_plugins": {},
@@ -443,6 +446,14 @@
             "clobbers": [
                 "PushNotification"
             ]
+        },
+        {
+            "file": "plugins/cordova-plugin-x-socialsharing/www/SocialSharing.js",
+            "id": "cordova-plugin-x-socialsharing.SocialSharing",
+            "pluginId": "cordova-plugin-x-socialsharing",
+            "clobbers": [
+                "window.plugins.socialsharing"
+            ]
         }
     ],
     "plugin_metadata": {
@@ -459,6 +470,7 @@
         "cordova-plugin-calendar": "4.5.1",
         "cordova-plugin-geolocation": "2.2.0",
         "onesignal-cordova-plugin": "1.13.0",
-        "phonegap-plugin-push": "1.8.0"
+        "phonegap-plugin-push": "1.8.0",
+        "cordova-plugin-x-socialsharing": "5.1.1"
     }
 }

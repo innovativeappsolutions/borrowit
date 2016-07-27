@@ -375,6 +375,14 @@ module.exports = [
         "clobbers": [
             "PushNotification"
         ]
+    },
+    {
+        "file": "plugins/cordova-plugin-x-socialsharing/www/SocialSharing.js",
+        "id": "cordova-plugin-x-socialsharing.SocialSharing",
+        "pluginId": "cordova-plugin-x-socialsharing",
+        "clobbers": [
+            "window.plugins.socialsharing"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -393,7 +401,8 @@ module.exports.metadata =
     "cordova-plugin-calendar": "4.5.1",
     "cordova-plugin-geolocation": "2.2.0",
     "onesignal-cordova-plugin": "1.13.0",
-    "phonegap-plugin-push": "1.8.0"
+    "phonegap-plugin-push": "1.8.0",
+    "cordova-plugin-x-socialsharing": "5.1.1"
 }
 // BOTTOM OF METADATA
 });

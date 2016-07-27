@@ -65,6 +65,7 @@
   <script src="lib/crypto-js/hmac-sha512.js"></script>
   <script src="lib/ionic-ratings/src/ionic-ratings.js"></script>
   <script src="lib/ionic-rating-stars/dist/js/ionic-rating-stars.min.js"></script>
+  <script src="lib/angular-socialshare/dist/angular-socialshare.js"></script>
 
   <!-- Library for SQLite support -->
   <script type="text/javascript" src="js/SQLitePlugin.js"></script>
@@ -318,7 +319,7 @@
             <i class="icon ion-search placeholder-icon"></i>
             <input type="search" placeholder="Search" ng-model="search">
           </label>
-          <div ng-repeat="chat in chats | searchContent:search track by $index">
+          <div ng-repeat="chat in chats  | orderBy:messages[messages.length - 1].date:true | searchContent:search track by $index">
             <button class="item button-full item-avatar" ng-click="viewChat(chat.roomid, true)">
               <img class="profile-pic left"
                    ng-src="{{chat.profile[0].picture}}" onerror="onProfilePicError(this)" />
@@ -778,6 +779,40 @@
           </ion-radio>
           <a class="button button-block button-borrowitgrau icon icon-right ion-chevron-right" href="#/adressen">Adressen bearbeiten</a>
           <div class="item item-divider">
+            Teile unsere App, um mehr Unterstützer zu finden:
+          </div>
+          <div class="button-bar">
+            <a class="button ion-social-facebook"
+               socialshare
+               socialshare-provider="facebook"
+               socialshare-text="BorrowIt!"
+               socialshare-url="https://github.com/innovativeappsolutions/borrowit">
+            </a>
+            <a class="button ion-social-whatsapp"
+               socialshare
+               socialshare-provider="whatsapp"
+               socialshare-text="BorrowIt!"
+               socialshare-url="https://github.com/innovativeappsolutions/borrowit">
+            </a>
+            <a class="button ion-social-twitter"
+               socialshare
+               socialshare-provider="twitter"
+               socialshare-text="BorrowIt!"
+               socialshare-url="https://github.com/innovativeappsolutions/borrowit">
+            </a>
+            <a class="button ion-android-mail"
+               socialshare
+               socialshare-provider="email"
+               socialshare-text="BorrowIt!"
+               socialshare-url="https://github.com/innovativeappsolutions/borrowit">
+            </a>
+            <a class="button ion-social-googleplus"
+               socialshare
+               socialshare-provider="google"
+               socialshare-url="https://github.com/innovativeappsolutions/borrowit">
+            </a>
+          </div>
+          <div class="item item-divider">
             Privatsphäre:
           </div>
           <ion-toggle ng-model="profile.push"
@@ -935,7 +970,7 @@
           <i class="ion-chevron-left"></i> Back
         </ion-nav-back-button>
       </ion-nav-bar>
-      <ion-content class="borrowit-blau has-footer">
+      <ion-content class="borrowit-blau">
         Datenschutzerklärung
         Diese Datenschutzbestimmungen erläutern, wie wir mit Ihren personenbezogenen Daten umgehen. Wir erheben, verarbeiten und nutzen Ihre personenbezogenen Daten, um unsere in der BorrowIt! Applikation und Webanwendung angebotenen Dienstleistungen zu erbringen und um deren rechtswidrige und missbräuchliche Nutzung zu verhindern und dagegen vorzugehen. Diese Bestimmungen treten in Kraft am 1. Juli 2016.
 
@@ -985,7 +1020,7 @@
           <i class="ion-chevron-left"></i> Back
         </ion-nav-back-button>
       </ion-nav-bar>
-      <ion-content class="borrowit-blau has-footer">
+      <ion-content class="borrowit-blau">
         Allgemeine Nutzungsbedingungen für BorrowIt!
         Willkommen bei BorrowIt! BorrowIt! ist eine mobile Angebotsplattform der Innovative App Solutions, Coblitzallee 1-9, 68163 Mannheim. Diese Nutzungsbedingungen regeln das Vertragsverhältnis zwischen Innovative App Solutions und den Nutzern, welche die Dienstleistungen von Innovative App Solutions in Anspruch nehmen. Diese Nutzungsbedingungen gelten ab dem 1.Juli 2016.
 
@@ -1047,7 +1082,6 @@
         § 6 Schutz geistigen Eigentums
 
         Berechtigte, insbesondere Inhaber von Urheberrechten, Warenzeichenrechten oder anderen Schutzrechten, können Angebote, die ihre Rechte verletzen, melden und deren Entfernung beantragen. Wenn ein Rechtsvertreter der berechtigten Person uns dies auf korrekte Art und Weise meldet, werden die Angebote, die die Schutz- oder Urheberrechte verletzen, von uns entfernt.
-
         Melden einer Rechtsverletzung
 
         Für die Teilnahme am Programm zur Mitteilung über eine mögliche Rechtsverletzung genügt es, das Formular zur Mitteilung über eine mögliche Rechtsverletzung auszufüllen, zu unterschreiben und per Fax an uns zu senden. Sie können dieses Formular verwenden, um Anzeigen zu melden, die Ihre Schutz- oder Urheberrechte verletzen. Die Angaben im Formular zur Mitteilung über eine mögliche Rechtsverletzung werden verwendet, um sicherzustellen, dass die Partei, die diese Anzeige(n) meldet, entweder der Rechteinhaber selbst oder ein offizieller bevollmächtigter Vertreter ist. Diese Angaben müssen auch Auskunft darüber geben, welche Anzeige entfernt werden soll.

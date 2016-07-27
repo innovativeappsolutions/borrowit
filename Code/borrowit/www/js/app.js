@@ -159,7 +159,7 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.service.push', 'ngCordova', 'ionic-rating-stars', 'ionic-ratings', 'angularMoment', 'satellizer', 'ngCookies'])
+var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.service.core', 'ionic.service.push', 'ngCordova', 'ionic-rating-stars', 'ionic-ratings', 'angularMoment', 'satellizer', 'ngCookies'])
 
   .run(function ($ionicPlatform, CommunicationService) {
     CommunicationService.initiateConnection();
@@ -269,6 +269,34 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
 
     // this could be on $rootScope rather than in $stateParams
     //$scope.user = ProfileService;
+
+    $scope.borrowit = function(request) {
+      message = {
+        text: ProfileService.profile.username + " möchte dir bezüglich deiner Anfrage >>" + request.title + "<< helfen!",
+        date: new Date(),
+        username: ProfileService.profile.username
+      };
+      $scope.showLoading();
+      var offered = CommunicationService.sendBorrowIt(request.requestid);
+      offered.then(function (result) {
+        ProfileService.profile.requests.push(request);
+        var chat = $scope.chatExists(request);
+        var chatInformations;
+        if (chat) {
+          chatInformations = getChatInformations(chat.roomid, true);
+        }
+        else {
+          chatInformations = getChatInformations(request.requestid, false);
+        }
+        chatInformations.then(function (result) {
+          CommunicationService.sendMessage($scope.values.currentChat.roomid, message);
+          $scope.values.currentChat.messages.push(message);
+          window.localStorage.setItem("chats", JSON.stringify($scope.chats));
+          window.location = "#/anfragenchat";
+        });
+        $scope.loadRequests();
+      });
+    }
 
     $scope.input = {
       message: ''
@@ -740,8 +768,8 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
         window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
         $scope.emptyAllFields();
         $scope.hideLoading();
-        var result = {status: 22};
-        ResultService.showResult(result);
+        var output = {status: 22};
+        ResultService.showResult(output);
       }, function(error) {
         $scope.hideLoading();
       });
@@ -939,11 +967,6 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
         chatInformations.then(function (result) {
           CommunicationService.sendMessage($scope.values.currentChat.roomid, message);
           $scope.values.currentChat.messages.push(message);
-          for (var i = 0; i < $scope.chats.length; i++) {
-            if ($scope.chats[i].roomid == $scope.values.currentChat.roomid) {
-              $scope.chats[i].messages.push(message);
-            }
-          }
           window.localStorage.setItem("chats", JSON.stringify($scope.chats));
           window.location = "#/anfragenchat";
         });
@@ -1364,7 +1387,6 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
     };
 
     $ionicPlatform.ready(function () {
-
       $ionicPush.register(config);
       document.addEventListener("pause", function () {
         $ionicPush.register(config);
@@ -1545,7 +1567,7 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
           content = "Deine Anfrage wurde veröffentlicht!";
           break;
       }
-      var promptPopup = $ionicPopup.prompt({
+      /*var promptPopup = $ionicPopup.prompt({
         title: content,
         buttons: [
           {
@@ -1553,7 +1575,7 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
             type: 'button-borrowitblau'
           }
         ]
-      });
+      });*/
     }
 
     showError = function (error) {
@@ -1614,7 +1636,7 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
           content = "Ja die anderen Fehler erwarten wir ;)";
           break;
       }
-      var showErrorPopup = $ionicPopup.show({
+      /*var showErrorPopup = $ionicPopup.show({
         template: content,
         title: title,
         buttons: [
@@ -1623,7 +1645,7 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
             type: 'button-borrowitblau'
           }
         ]
-      });
+      });*/
     }
 
     return {

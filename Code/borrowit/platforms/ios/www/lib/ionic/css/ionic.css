@@ -322,6 +322,8 @@
 .ion-ios-book-outline:before,
 .ion-ios-bookmarks:before,
 .ion-ios-bookmarks-outline:before,
+.ion-borrowit-star:before,
+.ion-borrowit-empty-star:before,
 .ion-ios-box:before,
 .ion-ios-box-outline:before,
 .ion-ios-briefcase:before,
@@ -1285,6 +1287,12 @@
 
 .ion-bookmark:before {
   content: ""; }
+
+.ion-borrowit-star:before {
+  background: url("../../../img/icons/blue_favorite_full.png"); }
+
+.ion-borrowit-empty-star:before {
+  background: url("../../../img/icons/blue_favorite_empty.png"); }
 
 .ion-bowtie:before {
   content: ""; }
@@ -7463,9 +7471,12 @@ ion-slides {
   .spinner svg {
     width: 28px;
     height: 28px; }
-  .spinner.spinner-light {
-    stroke: #fff;
-    fill: #fff; }
+.spinner.spinner-borrowitblau {
+  stroke: #5DBCD2;
+  fill: #5DBCD2; }
+.spinner.spinner-light {
+  stroke: #fff;
+  fill: #fff; }
   .spinner.spinner-stable {
     stroke: #f8f8f8;
     fill: #f8f8f8; }
