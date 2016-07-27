@@ -477,19 +477,11 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.servic
 
   .controller('LoginCtrl', ['$scope', '$ionicPopup', 'ProfileService', 'ResultService', 'CommunicationService', function ($scope, $ionicPopup, ProfileService, ResultService, CommunicationService) {
     $scope.registerFirstPart = function () {
-      if ($scope.textboxes.username != null &&
-        $scope.textboxes.lastname != null &&
-        $scope.textboxes.firstname != null &&
-        $scope.textboxes.telephone != null &&
-        (($scope.textboxes.email != null &&
-          $scope.textboxes.password != null &&
+      if (($scope.textboxes.email != null &&
+          $scope.textboxes.password != null && $scope.textboxes.password.length >= 8 &&
           $scope.textboxes.passwordrep != null &&
-          $scope.textboxes.password == $scope.textboxes.passwordrep) || (ProfileService.profile.access_token && ProfileService.profile.access_token !== ""))) {
-        ProfileService.profile.username = $scope.textboxes.username;
-        ProfileService.profile.lastname = $scope.textboxes.lastname;
-        ProfileService.profile.firstname = $scope.textboxes.firstname;
+          $scope.textboxes.password == $scope.textboxes.passwordrep) || (ProfileService.profile.access_token && ProfileService.profile.access_token !== "")) {
         ProfileService.profile.email = $scope.textboxes.email;
-        ProfileService.profile.telephone = $scope.textboxes.telephone;
         ProfileService.profile.password = $scope.textboxes.password;
         ProfileService.profile.addresses = [];
         ProfileService.profile.currentAddress = 0;
@@ -508,8 +500,16 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.servic
     };
 
     $scope.registerSecondPart = function () {
-      if ($scope.profile.addresses != null &&
+      if ($scope.textboxes.username != null && $scope.textboxes.username != "" &&
+        $scope.textboxes.lastname != null && $scope.textboxes.lastname != "" &&
+        $scope.textboxes.firstname != null && $scope.textboxes.firstname != "" &&
+        $scope.textboxes.telephone != null &&
+        $scope.profile.addresses != null &&
         $scope.profile.addresses.length > 0) {
+        ProfileService.profile.username = $scope.textboxes.username;
+        ProfileService.profile.lastname = $scope.textboxes.lastname;
+        ProfileService.profile.firstname = $scope.textboxes.firstname;
+        ProfileService.profile.telephone = $scope.textboxes.telephone;
         ProfileService.profile.push = true;
         ProfileService.profile.location = true;
         CommunicationService.createProfile();
@@ -1095,6 +1095,7 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.servic
       var loadedRequest = CommunicationService.getCurrentRequest(requestid);
       loadedRequest.then(function (result) {
         $scope.values.currentRequest = result;
+        $scope.values.currentRequest.distance = ($scope.values.currentRequest.distance / 1000).toString().replace(".",",")
         window.location = "#/anfrage_einsehen";
         $scope.hideLoading();
       }, function(error) {
@@ -1195,6 +1196,7 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.servic
                 var addressid = CommunicationService.addAddress(address);
                 addressid.then(function (result) {
                   address.addressid = result;
+                  ProfileService.profile.currentAddress = result;
                   ProfileService.profile.addresses.push(address);
                   window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
                 });
@@ -1448,11 +1450,6 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.servic
           },
         ]
       });
-
-      promptPopup.then(function (res) {
-        console.log(res);
-      });
-
     };
 
     $scope.changePage = function (page) {

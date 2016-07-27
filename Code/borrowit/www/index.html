@@ -122,25 +122,13 @@
             Benutzerinformationen
           </div>
           <label class="item item-input">
-            <input type="text" placeholder="Benutzername" ng-model="textboxes.username">
-          </label>
-          <label class="item item-input">
-            <input type="text" placeholder="Nachname" ng-model="textboxes.lastname">
-          </label>
-          <label class="item item-input">
-            <input type="text" placeholder="Vorname" ng-model="textboxes.firstname">
-          </label>
-          <label class="item item-input" ng-show='!profile.access_token || profile.access_token === ""'>
             <input type="email" placeholder="E-Mail" ng-model="textboxes.email">
           </label>
           <label class="item item-input">
-            <input type="tel" placeholder="Telefonnummer" ng-model="textboxes.telephone">
+            <input type="password" placeholder="Passwort" ng-model="textboxes.password">
           </label>
           <label class="item item-input">
-            <input type="password" placeholder="Passwort" ng-model="textboxes.password" ng-show='!profile.access_token || profile.access_token === ""'>
-          </label>
-          <label class="item item-input">
-            <input type="password" placeholder="Passwort wdh." ng-model="textboxes.passwordrep" ng-show='!profile.access_token || profile.access_token === ""'>
+            <input type="password" placeholder="Passwort wdh." ng-model="textboxes.passwordrep">
           </label>
           <button class="button button-light button-block icon-right ion-chevron-right" ng-click="registerFirstPart()">Weiter</button><br/>
         </div>
@@ -164,7 +152,21 @@
             </div>
           </div>
           <img class="bigprofile-pic" ng-click="addMedia()" ng-src="{{profile.picture}}">
-
+          <div class="item item-divider">
+            Benutzerinformationen
+          </div>
+          <label class="item item-input">
+            <input type="text" placeholder="Benutzername" ng-model="textboxes.username">
+          </label>
+          <label class="item item-input">
+            <input type="text" placeholder="Nachname" ng-model="textboxes.lastname">
+          </label>
+          <label class="item item-input">
+            <input type="text" placeholder="Vorname" ng-model="textboxes.firstname">
+          </label>
+          <label class="item item-input">
+            <input type="tel" placeholder="Telefonnummer" ng-model="textboxes.telephone">
+          </label>
           <!--<ion-scroll>
             <img ng-repeat="image in images" ng-src="{{urlForImage(image)}}" height="200px"/>
           </ion-scroll>
@@ -912,7 +914,7 @@
               Entfernung
             </div>
             <div class="col col-50 text-left">
-              {{values.currentRequest.distance / 1000}} km
+              {{values.currentRequest.distance}} km
             </div>
           </div>
           <div class="row">

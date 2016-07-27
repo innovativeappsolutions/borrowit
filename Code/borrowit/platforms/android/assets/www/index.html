@@ -122,25 +122,13 @@
             Benutzerinformationen
           </div>
           <label class="item item-input">
-            <input type="text" placeholder="Benutzername" ng-model="textboxes.username">
-          </label>
-          <label class="item item-input">
-            <input type="text" placeholder="Nachname" ng-model="textboxes.lastname">
-          </label>
-          <label class="item item-input">
-            <input type="text" placeholder="Vorname" ng-model="textboxes.firstname">
-          </label>
-          <label class="item item-input" ng-show='!profile.access_token || profile.access_token === ""'>
             <input type="email" placeholder="E-Mail" ng-model="textboxes.email">
           </label>
           <label class="item item-input">
-            <input type="tel" placeholder="Telefonnummer" ng-model="textboxes.telephone">
+            <input type="password" placeholder="Passwort" ng-model="textboxes.password">
           </label>
           <label class="item item-input">
-            <input type="password" placeholder="Passwort" ng-model="textboxes.password" ng-show='!profile.access_token || profile.access_token === ""'>
-          </label>
-          <label class="item item-input">
-            <input type="password" placeholder="Passwort wdh." ng-model="textboxes.passwordrep" ng-show='!profile.access_token || profile.access_token === ""'>
+            <input type="password" placeholder="Passwort wdh." ng-model="textboxes.passwordrep">
           </label>
           <button class="button button-light button-block icon-right ion-chevron-right" ng-click="registerFirstPart()">Weiter</button><br/>
         </div>
@@ -164,7 +152,21 @@
             </div>
           </div>
           <img class="bigprofile-pic" ng-click="addMedia()" ng-src="{{profile.picture}}">
-
+          <div class="item item-divider">
+            Benutzerinformationen
+          </div>
+          <label class="item item-input">
+            <input type="text" placeholder="Benutzername" ng-model="textboxes.username">
+          </label>
+          <label class="item item-input">
+            <input type="text" placeholder="Nachname" ng-model="textboxes.lastname">
+          </label>
+          <label class="item item-input">
+            <input type="text" placeholder="Vorname" ng-model="textboxes.firstname">
+          </label>
+          <label class="item item-input">
+            <input type="tel" placeholder="Telefonnummer" ng-model="textboxes.telephone">
+          </label>
           <!--<ion-scroll>
             <img ng-repeat="image in images" ng-src="{{urlForImage(image)}}" height="200px"/>
           </ion-scroll>
@@ -173,8 +175,7 @@
           </div>-->
           <ion-radio ng-repeat="item in profile.addresses track by $index"
                      ng-value="item.addressid"
-                     ng-model="profile.currentAddress"
-                     ng-change="currentAddressChanged()">
+                     ng-model="profile.currentAddress">
             {{ item.street }} {{ item.streetnumber }}
           </ion-radio>
           <button class="button button-block button-borrowitgrau" ng-click="addAddress()">Addresse ergänzen</button>
@@ -319,7 +320,7 @@
             <i class="icon ion-search placeholder-icon"></i>
             <input type="search" placeholder="Search" ng-model="search">
           </label>
-          <div ng-repeat="chat in chats | searchContent:search track by $index">
+          <div ng-repeat="chat in chats  | orderBy:messages[messages.length - 1].date:true | searchContent:search track by $index">
             <button class="item button-full item-avatar" ng-click="viewChat(chat.roomid, true)">
               <img class="profile-pic left"
                    ng-src="{{chat.profile[0].picture}}" onerror="onProfilePicError(this)" />
@@ -347,9 +348,9 @@
       <ion-header-bar class="bar-borrowitgrau text-center">
         <div ng-show="values.currentChat.request.offered && !values.currentChat.request.accepted && values.currentChat.request.borrower != values.currentChat.profile.uid">
           <h1 class="title">{{ values.currentChat.profile.username }} möchte dir helfen!</h1>
-          <div class="button-bar col-50">
+          <div class="button-bar">
             <a class="button button-block button-balanced icon ion-checkmark" onclick="acceptOffer(values.currentChat.request)"></a>
-            <a class="button button-block button-assertive icon ion-close" ng-click=""></a>
+            <a class="button button-block button-assertive icon ion-close" ng-click="declineOffer(values.currentChat.request)"></a>
           </div>
         </div>
         <div ng-show="!values.currentChat.request.offered && values.currentChat.request.borrower == values.currentChat.profile.uid">
@@ -532,7 +533,7 @@
           </div>
           <div class="button-bar">
             <button ng-hide="values.actualizeRequest" class="button button-block icon ion-checkmark" ng-click="prepareStartRequest()"></button>
-            <button ng-show="values.actualizeRequest" class="button button-block icon ion-checkmark" ng-click="updateRequestInformations(values.currentRequest)"></button>
+            <button ng-show="values.actualizeRequest" class="button button-block icon ion-checkmark" ng-click="updateRequestInformations(values.currentRequest.requestid)"></button>
             <button class="button button-block icon ion-close" ng-click="emptyAllFields()"></button>
           </div>
         </div>
@@ -724,12 +725,12 @@
             Aktivitäten:
           </div>
           <div class="item" ng-repeat="request in profile.requests | orderBy:requestid:true track by $index">
-            <button class="item button-full item-icon-right" ng-show="request.username != profile.username" ng-click="loadCurrentRequest(request.requestid)">
+            <button class="item button-full item-icon-right" ng-show="request.profile.username != profile.username" ng-click="loadCurrentRequest(request.requestid)">
               {{request.title}}
               <i class="ion-chevron-right"></i>
               <i class="ion-chevron-right"></i>
             </button>
-            <button class="item button-full item-icon-left" ng-show="request.username == profile.username" ng-click="loadCurrentRequest(request.requestid)">
+            <button class="item button-full item-icon-left" ng-show="request.profile.username == profile.username" ng-click="loadCurrentRequest(request.requestid)">
               <i class="ion-chevron-left"></i>
               <i class="ion-chevron-left"></i>
               {{request.title}}
@@ -779,7 +780,7 @@
           </ion-radio>
           <a class="button button-block button-borrowitgrau icon icon-right ion-chevron-right" href="#/adressen">Adressen bearbeiten</a>
           <div class="item item-divider">
-            Privatsphäre:
+            Teile unsere App, um mehr Unterstützer zu finden:
           </div>
           <div class="button-bar">
             <a class="button ion-social-facebook"
@@ -800,7 +801,7 @@
                socialshare-text="BorrowIt!"
                socialshare-url="https://github.com/innovativeappsolutions/borrowit">
             </a>
-            <a class="button ion-social-yen"
+            <a class="button ion-android-mail"
                socialshare
                socialshare-provider="email"
                socialshare-text="BorrowIt!"
@@ -811,6 +812,9 @@
                socialshare-provider="google"
                socialshare-url="https://github.com/innovativeappsolutions/borrowit">
             </a>
+          </div>
+          <div class="item item-divider">
+            Privatsphäre:
           </div>
           <ion-toggle ng-model="profile.push"
                       ng-change="pushToggleChange()">
@@ -910,7 +914,7 @@
               Entfernung
             </div>
             <div class="col col-50 text-left">
-              {{values.currentRequest.distance / 1000}} km
+              {{values.currentRequest.distance}} km
             </div>
           </div>
           <div class="row">
