@@ -347,9 +347,9 @@
       <ion-header-bar class="bar-borrowitgrau text-center">
         <div ng-show="values.currentChat.request.offered && !values.currentChat.request.accepted && values.currentChat.request.borrower != values.currentChat.profile.uid">
           <h1 class="title">{{ values.currentChat.profile.username }} möchte dir helfen!</h1>
-          <div class="button-bar col-50">
+          <div class="button-bar">
             <a class="button button-block button-balanced icon ion-checkmark" onclick="acceptOffer(values.currentChat.request)"></a>
-            <a class="button button-block button-assertive icon ion-close" ng-click=""></a>
+            <a class="button button-block button-assertive icon ion-close" ng-click="declineOffer(values.currentChat.request)"></a>
           </div>
         </div>
         <div ng-show="!values.currentChat.request.offered && values.currentChat.request.borrower == values.currentChat.profile.uid">

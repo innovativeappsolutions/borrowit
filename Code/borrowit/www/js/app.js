@@ -494,7 +494,8 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.servic
         ProfileService.profile.addresses = [];
         ProfileService.profile.currentAddress = 0;
         ProfileService.profile.requests = [];
-        window.location = '#/registrierung2';
+        $scope.registerSecondPart();
+        //window.location = '#/registrierung2';
       }
       else {
         error = {};
@@ -504,8 +505,8 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.servic
     };
 
     $scope.registerSecondPart = function () {
-      if ($scope.profile.addresses != null &&
-        $scope.profile.addresses.length > 0) {
+      /*if ($scope.profile.addresses != null &&
+        $scope.profile.addresses.length > 0) {*/
         ProfileService.profile.push = true;
         ProfileService.profile.location = true;
         var signedup = CommunicationService.signup("email");
@@ -519,7 +520,7 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.servic
         window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
         //signup("email", $scope.profile.email, $scope.profile.password);
         window.location = '#/';
-      }
+      //}
     };
 
     $scope.login = function (username, password) {
@@ -1105,17 +1106,23 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.servic
     $scope.requests = [];
 
     $scope.loadRequests = function () {
-      $scope.showLoading();
-      var loadedRequests = CommunicationService.getAllRequests();
-      loadedRequests.then(function (result) {
+      //$scope.showLoading();
+      try {
+        var loadedRequests = CommunicationService.getAllRequests();
+        loadedRequests.then(function (result) {
+          $scope.requests = [];
+          for (var i = 0; i < result.length; i++) {
+            $scope.requests.push(result[i]);
+          }
+          $scope.hideLoading();
+        }, function (error) {
+          $scope.hideLoading();
+        })
+      }
+      catch (error){
         $scope.requests = [];
-        for (var i = 0; i < result.length; i++) {
-          $scope.requests.push(result[i]);
-        }
         $scope.hideLoading();
-      }, function(error) {
-        $scope.hideLoading();
-      })
+      }
     };
 
     $scope.loadChats = function () {
@@ -1129,6 +1136,75 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.servic
     };
 
     $scope.profile = ProfileService.profile;
+
+    $scope.addAddress = function () {
+      $scope.popupData = {};
+      var addAddressPopup = $ionicPopup.show({
+        template:
+        '<div class="item item-input-inset">' +
+        '<label class="item item-input-wrapper">' +
+        '<input type="text" placeholder="Straße" ng-model="popupData.newAddressStreet"/>' +
+        '</label>' +
+        '<label class="item item-input-wrapper">' +
+        '<input type="text" placeholder="Hausnummer" ng-model="popupData.newAddressNumber"/>' +
+        '</label>' +
+        '</div>' +
+        '<div class="item item-input-inset">' +
+        '<label class="item item-input-wrapper">' +
+        '<input type="text" placeholder="PLZ" ng-model="popupData.newAddressZIP"/>' +
+        '</label>' +
+        '<label class="item item-input-wrapper">' +
+        '<input type="text" placeholder="Ort" ng-model="popupData.newAddressCity"/>' +
+        '</label>' +
+        '</div>' +
+        '<label class = "item item-input item-select item-light">' +
+        '<div class = "input-label">' +
+        'Land' +
+        '</div>' +
+        '<select ng-model="popupData.newAddressCountry">' +
+        '<option ng-selected="selected">Deutschland</option>' +
+        '<option>Schweiz</option>' +
+        '<option>Österreich</option>' +
+        '<option>Bayern</option>' +
+        '<option>Köln</option>' +
+        '<option>Kanada</option>' +
+        '</select>' +
+        '</label>',
+        title: 'Neue Adresse anlegen',
+        scope: $scope,
+        buttons: [
+          {
+            text: 'Abbrechen',
+            type: 'button-borrowitgrau'
+          },
+          {
+            text: '<b>Anlegen</b>',
+            type: 'button-borrowitblau',
+            onTap: function (e) {
+              if ($scope.popupData.newAddressStreet != null &&
+                $scope.popupData.newAddressNumber != null &&
+                $scope.popupData.newAddressZIP != null &&
+                $scope.popupData.newAddressCity != null &&
+                $scope.popupData.newAddressCountry != null) {
+                var address = {
+                  street: $scope.popupData.newAddressStreet,
+                  streetnumber: $scope.popupData.newAddressNumber,
+                  zip: $scope.popupData.newAddressZIP,
+                  city: $scope.popupData.newAddressCity,
+                  country: $scope.popupData.newAddressCountry
+                };
+                var addressid = CommunicationService.addAddress(address);
+                addressid.then(function (result) {
+                  address.addressid = result;
+                  ProfileService.profile.addresses.push(address);
+                  window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
+                });
+              }
+            }
+          }
+        ]
+      });
+    };
 
     $scope.addAddress = function () {
       $scope.popupData = {};
