@@ -576,7 +576,7 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.servic
     };
   }])
 
-  .controller("ToDoController", function ($scope, $ionicPopup, $ionicLoading, $cordovaKeyboard, $cordovaVibration, $cordovaCamera, $cordovaDevice, $cordovaFile, $cordovaContacts, $ionicPlatform, $ionicActionSheet, ImageService, ProfileService, ResultService, CommunicationService) {
+  .controller("ToDoController", function ($scope, $ionicPopup, $ionicLoading, $ionicPlatform, $ionicPush, $ionicActionSheet, $cordovaKeyboard, $cordovaVibration, $cordovaCamera, $cordovaDevice, $cordovaFile, $cordovaContacts, $timeout, ImageService, ProfileService, ResultService, CommunicationService) {
 
     $scope.getStars = function (rating) {
       // Get the value
@@ -624,6 +624,10 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.servic
         maxWidth: 200,
         showDelay: 0
       });
+
+      $timeout(function() {
+        $scope.hideLoading();
+      }, 5000)
     };
 
     $scope.hideLoading = function () {
@@ -1108,6 +1112,7 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.servic
     $scope.loadRequests = function () {
       //$scope.showLoading();
       try {
+        $scope.showLoading();
         var loadedRequests = CommunicationService.getAllRequests();
         loadedRequests.then(function (result) {
           $scope.requests = [];
@@ -1459,18 +1464,18 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.servic
     };
 
     $ionicPlatform.ready(function () {
-      $ionicPush.register(config);
+      $ionicPush.register(CommunicationService.config);
       document.addEventListener("pause", function () {
-        $ionicPush.register(config);
+        $ionicPush.register(CommunicationService.config);
         CommunicationService.sendLocationToServer();
       }, false);
       document.addEventListener("resume", function () {
         //code for action on resume
-        $ionicPush.register(config);
+        $ionicPush.register(CommunicationService.config);
         CommunicationService.sendLocationToServer();
       }, false)
       if ($cordovaKeyboard) {
-        $cordovaKeyboard.hideKeyboardAccessoryBar(true);
+        $cordovaKeyboard.hideAccessoryBar(true);
         $cordovaKeyboard.disableScroll(true);
       }
       if (window.StatusBar) {
@@ -1729,8 +1734,8 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.servic
   .factory('CommunicationService', ['$http', '$auth', '$cordovaDialogs', '$ionicPush', '$cordovaGeolocation', '$timeout', 'ResultService', 'ProfileService', function ($http, $auth, $cordovaDialogs, $ionicPush, $cordovaGeolocation, $timeout, ResultService, ProfileService) {
     HOST = "https://sb.pftclan.de";
     PORT = 546;
-    var HOST = "http://localhost";
-    var PORT = "3000"
+    //var HOST = "http://localhost";
+    //var PORT = "3000"
     var URLBACKEND = HOST + ":" + PORT + "/api/smartbackend/";
     var URLBORROWIT = HOST + ":" + PORT + "/api/borrowit/";
     var salt;
@@ -2348,7 +2353,8 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.servic
       sendMessage: sendMessage,
       sendBorrowIt: sendBorrowIt,
       acceptBorrowIt: acceptBorrowIt,
-      sha512: sha512
+      sha512: sha512,
+      config: config
     }
   }])
 
