@@ -646,10 +646,12 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.servic
     };
 
     $scope.locationToggleChange = function () {
-      console.log('Location', $scope.profile.location);
-      ProfileService.profile.location = $scope.profile.location;
-      CommunicationService.changeLocation($scope.profile.location);
-      window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
+      if(ProfileService.profile.addresses && ProfileService.profile.addresses > 0) {
+        console.log('Location', $scope.profile.location);
+        ProfileService.profile.location = $scope.profile.location;
+        CommunicationService.changeLocation($scope.profile.location);
+        window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
+      }
     };
 
     $scope.images = {
@@ -2191,8 +2193,8 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic.servic
             username: ProfileService.profile.username,
             telephone: ProfileService.profile.telephone,
             picture: ProfileService.profile.picture,
-            currentaddress: ProfileService.profile.currentAddress,
-            addresses: ProfileService.profile.addresses
+            currentaddress: 0,
+            addresses: []
           }
         })
           .then(function (result) {
