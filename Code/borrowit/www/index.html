@@ -64,6 +64,7 @@
   <script src="lib/crypto-js/crypto-js.js"></script>
   <script src="lib/crypto-js/hmac-sha512.js"></script>
   <script src="lib/ionic-ratings/src/ionic-ratings.js"></script>
+  <script src="lib/ionic-rating-stars/dist/js/ionic-rating-stars.min.js"></script>
 
   <!-- Library for SQLite support -->
   <script type="text/javascript" src="js/SQLitePlugin.js"></script>
@@ -323,7 +324,7 @@
               <img class="profile-pic left"
                    ng-src="{{chat.profile[0].picture}}" onerror="onProfilePicError(this)" />
                 <span class="bold">{{chat.profile[0].username}}</span>:
-                <span>{{chat.title}}</span>
+                <span>{{chat.request[0].title}}</span>
             </button>
           </div>
         </div>
@@ -350,14 +351,14 @@
       </div>
       <ion-header-bar class="bar-borrowitgrau text-center">
         <div ng-show="values.currentChat.request.offered && !values.currentChat.request.accepted && values.currentChat.request.borrower != values.currentChat.profile.uid">
-          <h1 class="title">{{ values.currentChat.profile.username }} möchte dir bezüglich deiner Anfrage helfen!</h1>
+          <h1 class="title">{{ values.currentChat.profile.username }} möchte dir helfen!</h1>
           <div class="button-bar col-50">
             <a class="button button-block button-balanced icon ion-checkmark" onclick="acceptOffer(values.currentChat.request)"></a>
             <a class="button button-block button-assertive icon ion-close" ng-click=""></a>
           </div>
         </div>
         <div ng-show="!values.currentChat.request.offered && values.currentChat.request.borrower == values.currentChat.profile.uid">
-          <h1 class="title">Möchtest du {{ values.currentChat.profile.username }} bezüglich seiner/ihrer Anfrage helfen?</h1>
+          <h1 class="title">Möchtest du helfen?</h1>
           <a class="button button-block button-balanced" onclick="borrowit(values.currentChat.request)">BorrowIt!</a>
         </div>
         <div class="text-center" ng-show="values.currentChat.request.accepted || (!values.currentChat.request.offered && values.currentChat.request.borrower != values.currentChat.profile.uid) || (values.currentChat.request.offered && values.currentChat.request.borrower == values.currentChat.profile.uid)">
@@ -596,7 +597,7 @@
       <ion-content class="borrowit-blau has-footer">
         <div class="list">
           <div class="item button-full text-center">
-            <img src="img/icons/black_avatar.png" width="80" height="80"></br>
+            <img src="http://www.freeiconspng.com/uploads/profile-icon-9.png" width="80" height="80"></br>
             <div class="item text-center">
               <div class="stars aligncenter">
                 <div ng-style="{ 'width': getStars(values.currentPerson.rating) }"></div>

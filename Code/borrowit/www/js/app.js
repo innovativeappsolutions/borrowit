@@ -159,7 +159,7 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.service.push', 'ngCordova', 'ionic-ratings', 'angularMoment', 'satellizer', 'ngCookies'])
+var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.service.push', 'ngCordova', 'ionic-rating-stars', 'ionic-ratings', 'angularMoment', 'satellizer', 'ngCookies'])
 
   .run(function ($ionicPlatform, CommunicationService) {
     CommunicationService.initiateConnection();
@@ -477,7 +477,9 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
         signedup.then(function (result) {
           $scope.hideLoading();
           $scope.loadRequests();
-        })
+        }), function(error) {
+          $scope.hideLoading();
+        };
         window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
         //signup("email", $scope.profile.email, $scope.profile.password);
         window.location = '#/';
@@ -493,6 +495,8 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
         $scope.showLoading();
         var loggedin = CommunicationService.login("email", $scope.textboxes.TextboxEmail, $scope.textboxes.TextboxPassword);
         loggedin.then(function (result) {
+          $scope.hideLoading();
+        }, function(error) {
           $scope.hideLoading();
         });
       }
@@ -562,11 +566,11 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
       $ionicLoading.hide();
     };
 
-    $scope.rate = function (person, request) {
+    $scope.rate = function(person, request) {
       var ratedvalue = 1;
       var rating = $ionicPopup.prompt({
         title: 'Möchtest du ' + person.username + ' bewerten?',
-        template: '<div class="item"><rating ng-model="ratedvalue" max="5" ></rating></div>',
+        template: '<div class="item"><rating-stars ng-model="ratedvalue" max="5"></rating-stars></div>',
         buttons: [
           {
             text: 'Abbrechen',
@@ -1041,7 +1045,8 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
         $scope.values.currentRequest = result;
         window.location = "#/anfrage_einsehen";
         $scope.hideLoading();
-        $scope.rate(result)
+        var person = {username: result.username, uid: result.uid};
+        $scope.rate(person, result);
       })
     };
 
@@ -1317,15 +1322,18 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
       this.nav.push(ItemDetailsPage, {
         item: item
       });
-    }
+    };
 
     $ionicPlatform.ready(function () {
 
+      $ionicPush.register(config);
       document.addEventListener("pause", function () {
+        $ionicPush.register(config);
         CommunicationService.sendLocationToServer();
       }, false);
       document.addEventListener("resume", function () {
         //code for action on resume
+        $ionicPush.register(config);
         CommunicationService.sendLocationToServer();
       }, false)
       if ($cordovaKeyboard) {
@@ -1643,7 +1651,7 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
     }
   })
 
-  .factory('CommunicationService', ['$http', '$auth', '$ionicPush', '$cordovaGeolocation', '$timeout', 'ResultService', 'ProfileService', function ($http, $auth, $ionicPush, $cordovaGeolocation, $timeout, ResultService, ProfileService) {
+  .factory('CommunicationService', ['$http', '$auth', '$cordovaDialogs', '$ionicPush', '$cordovaGeolocation', '$timeout', 'ResultService', 'ProfileService', function ($http, $auth, $cordovaDialogs, $ionicPush, $cordovaGeolocation, $timeout, ResultService, ProfileService) {
     HOST = "https://sb.pftclan.de";
     PORT = 546;
     //var HOST = "http://localhost";
@@ -1652,8 +1660,44 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
     var URLBORROWIT = HOST + ":" + PORT + "/api/borrowit/";
     var salt;
 
-    initiateConnection = function (token) {
+    var config = null;
+
+    initiateConnection = function () {
       $http.defaults.headers.common['Authorization'] = "Bearer " + ProfileService.profile.access_token;
+      $ionicPush.init({
+        "debug": true,
+        "onNotification": function (notification) {
+          var payload = notification.payload;
+          console.log(notification, payload);
+          $cordovaDialogs.alert(notification.payload, "BorrowIt!");
+        },
+        "onRegister": function (data) {
+          console.log("Device token:", data.token);
+          if (data !== undefined && data.token !== undefined) {
+            var deviceId = data.token;
+            if (ionic.Platform.isAndroid()) {
+              sendDeviceId(deviceId, "android"); // send token to backend to register for push messages
+            } else if (ionic.Platform.isIOS()) {
+              sendDeviceId(deviceId, "ios"); // send token to backend to register for push messages
+            } else {
+              sendDeviceId(deviceId, "other"); // type other (e.g. browser) will not receive push messages
+            }
+          };
+        }
+      });
+
+      if (ionic.Platform.isAndroid()) {
+        config = {
+          "senderID": "40863005073"
+        };
+      }
+      else if (ionic.Platform.isIOS()) {
+        config = {
+          "badge": "true",
+          "sound": "true",
+          "alert": "true"
+        }
+      }
     }
 
     sha512 = function (password, salt) {
@@ -1999,7 +2043,7 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
       }
       else {
         var location = getAddressLocation();
-        return $http({ method: "POST", url: URLBORROWIT + "request/" + requestid, data: { currentlocation: location } })
+        return $http({ method: "POST", url: URLBORROWIT + "request/" + requestid + "/details", data: { currentlocation: location } })
           .then(function (result) {
             var request = result.data[0];
             var startdate = request.startdate.split('T')[0].split('-');
@@ -2111,42 +2155,6 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
               ProfileService.profile.push = result.data[0].push;
               ProfileService.profile.location = result.data[0].location;
               window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
-              $ionicPush.init({
-                "debug": true,
-                "onNotification": function (notification) {
-                  var payload = notification.payload;
-                  console.log(notification, payload);
-                },
-                "onRegister": function (data) {
-                  console.log("Device token:", data.token);
-                  if (data !== undefined && data.token !== undefined) {
-                    var deviceId = data.token;
-                    if (ionic.Platform.isAndroid()) {
-                      sendDeviceId(deviceId, "android"); // send token to backend to register for push messages
-                    } else if (ionic.Platform.isIOS()) {
-                      sendDeviceId(deviceId, "ios"); // send token to backend to register for push messages
-                    } else {
-                      sendDeviceId(deviceId, "other"); // type other (e.g. browser) will not receive push messages
-                    }
-                  }
-
-                }
-              });
-
-              var config = null;
-
-              if (ionic.Platform.isAndroid()) {
-                config = {
-                  "senderID": "40863005073"
-                };
-              }
-              else if (ionic.Platform.isIOS()) {
-                config = {
-                  "badge": "true",
-                  "sound": "true",
-                  "alert": "true"
-                }
-              }
 
               $ionicPush.register(config)/*.then(function (result) {
                 console.log("Register success " + result);
@@ -2203,6 +2211,31 @@ var app = angular.module('starter', ['ionic', 'ionic.service.core', 'ionic.servi
         })
       }
     };
+
+    function api(obj) {
+
+      var method = obj.method || 'GET',
+        params = obj.params || {};
+
+      params['access_token'] = tokenStore['fbtoken'];
+
+      return $http({method: method, url: 'https://graph.facebook.com' + obj.path, params: params})
+        .error(function(data, status, headers, config) {
+          if (data.error && data.error.type === 'OAuthException') {
+            $rootScope.$emit('OAuthException');
+          }
+        });
+    }
+
+    /**
+     * Helper function for a POST call into the Graph API
+     * @param path
+     * @param params
+     * @returns {*}
+     */
+    function post(path, params) {
+      return api({method: 'POST', path: path, params: params});
+    }
 
     return {
       signup: signup,

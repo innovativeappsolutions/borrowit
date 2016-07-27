@@ -64,6 +64,7 @@
   <script src="lib/crypto-js/crypto-js.js"></script>
   <script src="lib/crypto-js/hmac-sha512.js"></script>
   <script src="lib/ionic-ratings/src/ionic-ratings.js"></script>
+  <script src="lib/ionic-rating-stars/dist/js/ionic-rating-stars.min.js"></script>
 
   <!-- Library for SQLite support -->
   <script type="text/javascript" src="js/SQLitePlugin.js"></script>
@@ -323,7 +324,7 @@
               <img class="profile-pic left"
                    ng-src="{{chat.profile[0].picture}}" onerror="onProfilePicError(this)" />
                 <span class="bold">{{chat.profile[0].username}}</span>:
-                <span>{{chat.title}}</span>
+                <span>{{chat.request[0].title}}</span>
             </button>
           </div>
         </div>
@@ -595,15 +596,13 @@
       </ion-nav-bar>
       <ion-content class="borrowit-blau has-footer">
         <div class="list">
-          <div class="item text-center">
-            <img src="img/icons/black_avatar.png" width="80" height="80">
-          </div>
-          <div class="item text-center">
-            <i class="icon ion-star"></i>
-            <i class="icon ion-star"></i>
-            <i class="icon ion-star"></i>
-            <i class="icon ion-star"></i>
-            <i class="ion-ios-star-half"></i>
+          <div class="item button-full text-center">
+            <img src="http://www.freeiconspng.com/uploads/profile-icon-9.png" width="80" height="80"></br>
+            <div class="item text-center">
+              <div class="stars aligncenter">
+                <div ng-style="{ 'width': getStars(values.currentPerson.rating) }"></div>
+              </div>
+            </div>
           </div>
           <button class="button button button-block button-borrowitgrau ion-plus" ng-hide="alreadyContact(values.currentPerson)" ng-click="addContact(values.currentPerson)">
             Als Kontakt hinzufügen
@@ -890,7 +889,7 @@
               Entfernung
             </div>
             <div class="col col-50 text-left">
-              {{values.currentRequest.distance}}
+              {{values.currentRequest.distance / 1000}} km
             </div>
           </div>
           <div class="row">

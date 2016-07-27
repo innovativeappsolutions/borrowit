@@ -254,3 +254,37 @@ a.autolinker {
 .fb-bg:active{
   background: #3b5998;
 }
+
+div.stars, div.stars div {
+  display: block;
+  /* Download the star image here: http://stackoverflow.com/questions/1987524/turn-a-number-into-star-rating-display-using-jquery-and-css */
+  background: url('../img/icons/rating_stars.png') 0 -20px repeat-x; /*url('../img/icons/rating_stars.png') 0 -20px repeat-x;*/
+  width: 100px;
+  height: 20px;
+}
+
+div.stars div {
+  background-position: 0 0;
+}
+
+.aligncenter {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
+span.stars, span.stars span {
+  display: block;
+  /* Download the star image here: http://stackoverflow.com/questions/1987524/turn-a-number-into-star-rating-display-using-jquery-and-css */
+  background: url('https://apppresser.com/wp-content/uploads/2015/11/stars.png') 0 -16px repeat-x;
+  width: 80px;
+  height: 16px;
+}
+
+span.stars span {
+  background-position: 0 0;
+}
+
+.alignright {
+  float:right;
+}
