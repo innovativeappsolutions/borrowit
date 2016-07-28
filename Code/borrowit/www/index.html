@@ -1,50 +1,51 @@
 <!--<!DOCTYPE html>-->
 <!--<html>-->
 <!--<head>-->
-  <!--<meta charset="utf-8">-->
+<!--<meta charset="utf-8">-->
 
-  <!--<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">-->
-  <!--<title></title>-->
+<!--<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">-->
+<!--<title></title>-->
 
-  <!--<link href="lib/ionic/css/ionic.css" rel="stylesheet">-->
-  <!--<link href="css/style.css" rel="stylesheet">-->
+<!--<link href="lib/ionic/css/ionic.css" rel="stylesheet">-->
+<!--<link href="css/style.css" rel="stylesheet">-->
 
-  <!--<script src="lib/ionic/js/ionic.bundle.js"></script>-->
+<!--<script src="lib/ionic/js/ionic.bundle.js"></script>-->
 
-  <!--<script src="lib/ngCordova/dist/ng-cordova.js"></script>-->
-  <!--<script src="cordova.js"></script>-->
+<!--<script src="lib/ngCordova/dist/ng-cordova.js"></script>-->
+<!--<script src="cordova.js"></script>-->
 
-  <!--<script src="js/app.js"></script>-->
+<!--<script src="js/app.js"></script>-->
 <!--</head>-->
 <!--<body ng-app="starter">-->
 
 <!--<ion-pane ng-controller="MainCtrl">-->
-  <!--<ion-header-bar class="bar-stable">-->
-    <!--<h1 class="title">Ionic Calendar Demo</h1>-->
-  <!--</ion-header-bar>-->
-  <!--<ion-content>-->
+<!--<ion-header-bar class="bar-stable">-->
+<!--<h1 class="title">Ionic Calendar Demo</h1>-->
+<!--</ion-header-bar>-->
+<!--<ion-content>-->
 
-    <!--<div class="card" ng-repeat="event in events">-->
-      <!--<div class="item item-divider">-->
-        <!--{{event.title}}-->
-      <!--</div>-->
-      <!--<div class="item item-text-wrap">-->
-        <!--{{ event.description }}-->
-        <!--<p/>-->
-        <!--<strong>When: {{ event.date | date:'short' }}</strong>-->
+<!--<div class="card" ng-repeat="event in events">-->
+<!--<div class="item item-divider">-->
+<!--{{event.title}}-->
+<!--</div>-->
+<!--<div class="item item-text-wrap">-->
+<!--{{ event.description }}-->
+<!--<p/>-->
+<!--<strong>When: {{ event.date | date:'short' }}</strong>-->
 
-        <!--<p ng-if="event.status">This event is added to your calendar already!</p>-->
-        <!--<button ng-if="!event.status" ng-click="addEvent(event,$index)" class="button button-block button-balanced">Add to Calendar</button>-->
+<!--<p ng-if="event.status">This event is added to your calendar already!</p>-->
+<!--<button ng-if="!event.status" ng-click="addEvent(event,$index)" class="button button-block button-balanced">Add to Calendar</button>-->
 
-      <!--</div>-->
-    <!--</div>-->
+<!--</div>-->
+<!--</div>-->
 
-  <!--</ion-content>-->
+<!--</ion-content>-->
 <!--</ion-pane>-->
 <!--</body>-->
 <!--</html>-->
 <!DOCTYPE html>
 <html ng-app="starter">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
@@ -57,7 +58,7 @@
   <script src="lib/ionic-platform-web-client/dist/ionic.io.bundle.js"></script>
   <script src="lib/ngCordova/dist/ng-cordova.js"></script>
   <!-- Cordova is bootstrapped by ionic-platform-web-client, uncomment this if you remove ionic-platform-web-client... -->
-<!-- <script src="cordova.js"></script> -->
+  <!-- <script src="cordova.js"></script> -->
   <script src="js/app.js"></script>
   <script src="lib/satellizer/dist/satellizer.js"></script>
   <script src="lib/angular-cookies/angular-cookies.js"></script>
@@ -68,6 +69,10 @@
   <script src="lib/angular-socialshare/dist/angular-socialshare.js"></script>
   <script src="lib/ionic-toast/dist/ionic-toast.bundle.min.js"></script>
 
+  <!-- Libraries for push messages from "OneSignal" server -->
+  <script src="js/GameThrive.js"></script>
+  <script src="js/OneSignal.js"></script>
+
   <!-- Library for SQLite support -->
   <script type="text/javascript" src="js/SQLitePlugin.js"></script>
   <!-- Library for native storage -->
@@ -77,6 +82,7 @@
   <!-- angular moment -->
   <script src="js/angular-moment.js"></script>
 </head>
+
 <body ng-app="starter" ng-controller="ToDoController">
   <div>
     <ion-nav-view animation="slide-left-right"></ion-nav-view>
@@ -1124,4 +1130,5 @@
     </ion-view>
   </script>
 </body>
+
 </html>

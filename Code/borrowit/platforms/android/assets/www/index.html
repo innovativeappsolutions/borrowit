@@ -1,50 +1,51 @@
 <!--<!DOCTYPE html>-->
 <!--<html>-->
 <!--<head>-->
-  <!--<meta charset="utf-8">-->
+<!--<meta charset="utf-8">-->
 
-  <!--<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">-->
-  <!--<title></title>-->
+<!--<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">-->
+<!--<title></title>-->
 
-  <!--<link href="lib/ionic/css/ionic.css" rel="stylesheet">-->
-  <!--<link href="css/style.css" rel="stylesheet">-->
+<!--<link href="lib/ionic/css/ionic.css" rel="stylesheet">-->
+<!--<link href="css/style.css" rel="stylesheet">-->
 
-  <!--<script src="lib/ionic/js/ionic.bundle.js"></script>-->
+<!--<script src="lib/ionic/js/ionic.bundle.js"></script>-->
 
-  <!--<script src="lib/ngCordova/dist/ng-cordova.js"></script>-->
-  <!--<script src="cordova.js"></script>-->
+<!--<script src="lib/ngCordova/dist/ng-cordova.js"></script>-->
+<!--<script src="cordova.js"></script>-->
 
-  <!--<script src="js/app.js"></script>-->
+<!--<script src="js/app.js"></script>-->
 <!--</head>-->
 <!--<body ng-app="starter" class="platform-android platform-cordova platform-webview">-->
 
 <!--<ion-pane ng-controller="MainCtrl">-->
-  <!--<ion-header-bar class="bar-stable">-->
-    <!--<h1 class="title">Ionic Calendar Demo</h1>-->
-  <!--</ion-header-bar>-->
-  <!--<ion-content>-->
+<!--<ion-header-bar class="bar-stable">-->
+<!--<h1 class="title">Ionic Calendar Demo</h1>-->
+<!--</ion-header-bar>-->
+<!--<ion-content>-->
 
-    <!--<div class="card" ng-repeat="event in events">-->
-      <!--<div class="item item-divider">-->
-        <!--{{event.title}}-->
-      <!--</div>-->
-      <!--<div class="item item-text-wrap">-->
-        <!--{{ event.description }}-->
-        <!--<p/>-->
-        <!--<strong>When: {{ event.date | date:'short' }}</strong>-->
+<!--<div class="card" ng-repeat="event in events">-->
+<!--<div class="item item-divider">-->
+<!--{{event.title}}-->
+<!--</div>-->
+<!--<div class="item item-text-wrap">-->
+<!--{{ event.description }}-->
+<!--<p/>-->
+<!--<strong>When: {{ event.date | date:'short' }}</strong>-->
 
-        <!--<p ng-if="event.status">This event is added to your calendar already!</p>-->
-        <!--<button ng-if="!event.status" ng-click="addEvent(event,$index)" class="button button-block button-balanced">Add to Calendar</button>-->
+<!--<p ng-if="event.status">This event is added to your calendar already!</p>-->
+<!--<button ng-if="!event.status" ng-click="addEvent(event,$index)" class="button button-block button-balanced">Add to Calendar</button>-->
 
-      <!--</div>-->
-    <!--</div>-->
+<!--</div>-->
+<!--</div>-->
 
-  <!--</ion-content>-->
+<!--</ion-content>-->
 <!--</ion-pane>-->
 <!--</body>-->
 <!--</html>-->
 <!DOCTYPE html>
 <html ng-app="starter">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
@@ -57,7 +58,7 @@
   <script src="lib/ionic-platform-web-client/dist/ionic.io.bundle.js"></script>
   <script src="lib/ngCordova/dist/ng-cordova.js"></script>
   <!-- Cordova is bootstrapped by ionic-platform-web-client, uncomment this if you remove ionic-platform-web-client... -->
-<!-- <script src="cordova.js"></script> -->
+  <!-- <script src="cordova.js"></script> -->
   <script src="js/app.js"></script>
   <script src="lib/satellizer/dist/satellizer.js"></script>
   <script src="lib/angular-cookies/angular-cookies.js"></script>
@@ -66,6 +67,11 @@
   <script src="lib/ionic-ratings/src/ionic-ratings.js"></script>
   <script src="lib/ionic-rating-stars/dist/js/ionic-rating-stars.min.js"></script>
   <script src="lib/angular-socialshare/dist/angular-socialshare.js"></script>
+  <script src="lib/ionic-toast/dist/ionic-toast.bundle.min.js"></script>
+
+  <!-- Libraries for push messages from "OneSignal" server -->
+  <script src="js/GameThrive.js"></script>
+  <script src="js/OneSignal.js"></script>
 
   <!-- Library for SQLite support -->
   <script type="text/javascript" src="js/SQLitePlugin.js"></script>
@@ -76,6 +82,7 @@
   <!-- angular moment -->
   <script src="js/angular-moment.js"></script>
 </head>
+
 <body ng-app="starter" ng-controller="ToDoController">
   <div>
     <ion-nav-view animation="slide-left-right"></ion-nav-view>
@@ -102,7 +109,11 @@
           <a class="button button-block button-borrowitgrau" href="#/registrierung">Registrierung</a>
           <div class="button-bar">
             <!--<a class="button button-borrowitgrau button-block">Passwort vergessen</a>-->
-            <button class="button button-borrowitgrau button-block">Hilfe</button>
+            <!--<button class="button button-borrowitgrau button-block">Hilfe</button>-->
+            <a class="button button-borrowitgrau button-block"
+               socialshare
+               socialshare-provider="email">Hilfe
+            </a>
           </div>
         </div>
       </ion-content>
@@ -837,6 +848,13 @@
           <a class="button button-full item button-light icon icon-right ion-chevron-right" href="#/login" ng-click="logout()">
             Abmelden
           </a>
+
+          <!--<button class="button button-borrowitgrau button-block">Hilfe</button>-->
+
+          <a class="button button-borrowitgrau button-block"
+             socialshare
+             socialshare-provider="email">Hilfe
+          </a>
           <!--<button class="button button-full item item-icon-right text-left button-assertive" ng-click="deleteProfile()">
             Konto löschen
             <i class="ion-chevron-right"></i>
@@ -1000,7 +1018,7 @@
         Sie dürfen personenbezogene Daten von BorrowIt! ausschließlich dazu verwenden, um sich mit einem anderen Nutzer bezüglich einer bestimmten Anzeige in Verbindung zu setzen. Insbesondere dürfen personenbezogene Daten BorrowIt! keinesfalls genutzt werden, um Spam zu versenden oder ohne vorherige Zustimmung des jeweiligen Nutzers gesammelt werden.
 
         Zugriff, Änderung und Löschung
-        Durch Aufrufen Ihrer Anzeigen- oder Kontostatusseite können Sie Ihre bei BorrowIt! gespeicherten personenbezogenen Daten einsehen, ändern oder löschen. Wenden Sie sich bitte unter innovativeappsolutions@web.de an den Kundenservice, um sämtliche personenbezogenen Daten zu überprüfen, die wir gespeichert haben und die nicht BorrowIt! angezeigt werden. Unter Umständen ist diese Auskunft kostenpflichtig, höchstens jedoch in Höhe der gesetzlich erlaubten Entgelte. Bitte korrigieren Sie etwaige falsche Daten. Wir löschen Ihre personenbezogenen Daten, wenn wir sie nicht mehr für die in dieser Datenschutzbestimmung aufgeführten Zwecke benötigen und gesetzliche Aufbewahrungspflichten dem nicht entgegenstehen. Im Rahmen der gesetzlichen Vorschriften speichern wir personenbezogene Daten, um Streitigkeiten beizulegen, unsere Bestimmungen durchzusetzen und um zu verhindern, dass sich Personen, die wir von der Nutzung unserer Dienstleistungen ausgeschlossen haben, erneut bei uns anmelden.
+        Durch Aufrufen Ihrer Anzeigen- oder Kontostatusseite können Sie Ihre bei BorrowIt! gespeicherten personenbezogenen Daten einsehen, ändern oder löschen. Wenden Sie sich bitte unter <a socialshare socialshare-provider="email" socialshare-to="innovativeappsolutions@web.de">innovativeappsolutions@web.de</a> an den Kundenservice, um sämtliche personenbezogenen Daten zu überprüfen, die wir gespeichert haben und die nicht BorrowIt! angezeigt werden. Unter Umständen ist diese Auskunft kostenpflichtig, höchstens jedoch in Höhe der gesetzlich erlaubten Entgelte. Bitte korrigieren Sie etwaige falsche Daten. Wir löschen Ihre personenbezogenen Daten, wenn wir sie nicht mehr für die in dieser Datenschutzbestimmung aufgeführten Zwecke benötigen und gesetzliche Aufbewahrungspflichten dem nicht entgegenstehen. Im Rahmen der gesetzlichen Vorschriften speichern wir personenbezogene Daten, um Streitigkeiten beizulegen, unsere Bestimmungen durchzusetzen und um zu verhindern, dass sich Personen, die wir von der Nutzung unserer Dienstleistungen ausgeschlossen haben, erneut bei uns anmelden.
 
         Datensicherheit
         Wir haben technische und organisatorische Sicherheitsmaßnahmen getroffen, um unser Datenverarbeitungssystem vor unbefugtem Zugang und personenbezogene Daten vor unbefugtem Zugriff zu schützen.
@@ -1008,7 +1026,7 @@
         Unter Umständen werden wir bzw. unsere Dienstleister bei Ihrem Besuch bestimmter Webseiten von BorrowIt! auf Ihrem Computer "Cookies" speichern (ein "Cookie" ist eine kleine Datei, die auf der Festplatte ihres Computers abgespeichert wird). Die meisten Cookies sind sogenannte "Sitzungscookies", die am Ende einer Sitzung automatisch von Ihrer Festplatte gelöscht werden, zum Beispiel, wenn Sie Ihren Browser schließen. Es kann sein, dass wir für die Zwecke einer Analyse unseres Webseitenverlaufs sowohl dauerhafte Cookies als auch Sitzungscookies einsetzen, um unsere Dienste, Inhalte und Werbung genauer auf unsere Nutzer abzustimmen, die Wirksamkeit von Werbeaktionen zu messen und um Vertrauen und Sicherheit zu fördern. Bestimmte der von uns angebotenen Funktionen können nur unter Zulassung der Cookies genutzt werden. Sie können unsere Cookies sperren, indem Sie die Einstellungen Ihres Browsers in "keine Cookies akzeptieren“ ändern. Sie können Ihren Browser auch so einstellen, dass dieser Sie vor dem Setzen von Cookies fragt, ob Sie einverstanden sind. Schließlich können Sie auch einmal gesetzte Cookies jederzeit wieder löschen. Wie all das im Einzelnen funktioniert, entnehmen Sie bitte der Anleitung Ihres Browser-Herstellers. Für Informationen dazu, wie Sie diese Einstellungen auf dem Browser Ihres mobilen Endgeräts vornehmen können, ziehen Sie bitte die entsprechende Bedienungsanleitung heran. Wenn Sie keine Cookies akzeptieren, kann dies im Einzelfall zu Funktionseinschränkungen unserer Websites führen (z.B. müssen Sie Ihr Passwort ggf. häufiger eingeben). Nähere Informationen über die Gründe, aus denen wir Cookies verwenden, finden sie oben unter „Datenerhebung“. Informationen zur Verwendung von Cookies durch Dritte finden Sie nachfolgend.
 
         Allgemeines
-        Diese Bestimmungen können jederzeit von uns aktualisiert werden. Die Aktualisierungen werden jeweils mit Ihrer nächsten Anzeige bei BorrowIt! wirksam. Falls wir oder unsere Tochterunternehmen mit einem anderen Unternehmen fusionieren bzw. von einem anderen Unternehmen übernommen werden, dürfen wir personenbezogene Daten mit diesem anderen Unternehmen gemeinsam verarbeiten und nutzen, wobei diese Bestimmungen ihre Gültigkeit behalten. Bei Fragen zu diesen Bestimmungen wenden Sie sich bitte an <a href="mailto:innovativeappsolutions@web.de">innovativeappsolutions@web.de</a>.
+        Diese Bestimmungen können jederzeit von uns aktualisiert werden. Die Aktualisierungen werden jeweils mit Ihrer nächsten Anzeige bei BorrowIt! wirksam. Falls wir oder unsere Tochterunternehmen mit einem anderen Unternehmen fusionieren bzw. von einem anderen Unternehmen übernommen werden, dürfen wir personenbezogene Daten mit diesem anderen Unternehmen gemeinsam verarbeiten und nutzen, wobei diese Bestimmungen ihre Gültigkeit behalten. Bei Fragen zu diesen Bestimmungen wenden Sie sich bitte an <a socialshare socialshare-provider="email" socialshare-to="innovativeappsolutions@web.de">innovativeappsolutions@web.de</a>.
       </ion-content>
     </ion-view>
   </script>
@@ -1112,4 +1130,5 @@
     </ion-view>
   </script>
 </body>
+
 </html>

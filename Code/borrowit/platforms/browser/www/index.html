@@ -65,6 +65,8 @@
   <script src="lib/crypto-js/hmac-sha512.js"></script>
   <script src="lib/ionic-ratings/src/ionic-ratings.js"></script>
   <script src="lib/ionic-rating-stars/dist/js/ionic-rating-stars.min.js"></script>
+  <script src="lib/angular-socialshare/dist/angular-socialshare.js"></script>
+  <script src="lib/ionic-toast/dist/ionic-toast.bundle.min.js"></script>
 
   <!-- Library for SQLite support -->
   <script type="text/javascript" src="js/SQLitePlugin.js"></script>
@@ -101,7 +103,11 @@
           <a class="button button-block button-borrowitgrau" href="#/registrierung">Registrierung</a>
           <div class="button-bar">
             <!--<a class="button button-borrowitgrau button-block">Passwort vergessen</a>-->
-            <button class="button button-borrowitgrau button-block">Hilfe</button>
+            <!--<button class="button button-borrowitgrau button-block">Hilfe</button>-->
+            <a class="button button-borrowitgrau button-block"
+               socialshare
+               socialshare-provider="email">Hilfe
+            </a>
           </div>
         </div>
       </ion-content>
@@ -121,25 +127,13 @@
             Benutzerinformationen
           </div>
           <label class="item item-input">
-            <input type="text" placeholder="Benutzername" ng-model="textboxes.username">
-          </label>
-          <label class="item item-input">
-            <input type="text" placeholder="Nachname" ng-model="textboxes.lastname">
-          </label>
-          <label class="item item-input">
-            <input type="text" placeholder="Vorname" ng-model="textboxes.firstname">
-          </label>
-          <label class="item item-input" ng-show='!profile.access_token || profile.access_token === ""'>
             <input type="email" placeholder="E-Mail" ng-model="textboxes.email">
           </label>
           <label class="item item-input">
-            <input type="tel" placeholder="Telefonnummer" ng-model="textboxes.telephone">
+            <input type="password" placeholder="Passwort" ng-model="textboxes.password">
           </label>
           <label class="item item-input">
-            <input type="password" placeholder="Passwort" ng-model="textboxes.password" ng-show='!profile.access_token || profile.access_token === ""'>
-          </label>
-          <label class="item item-input">
-            <input type="password" placeholder="Passwort wdh." ng-model="textboxes.passwordrep" ng-show='!profile.access_token || profile.access_token === ""'>
+            <input type="password" placeholder="Passwort wdh." ng-model="textboxes.passwordrep">
           </label>
           <button class="button button-light button-block icon-right ion-chevron-right" ng-click="registerFirstPart()">Weiter</button><br/>
         </div>
@@ -158,12 +152,25 @@
         <div class="list text-center">
           <div class="row">
             <div class="col col-100 text-center">
-              <h1 style="color: #fff">Hallo {{profile.firstname}}</h1>
               <h3 style="color: #fff">Bitte vervollständige dein Profil</h3>
             </div>
           </div>
           <img class="bigprofile-pic" ng-click="addMedia()" ng-src="{{profile.picture}}">
-
+          <div class="item item-divider">
+            Benutzerinformationen
+          </div>
+          <label class="item item-input">
+            <input type="text" placeholder="Benutzername" ng-model="textboxes.username">
+          </label>
+          <label class="item item-input">
+            <input type="text" placeholder="Nachname" ng-model="textboxes.lastname">
+          </label>
+          <label class="item item-input">
+            <input type="text" placeholder="Vorname" ng-model="textboxes.firstname">
+          </label>
+          <label class="item item-input">
+            <input type="tel" placeholder="Telefonnummer" ng-model="textboxes.telephone">
+          </label>
           <!--<ion-scroll>
             <img ng-repeat="image in images" ng-src="{{urlForImage(image)}}" height="200px"/>
           </ion-scroll>
@@ -172,8 +179,7 @@
           </div>-->
           <ion-radio ng-repeat="item in profile.addresses track by $index"
                      ng-value="item.addressid"
-                     ng-model="profile.currentAddress"
-                     ng-change="currentAddressChanged()">
+                     ng-model="profile.currentAddress">
             {{ item.street }} {{ item.streetnumber }}
           </ion-radio>
           <button class="button button-block button-borrowitgrau" ng-click="addAddress()">Addresse ergänzen</button>
@@ -318,7 +324,7 @@
             <i class="icon ion-search placeholder-icon"></i>
             <input type="search" placeholder="Search" ng-model="search">
           </label>
-          <div ng-repeat="chat in chats | searchContent:search track by $index">
+          <div ng-repeat="chat in chats  | orderBy:messages[messages.length - 1].date:true | searchContent:search track by $index">
             <button class="item button-full item-avatar" ng-click="viewChat(chat.roomid, true)">
               <img class="profile-pic left"
                    ng-src="{{chat.profile[0].picture}}" onerror="onProfilePicError(this)" />
@@ -346,9 +352,9 @@
       <ion-header-bar class="bar-borrowitgrau text-center">
         <div ng-show="values.currentChat.request.offered && !values.currentChat.request.accepted && values.currentChat.request.borrower != values.currentChat.profile.uid">
           <h1 class="title">{{ values.currentChat.profile.username }} möchte dir helfen!</h1>
-          <div class="button-bar col-50">
+          <div class="button-bar">
             <a class="button button-block button-balanced icon ion-checkmark" onclick="acceptOffer(values.currentChat.request)"></a>
-            <a class="button button-block button-assertive icon ion-close" ng-click=""></a>
+            <a class="button button-block button-assertive icon ion-close" ng-click="declineOffer(values.currentChat.request)"></a>
           </div>
         </div>
         <div ng-show="!values.currentChat.request.offered && values.currentChat.request.borrower == values.currentChat.profile.uid">
@@ -531,7 +537,7 @@
           </div>
           <div class="button-bar">
             <button ng-hide="values.actualizeRequest" class="button button-block icon ion-checkmark" ng-click="prepareStartRequest()"></button>
-            <button ng-show="values.actualizeRequest" class="button button-block icon ion-checkmark" ng-click="updateRequestInformations(values.currentRequest)"></button>
+            <button ng-show="values.actualizeRequest" class="button button-block icon ion-checkmark" ng-click="updateRequestInformations(values.currentRequest.requestid)"></button>
             <button class="button button-block icon ion-close" ng-click="emptyAllFields()"></button>
           </div>
         </div>
@@ -723,12 +729,12 @@
             Aktivitäten:
           </div>
           <div class="item" ng-repeat="request in profile.requests | orderBy:requestid:true track by $index">
-            <button class="item button-full item-icon-right" ng-show="request.username != profile.username" ng-click="loadCurrentRequest(request.requestid)">
+            <button class="item button-full item-icon-right" ng-show="request.profile.username != profile.username" ng-click="loadCurrentRequest(request.requestid)">
               {{request.title}}
               <i class="ion-chevron-right"></i>
               <i class="ion-chevron-right"></i>
             </button>
-            <button class="item button-full item-icon-left" ng-show="request.username == profile.username" ng-click="loadCurrentRequest(request.requestid)">
+            <button class="item button-full item-icon-left" ng-show="request.profile.username == profile.username" ng-click="loadCurrentRequest(request.requestid)">
               <i class="ion-chevron-left"></i>
               <i class="ion-chevron-left"></i>
               {{request.title}}
@@ -778,6 +784,40 @@
           </ion-radio>
           <a class="button button-block button-borrowitgrau icon icon-right ion-chevron-right" href="#/adressen">Adressen bearbeiten</a>
           <div class="item item-divider">
+            Teile unsere App, um mehr Unterstützer zu finden:
+          </div>
+          <div class="button-bar">
+            <a class="button ion-social-facebook"
+               socialshare
+               socialshare-provider="facebook"
+               socialshare-text="BorrowIt!"
+               socialshare-url="https://github.com/innovativeappsolutions/borrowit">
+            </a>
+            <a class="button ion-social-whatsapp"
+               socialshare
+               socialshare-provider="whatsapp"
+               socialshare-text="BorrowIt!"
+               socialshare-url="https://github.com/innovativeappsolutions/borrowit">
+            </a>
+            <a class="button ion-social-twitter"
+               socialshare
+               socialshare-provider="twitter"
+               socialshare-text="BorrowIt!"
+               socialshare-url="https://github.com/innovativeappsolutions/borrowit">
+            </a>
+            <a class="button ion-android-mail"
+               socialshare
+               socialshare-provider="email"
+               socialshare-text="BorrowIt!"
+               socialshare-url="https://github.com/innovativeappsolutions/borrowit">
+            </a>
+            <a class="button ion-social-googleplus"
+               socialshare
+               socialshare-provider="google"
+               socialshare-url="https://github.com/innovativeappsolutions/borrowit">
+            </a>
+          </div>
+          <div class="item item-divider">
             Privatsphäre:
           </div>
           <ion-toggle ng-model="profile.push"
@@ -801,6 +841,13 @@
           </button>-->
           <a class="button button-full item button-light icon icon-right ion-chevron-right" href="#/login" ng-click="logout()">
             Abmelden
+          </a>
+
+          <!--<button class="button button-borrowitgrau button-block">Hilfe</button>-->
+
+          <a class="button button-borrowitgrau button-block"
+             socialshare
+             socialshare-provider="email">Hilfe
           </a>
           <!--<button class="button button-full item item-icon-right text-left button-assertive" ng-click="deleteProfile()">
             Konto löschen
@@ -878,7 +925,7 @@
               Entfernung
             </div>
             <div class="col col-50 text-left">
-              {{values.currentRequest.distance / 1000}} km
+              {{values.currentRequest.distance}} km
             </div>
           </div>
           <div class="row">
@@ -935,7 +982,7 @@
           <i class="ion-chevron-left"></i> Back
         </ion-nav-back-button>
       </ion-nav-bar>
-      <ion-content class="borrowit-blau has-footer">
+      <ion-content class="borrowit-blau">
         Datenschutzerklärung
         Diese Datenschutzbestimmungen erläutern, wie wir mit Ihren personenbezogenen Daten umgehen. Wir erheben, verarbeiten und nutzen Ihre personenbezogenen Daten, um unsere in der BorrowIt! Applikation und Webanwendung angebotenen Dienstleistungen zu erbringen und um deren rechtswidrige und missbräuchliche Nutzung zu verhindern und dagegen vorzugehen. Diese Bestimmungen treten in Kraft am 1. Juli 2016.
 
@@ -965,7 +1012,7 @@
         Sie dürfen personenbezogene Daten von BorrowIt! ausschließlich dazu verwenden, um sich mit einem anderen Nutzer bezüglich einer bestimmten Anzeige in Verbindung zu setzen. Insbesondere dürfen personenbezogene Daten BorrowIt! keinesfalls genutzt werden, um Spam zu versenden oder ohne vorherige Zustimmung des jeweiligen Nutzers gesammelt werden.
 
         Zugriff, Änderung und Löschung
-        Durch Aufrufen Ihrer Anzeigen- oder Kontostatusseite können Sie Ihre bei BorrowIt! gespeicherten personenbezogenen Daten einsehen, ändern oder löschen. Wenden Sie sich bitte unter innovativeappsolutions@web.de an den Kundenservice, um sämtliche personenbezogenen Daten zu überprüfen, die wir gespeichert haben und die nicht BorrowIt! angezeigt werden. Unter Umständen ist diese Auskunft kostenpflichtig, höchstens jedoch in Höhe der gesetzlich erlaubten Entgelte. Bitte korrigieren Sie etwaige falsche Daten. Wir löschen Ihre personenbezogenen Daten, wenn wir sie nicht mehr für die in dieser Datenschutzbestimmung aufgeführten Zwecke benötigen und gesetzliche Aufbewahrungspflichten dem nicht entgegenstehen. Im Rahmen der gesetzlichen Vorschriften speichern wir personenbezogene Daten, um Streitigkeiten beizulegen, unsere Bestimmungen durchzusetzen und um zu verhindern, dass sich Personen, die wir von der Nutzung unserer Dienstleistungen ausgeschlossen haben, erneut bei uns anmelden.
+        Durch Aufrufen Ihrer Anzeigen- oder Kontostatusseite können Sie Ihre bei BorrowIt! gespeicherten personenbezogenen Daten einsehen, ändern oder löschen. Wenden Sie sich bitte unter <a socialshare socialshare-provider="email" socialshare-to="innovativeappsolutions@web.de">innovativeappsolutions@web.de</a> an den Kundenservice, um sämtliche personenbezogenen Daten zu überprüfen, die wir gespeichert haben und die nicht BorrowIt! angezeigt werden. Unter Umständen ist diese Auskunft kostenpflichtig, höchstens jedoch in Höhe der gesetzlich erlaubten Entgelte. Bitte korrigieren Sie etwaige falsche Daten. Wir löschen Ihre personenbezogenen Daten, wenn wir sie nicht mehr für die in dieser Datenschutzbestimmung aufgeführten Zwecke benötigen und gesetzliche Aufbewahrungspflichten dem nicht entgegenstehen. Im Rahmen der gesetzlichen Vorschriften speichern wir personenbezogene Daten, um Streitigkeiten beizulegen, unsere Bestimmungen durchzusetzen und um zu verhindern, dass sich Personen, die wir von der Nutzung unserer Dienstleistungen ausgeschlossen haben, erneut bei uns anmelden.
 
         Datensicherheit
         Wir haben technische und organisatorische Sicherheitsmaßnahmen getroffen, um unser Datenverarbeitungssystem vor unbefugtem Zugang und personenbezogene Daten vor unbefugtem Zugriff zu schützen.
@@ -973,7 +1020,7 @@
         Unter Umständen werden wir bzw. unsere Dienstleister bei Ihrem Besuch bestimmter Webseiten von BorrowIt! auf Ihrem Computer "Cookies" speichern (ein "Cookie" ist eine kleine Datei, die auf der Festplatte ihres Computers abgespeichert wird). Die meisten Cookies sind sogenannte "Sitzungscookies", die am Ende einer Sitzung automatisch von Ihrer Festplatte gelöscht werden, zum Beispiel, wenn Sie Ihren Browser schließen. Es kann sein, dass wir für die Zwecke einer Analyse unseres Webseitenverlaufs sowohl dauerhafte Cookies als auch Sitzungscookies einsetzen, um unsere Dienste, Inhalte und Werbung genauer auf unsere Nutzer abzustimmen, die Wirksamkeit von Werbeaktionen zu messen und um Vertrauen und Sicherheit zu fördern. Bestimmte der von uns angebotenen Funktionen können nur unter Zulassung der Cookies genutzt werden. Sie können unsere Cookies sperren, indem Sie die Einstellungen Ihres Browsers in "keine Cookies akzeptieren“ ändern. Sie können Ihren Browser auch so einstellen, dass dieser Sie vor dem Setzen von Cookies fragt, ob Sie einverstanden sind. Schließlich können Sie auch einmal gesetzte Cookies jederzeit wieder löschen. Wie all das im Einzelnen funktioniert, entnehmen Sie bitte der Anleitung Ihres Browser-Herstellers. Für Informationen dazu, wie Sie diese Einstellungen auf dem Browser Ihres mobilen Endgeräts vornehmen können, ziehen Sie bitte die entsprechende Bedienungsanleitung heran. Wenn Sie keine Cookies akzeptieren, kann dies im Einzelfall zu Funktionseinschränkungen unserer Websites führen (z.B. müssen Sie Ihr Passwort ggf. häufiger eingeben). Nähere Informationen über die Gründe, aus denen wir Cookies verwenden, finden sie oben unter „Datenerhebung“. Informationen zur Verwendung von Cookies durch Dritte finden Sie nachfolgend.
 
         Allgemeines
-        Diese Bestimmungen können jederzeit von uns aktualisiert werden. Die Aktualisierungen werden jeweils mit Ihrer nächsten Anzeige bei BorrowIt! wirksam. Falls wir oder unsere Tochterunternehmen mit einem anderen Unternehmen fusionieren bzw. von einem anderen Unternehmen übernommen werden, dürfen wir personenbezogene Daten mit diesem anderen Unternehmen gemeinsam verarbeiten und nutzen, wobei diese Bestimmungen ihre Gültigkeit behalten. Bei Fragen zu diesen Bestimmungen wenden Sie sich bitte an <a href="mailto:innovativeappsolutions@web.de">innovativeappsolutions@web.de</a>.
+        Diese Bestimmungen können jederzeit von uns aktualisiert werden. Die Aktualisierungen werden jeweils mit Ihrer nächsten Anzeige bei BorrowIt! wirksam. Falls wir oder unsere Tochterunternehmen mit einem anderen Unternehmen fusionieren bzw. von einem anderen Unternehmen übernommen werden, dürfen wir personenbezogene Daten mit diesem anderen Unternehmen gemeinsam verarbeiten und nutzen, wobei diese Bestimmungen ihre Gültigkeit behalten. Bei Fragen zu diesen Bestimmungen wenden Sie sich bitte an <a socialshare socialshare-provider="email" socialshare-to="innovativeappsolutions@web.de">innovativeappsolutions@web.de</a>.
       </ion-content>
     </ion-view>
   </script>
@@ -985,7 +1032,7 @@
           <i class="ion-chevron-left"></i> Back
         </ion-nav-back-button>
       </ion-nav-bar>
-      <ion-content class="borrowit-blau has-footer">
+      <ion-content class="borrowit-blau">
         Allgemeine Nutzungsbedingungen für BorrowIt!
         Willkommen bei BorrowIt! BorrowIt! ist eine mobile Angebotsplattform der Innovative App Solutions, Coblitzallee 1-9, 68163 Mannheim. Diese Nutzungsbedingungen regeln das Vertragsverhältnis zwischen Innovative App Solutions und den Nutzern, welche die Dienstleistungen von Innovative App Solutions in Anspruch nehmen. Diese Nutzungsbedingungen gelten ab dem 1.Juli 2016.
 
@@ -1047,7 +1094,6 @@
         § 6 Schutz geistigen Eigentums
 
         Berechtigte, insbesondere Inhaber von Urheberrechten, Warenzeichenrechten oder anderen Schutzrechten, können Angebote, die ihre Rechte verletzen, melden und deren Entfernung beantragen. Wenn ein Rechtsvertreter der berechtigten Person uns dies auf korrekte Art und Weise meldet, werden die Angebote, die die Schutz- oder Urheberrechte verletzen, von uns entfernt.
-
         Melden einer Rechtsverletzung
 
         Für die Teilnahme am Programm zur Mitteilung über eine mögliche Rechtsverletzung genügt es, das Formular zur Mitteilung über eine mögliche Rechtsverletzung auszufüllen, zu unterschreiben und per Fax an uns zu senden. Sie können dieses Formular verwenden, um Anzeigen zu melden, die Ihre Schutz- oder Urheberrechte verletzen. Die Angaben im Formular zur Mitteilung über eine mögliche Rechtsverletzung werden verwendet, um sicherzustellen, dass die Partei, die diese Anzeige(n) meldet, entweder der Rechteinhaber selbst oder ein offizieller bevollmächtigter Vertreter ist. Diese Angaben müssen auch Auskunft darüber geben, welche Anzeige entfernt werden soll.
