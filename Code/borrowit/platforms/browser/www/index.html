@@ -790,15 +790,17 @@
           </ion-radio>
           <a class="button button-block button-borrowitgrau icon icon-right ion-chevron-right" href="#/adressen">Adressen bearbeiten</a>
           <div class="item item-divider">
-            Teile unsere App, um mehr Unterstützer zu finden:
+            Teile unsere App:
           </div>
-          <div class="button-bar">
-            <button class="button ion-social-facebook" ng-click='socialShare("facebook")'></button>
-            <button class="button ion-social-whatsapp" ng-click='socialShare("whatsapp")'></button>
-            <button class="button ion-social-twitter" ng-click='socialShare("twitter")'></button>
-            <button class="button ion-android-mail" ng-click='socialShare("mail")'></button>
-            <button class="button ion-social-googleplus" ng-click='socialShare("googleplus")'></button>
-            <!--<a class="button ion-social-facebook"
+          <div class="button-bar" ng-if="isWebView()">
+            <button class="button ion-social-facebook" ng-show='canSocialShare("facebook")' ng-click='socialShare("facebook")'></button>
+            <button class="button ion-social-whatsapp" ng-show='canSocialShare("whatsapp")' ng-click='socialShare("whatsapp")'></button>
+            <button class="button ion-social-twitter" ng-show='canSocialShare("twitter")' ng-click='socialShare("twitter")'></button>
+            <button class="button ion-android-mail" ng-show='canSocialShare("mail")' ng-click='socialShare("mail")'></button>
+            <button class="button ion-social-googleplus" ng-show='canSocialShare("googleplus")' ng-click='socialShare("googleplus")'></button>
+          </div>
+          <div class="button-bar" ng-if="!isWebView()">
+            <a class="button ion-social-facebook"
                socialshare
                socialshare-provider="facebook"
                socialshare-text="BorrowIt!"
@@ -826,7 +828,7 @@
                socialshare
                socialshare-provider="google"
                socialshare-url="https://github.com/innovativeappsolutions/borrowit">
-            </a>-->
+            </a>
           </div>
           <div class="item item-divider">
             Privatsphäre:

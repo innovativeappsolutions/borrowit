@@ -576,10 +576,19 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
     };
   }])
 
-  .controller("ToDoController", function ($scope, $ionicPopup, $ionicLoading, $ionicPlatform, $ionicActionSheet, $cordovaKeyboard, $cordovaVibration, $cordovaCamera, $cordovaDevice, $cordovaFile, $cordovaContacts, $timeout, ImageService, ProfileService, ResultService, CommunicationService) {
+  .controller("ToDoController", function ($scope, $ionicPopup, $ionicLoading, $ionicPlatform, $ionicActionSheet, $cordovaKeyboard, $cordovaVibration, $cordovaCamera, $cordovaDevice, $cordovaFile, $cordovaContacts, $cordovaSocialSharing, $timeout, ImageService, ProfileService, ResultService, CommunicationService) {
 
     $scope.socialShare = function(provider) {
       CommunicationService.socialShare(provider);
+    };
+
+    $scope.canSocialShare = function(provider) {
+      $cordovaSocialSharing.canShareVia(provider);
+    };
+
+    $scope.isWebView = function() {
+      var web = ionic.Platform.isWebView();
+      return web;
     }
 
     $scope.getStars = function (rating) {
@@ -2329,15 +2338,19 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
     };
 
     sendDeviceId = function () {
-      window.plugins.OneSignal.getIds(function (ids) {
-        $http({ method: "POST", url: URLBACKEND + "push/register", data: { deviceid: ids.userId, useragent: "default" } })
-          .then(function (result) {
-            console.log(result);
-          }, function (error) {
-            ResultService.showError(error);
-          })
-      });
-
+      try {
+        window.plugins.OneSignal.getIds(function (ids) {
+          $http({method: "POST", url: URLBACKEND + "push/register", data: {deviceid: ids.userId, useragent: "default"}})
+            .then(function (result) {
+              console.log(result);
+            }, function (error) {
+              ResultService.showError(error);
+            })
+        });
+      }
+      catch(error) {
+        
+      }
     };
 
     var authenticate = function (provider) {
@@ -2347,10 +2360,10 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
           console.log($auth.getToken());
           console.log($auth.getPayload());
           var token = $auth.getToken();
-          return $http({ method: "GET", url: URLBACKEND + "auth/" + provider + "/", params: { id_token: $auth.getToken() } }).then(
+          return $http({ method: "GET", url: URLBACKEND + "auth/" + provider + "/", params: { id_token: token } }).then(
             function (result) {
               console.log('yes im ok');
-              ProfileService.profile.access_token = $auth.getToken();
+              ProfileService.profile.access_token = token;
 
             }, function (error) {
               console.log('Error: ' + error);

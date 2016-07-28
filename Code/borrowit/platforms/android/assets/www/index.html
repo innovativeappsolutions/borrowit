@@ -678,7 +678,7 @@
   </script>
 
   <script id="kontakt_hinzufuegen_geraet.html" type="text/ng-template">
-    <ion-view>
+    <ion-view ng-init="getDeviceContacts()">
       <ion-header-bar class="bar bar-borrowitgrau">
         <div class="button-bar">
           <a class="button button-block button-borrowitgrau" href="#/kontakt_hinzufuegen_name"><img src="img/icons/white_add_user.png" width="30"></a>
@@ -790,15 +790,17 @@
           </ion-radio>
           <a class="button button-block button-borrowitgrau icon icon-right ion-chevron-right" href="#/adressen">Adressen bearbeiten</a>
           <div class="item item-divider">
-            Teile unsere App, um mehr Unterstützer zu finden:
+            Teile unsere App:
           </div>
-          <div class="button-bar">
-            <button class="button ion-social-facebook" ng-click='socialShare("facebook")'></button>
-            <button class="button ion-social-whatsapp" ng-click='socialShare("whatsapp")'></button>
-            <button class="button ion-social-twitter" ng-click='socialShare("twitter")'></button>
-            <button class="button ion-android-mail" ng-click='socialShare("mail")'></button>
-            <button class="button ion-social-googleplus" ng-click='socialShare("googleplus")'></button>
-            <!--<a class="button ion-social-facebook"
+          <div class="button-bar" ng-if="isWebView()">
+            <button class="button ion-social-facebook" ng-show='canSocialShare("facebook")' ng-click='socialShare("facebook")'></button>
+            <button class="button ion-social-whatsapp" ng-show='canSocialShare("whatsapp")' ng-click='socialShare("whatsapp")'></button>
+            <button class="button ion-social-twitter" ng-show='canSocialShare("twitter")' ng-click='socialShare("twitter")'></button>
+            <button class="button ion-android-mail" ng-show='canSocialShare("mail")' ng-click='socialShare("mail")'></button>
+            <button class="button ion-social-googleplus" ng-show='canSocialShare("googleplus")' ng-click='socialShare("googleplus")'></button>
+          </div>
+          <div class="button-bar" ng-if="!isWebView()">
+            <a class="button ion-social-facebook"
                socialshare
                socialshare-provider="facebook"
                socialshare-text="BorrowIt!"
@@ -826,7 +828,7 @@
                socialshare
                socialshare-provider="google"
                socialshare-url="https://github.com/innovativeappsolutions/borrowit">
-            </a>-->
+            </a>
           </div>
           <div class="item item-divider">
             Privatsphäre:
@@ -898,9 +900,9 @@
       </ion-content>
       <ion-footer-bar class="bar-subfooter bar-borrowitblau">
         <div class="button-bar">
-          <button class="button button-block button-borrowitblau icon-left ion-plus" data-ng-click="addAddress()">Adresse hinzufügen</button>
+          <button class="button button-block button-borrowitblau icon-left ion-plus" ng-click="addAddress()">Adresse hinzufügen</button>
           <!--<button class="button button-block button-borrowitgrau icon-left ion-cloud" data-ng-click="changeAddress(data.address)">Ausgewählte Adresse bearbeiten</button>-->
-          <button class="button button-block button-borrowitblau icon-left ion-minus" data-ng-click="removeAddress(profile.currentAddress)">Adresse löschen</button>
+          <button class="button button-block button-borrowitblau icon-left ion-minus" ng-click="removeAddress(profile.currentAddress)">Adresse löschen</button>
         </div>
       </ion-footer-bar>
       <ion-footer-bar class="bar bar-footer bar-borrowitgrau">

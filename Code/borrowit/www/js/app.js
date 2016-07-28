@@ -486,6 +486,7 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
         ProfileService.profile.addresses = [];
         ProfileService.profile.currentAddress = 0;
         ProfileService.profile.requests = [];
+        $scope.profile = ProfileService.profile;
         $scope.showLoading();
         CommunicationService.signup("email", $scope.profile.email, $scope.profile.password).then(function (result) {
           window.location = '#/registrierung2';
@@ -543,7 +544,7 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
     $scope.facebookLogin = function () {
       var authenticated = CommunicationService.authenticate("facebook");
       authenticated.then(function (result) {
-        window.location = "#/registrierung"
+        window.location = "#/registrierung2"
       });
     };
 
@@ -576,10 +577,19 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
     };
   }])
 
-  .controller("ToDoController", function ($scope, $ionicPopup, $ionicLoading, $ionicPlatform, $ionicActionSheet, $cordovaKeyboard, $cordovaVibration, $cordovaCamera, $cordovaDevice, $cordovaFile, $cordovaContacts, $timeout, ImageService, ProfileService, ResultService, CommunicationService) {
+  .controller("ToDoController", function ($scope, $ionicPopup, $ionicLoading, $ionicPlatform, $ionicActionSheet, $ionicHistory, $state, $cordovaKeyboard, $cordovaVibration, $cordovaCamera, $cordovaDevice, $cordovaFile, $cordovaContacts, $cordovaSocialSharing, $timeout, ImageService, ProfileService, ResultService, CommunicationService) {
 
     $scope.socialShare = function(provider) {
       CommunicationService.socialShare(provider);
+    };
+
+    $scope.canSocialShare = function(provider) {
+      $cordovaSocialSharing.canShareVia(provider);
+    };
+
+    $scope.isWebView = function() {
+      var web = ionic.Platform.isWebView();
+      return web;
     }
 
     $scope.getStars = function (rating) {
@@ -1122,7 +1132,10 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       var loadedRequest = CommunicationService.getCurrentRequest(requestid);
       loadedRequest.then(function (result) {
         $scope.values.currentRequest = result;
-        $scope.values.currentRequest.distance = ($scope.values.currentRequest.distance / 1000).toString().replace(".", ",")
+        if ($scope.values.currentRequest.distance == 40000000)
+          $scope.values.currentRequest.shownDistance = "Nicht in Reichweite";
+        else
+          $scope.values.currentRequest.shownDistance = ($scope.values.currentRequest.distance / 1000).toString().replace(".", ",") + " km";
         window.location = "#/anfrage_einsehen";
         $scope.hideLoading();
       }, function (error) {
@@ -1166,7 +1179,13 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
     $scope.profile = ProfileService.profile;
 
     $scope.addAddress = function () {
-      $scope.popupData = {};
+      $scope.popupData = {
+        newAddressStreet: "",
+        newAddressNumber: "",
+        newAddressZIP: "",
+        newAddressCity: "",
+        newAddressCountry: "germany"
+      };
       var addAddressPopup = $ionicPopup.show({
         template:
         '<div class="item item-input-inset">' +
@@ -1190,12 +1209,13 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
         'Land' +
         '</div>' +
         '<select ng-model="popupData.newAddressCountry">' +
-        '<option ng-selected="selected">Deutschland</option>' +
-        '<option>Schweiz</option>' +
-        '<option>Österreich</option>' +
-        '<option>Bayern</option>' +
-        '<option>Köln</option>' +
-        '<option>Kanada</option>' +
+        '<option value="germany">Deutschland</option>' +
+        '<option value="switzerland">Schweiz</option>' +
+        '<option value="austria">Österreich</option>' +
+        '<option value="luxemburg">Luxemburg</option>' +
+        '<option value="belgia">Belgien</option>' +
+        '<option value="netherlands">Niederlande</option>' +
+        '<option value="canada">Kanada</option>' +
         '</select>' +
         '</label>',
         title: 'Neue Adresse anlegen',
@@ -1225,75 +1245,7 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
                 addressid.then(function (result) {
                   address.addressid = result;
                   ProfileService.profile.currentAddress = result;
-                  ProfileService.profile.addresses.push(address);
-                  window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
-                });
-              }
-            }
-          }
-        ]
-      });
-    };
-
-    $scope.addAddress = function () {
-      $scope.popupData = {};
-      var addAddressPopup = $ionicPopup.show({
-        template:
-        '<div class="item item-input-inset">' +
-        '<label class="item item-input-wrapper">' +
-        '<input type="text" placeholder="Straße" ng-model="popupData.newAddressStreet"/>' +
-        '</label>' +
-        '<label class="item item-input-wrapper">' +
-        '<input type="text" placeholder="Hausnummer" ng-model="popupData.newAddressNumber"/>' +
-        '</label>' +
-        '</div>' +
-        '<div class="item item-input-inset">' +
-        '<label class="item item-input-wrapper">' +
-        '<input type="text" placeholder="PLZ" ng-model="popupData.newAddressZIP"/>' +
-        '</label>' +
-        '<label class="item item-input-wrapper">' +
-        '<input type="text" placeholder="Ort" ng-model="popupData.newAddressCity"/>' +
-        '</label>' +
-        '</div>' +
-        '<label class = "item item-input item-select item-light">' +
-        '<div class = "input-label">' +
-        'Land' +
-        '</div>' +
-        '<select ng-model="popupData.newAddressCountry">' +
-        '<option ng-selected="selected">Deutschland</option>' +
-        '<option>Schweiz</option>' +
-        '<option>Österreich</option>' +
-        '<option>Bayern</option>' +
-        '<option>Köln</option>' +
-        '<option>Kanada</option>' +
-        '</select>' +
-        '</label>',
-        title: 'Neue Adresse anlegen',
-        scope: $scope,
-        buttons: [
-          {
-            text: 'Abbrechen',
-            type: 'button-borrowitgrau'
-          },
-          {
-            text: '<b>Anlegen</b>',
-            type: 'button-borrowitblau',
-            onTap: function (e) {
-              if ($scope.popupData.newAddressStreet != null &&
-                $scope.popupData.newAddressNumber != null &&
-                $scope.popupData.newAddressZIP != null &&
-                $scope.popupData.newAddressCity != null &&
-                $scope.popupData.newAddressCountry != null) {
-                var address = {
-                  street: $scope.popupData.newAddressStreet,
-                  streetnumber: $scope.popupData.newAddressNumber,
-                  zip: $scope.popupData.newAddressZIP,
-                  city: $scope.popupData.newAddressCity,
-                  country: $scope.popupData.newAddressCountry
-                };
-                var addressid = CommunicationService.addAddress(address);
-                addressid.then(function (result) {
-                  address.addressid = result;
+                  $scope.profile.currentAddress = result;
                   ProfileService.profile.addresses.push(address);
                   window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
                 });
@@ -1494,6 +1446,18 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
         // - type (chat | request) AND
         // - roomid (if type chat) OR roomid (if type request)
         //TODO hier die entsprechende Funktion aufrufen
+        switch(jsonData.type) {
+          case "chat":
+            if($state.current.name === "anfragenchat" && $scope.values.currentChat.roomid === jsonData.roomid) {
+              $scope.viewChat(jsonData.roomid, true);
+            }
+            else {
+              ResultService.showPush(jsonData.type);
+            }
+            break;
+          case "request":
+            ResultService.showPush(jsonData.type);
+        }
       };
 
       window.plugins.OneSignal.init("c9607961-b043-486d-9449-0587764bb739",
@@ -1505,19 +1469,23 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
 
 
 
-      if (ProfileService.profile.access_token && ProfileService.profile.access_token != "")
+      if (ProfileService.profile.access_token && ProfileService.profile.access_token != "") {
         sendDeviceId();
+        CommunicationService.sendLocationToServer();
+      }
 
       document.addEventListener("pause", function () {
-        if (ProfileService.profile.access_token && ProfileService.profile.access_token != "")
+        if (ProfileService.profile.access_token && ProfileService.profile.access_token != "") {
           sendDeviceId();
-        CommunicationService.sendLocationToServer();
+          CommunicationService.sendLocationToServer();
+        }
       }, false);
       document.addEventListener("resume", function () {
         //code for action on resume
-        if (ProfileService.profile.access_token && ProfileService.profile.access_token != "")
+        if (ProfileService.profile.access_token && ProfileService.profile.access_token != "") {
           sendDeviceId();
-        CommunicationService.sendLocationToServer();
+          CommunicationService.sendLocationToServer();
+        }
       }, false)
       if ($cordovaKeyboard) {
         $cordovaKeyboard.hideAccessoryBar(true);
@@ -1527,13 +1495,33 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
         StatusBar.styleDefault();
       }
       $scope.$apply();
-      $scope.getDeviceContacts();
     });
 
     $scope.urlForImage = function (imageName) {
       var trueOrigin = cordova.file.dataDirectory + imageName;
       return trueOrigin;
     }
+
+    $scope.addFile = function () {
+      if (ionic.Platform.isWebView()) {
+        var options = {
+          quality: 75,
+          destinationType: Camera.DestinationType.DATA_URL,
+          sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+          allowEdit: true,
+          encodingType: Camera.EncodingType.JPEG,
+          targetWidth: 300,
+          targetHeight: 300,
+          popoverOptions: CameraPopoverOptions,
+          saveToPhotoAlbum: false
+        };
+
+        $cordovaCamera.getPicture(options).then($scope.addPicture, $scope.errorPicture);
+      } else {
+        ionic.trigger('click', { target: document.getElementById('fileToUpload') });
+      }
+    }
+
 
     $scope.addMedia = function () {
       $scope.hideSheet = $ionicActionSheet.show({
@@ -1545,20 +1533,21 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
         cancelText: 'Cancel',
         buttonClicked: function (index) {
           $scope.addImage(index);
-          /*$scope.hideSheet();
-          ProfileService.profile.picture = "img/icons/grey_woman.png";
+          //$scope.hideSheet();
+          /*ProfileService.profile.picture = "img/icons/grey_woman.png";
           $scope.profile = ProfileService.profile;*/
-          //$scope.$apply();
+          $scope.$apply();
         }
       });
-    }
+    };
 
     $scope.addImage = function (type) {
       $scope.hideSheet();
       ImageService.handleMediaDialog(type).then(function () {
+        $scope.profile = ProfileService.profile;
         $scope.$apply();
       });
-    }
+    };
   })
 
   //factories
@@ -1587,13 +1576,15 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
           break;
       }
       return {
+        quality: 75,
         destinationType: Camera.DestinationType.DATA_URL,
         sourceType: source,
-        allowEdit: false,
+        allowEdit: true,
         encodingType: Camera.EncodingType.JPEG,
+        targetWidth: 300,
+        targetHeight: 300,
         popoverOptions: CameraPopoverOptions,
-        saveToPhotoAlbum: true,
-        correctOrientation: true
+        saveToPhotoAlbum: false
       };
     }
 
@@ -1603,8 +1594,8 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
         var options = optionsForType(type);
 
         $cordovaCamera.getPicture(options).then(function (imageUrl) {
-          ProfileService.profile.picture = imageUrl;//cordova.file.dataDirectory + imageData;
-          /*var name = imageUrl.substr(imageUrl.lastIndexOf('/') + 1);
+          //ProfileService.profile.picture = imageUrl;//cordova.file.dataDirectory + imageData;
+          var name = imageUrl.substr(imageUrl.lastIndexOf('/') + 1);
           var namePath = imageUrl.substr(0, imageUrl.lastIndexOf('/') + 1);
           var newName = makeid() + name;
           $cordovaFile.copyFile(namePath, name, cordova.file.dataDirectory, newName)
@@ -1613,7 +1604,7 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
               resolve();
             }, function(e) {
               reject();
-            });*/
+            });
         });
       })
     }
@@ -1784,8 +1775,8 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
   })
 
   .factory('CommunicationService', ['$http', '$auth', '$cordovaDialogs', '$cordovaGeolocation', '$cordovaSocialSharing', '$timeout', 'ResultService', 'ProfileService', function ($http, $auth, $cordovaDialogs, $cordovaGeolocation, $cordovaSocialSharing, $timeout, ResultService, ProfileService) {
-    HOST = "https://sb.pftclan.de";
-    PORT = 546;
+    var HOST = "https://sb.pftclan.de";
+    var PORT = 546;
     //var HOST = "http://localhost";
     //var PORT = "3000"
     var URLBACKEND = HOST + ":" + PORT + "/api/smartbackend/";
@@ -2302,9 +2293,11 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
           ProfileService.profile.push = result.data[0].push;
           ProfileService.profile.location = result.data[0].location;
           window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
+          window.location = '#/';
         }, function (error) {
           console.log("Mist");
           ResultService.showError(error);
+          window.location = "#/registrierung2"
         });
     };
 
@@ -2320,7 +2313,6 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
           $http.defaults.headers.common['Authorization'] = "Bearer " + ProfileService.profile.access_token;
           sendDeviceId();
           getProfile();
-          window.location = '#/';
         }, function (error) {
           ResultService.showError(error);
           console.log(error.data);
@@ -2329,15 +2321,19 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
     };
 
     sendDeviceId = function () {
-      window.plugins.OneSignal.getIds(function (ids) {
-        $http({ method: "POST", url: URLBACKEND + "push/register", data: { deviceid: ids.userId, useragent: "default" } })
-          .then(function (result) {
-            console.log(result);
-          }, function (error) {
-            ResultService.showError(error);
-          })
-      });
+      try {
+        window.plugins.OneSignal.getIds(function (ids) {
+          $http({method: "POST", url: URLBACKEND + "push/register", data: {deviceid: ids.userId, useragent: "default"}})
+            .then(function (result) {
+              console.log(result);
+            }, function (error) {
+              ResultService.showError(error);
+            })
+        });
+      }
+      catch(error) {
 
+      }
     };
 
     var authenticate = function (provider) {
@@ -2347,10 +2343,10 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
           console.log($auth.getToken());
           console.log($auth.getPayload());
           var token = $auth.getToken();
-          return $http({ method: "GET", url: URLBACKEND + "auth/" + provider + "/", params: { id_token: $auth.getToken() } }).then(
+          return $http({ method: "GET", url: URLBACKEND + "auth/" + provider + "/", params: { id_token: token } }).then(
             function (result) {
               console.log('yes im ok');
-              ProfileService.profile.access_token = $auth.getToken();
+              ProfileService.profile.access_token = token;
 
             }, function (error) {
               console.log('Error: ' + error);
