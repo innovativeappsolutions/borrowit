@@ -793,7 +793,12 @@
             Teile unsere App, um mehr Unterstützer zu finden:
           </div>
           <div class="button-bar">
-            <a class="button ion-social-facebook"
+            <button class="button ion-social-facebook" ng-click='socialShare("facebook")'></button>
+            <button class="button ion-social-whatsapp" ng-click='socialShare("whatsapp")'></button>
+            <button class="button ion-social-twitter" ng-click='socialShare("twitter")'></button>
+            <button class="button ion-android-mail" ng-click='socialShare("mail")'></button>
+            <button class="button ion-social-googleplus" ng-click='socialShare("googleplus")'></button>
+            <!--<a class="button ion-social-facebook"
                socialshare
                socialshare-provider="facebook"
                socialshare-text="BorrowIt!"
@@ -821,7 +826,7 @@
                socialshare
                socialshare-provider="google"
                socialshare-url="https://github.com/innovativeappsolutions/borrowit">
-            </a>
+            </a>-->
           </div>
           <div class="item item-divider">
             Privatsphäre:

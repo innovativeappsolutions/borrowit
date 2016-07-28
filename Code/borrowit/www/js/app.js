@@ -578,6 +578,10 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
 
   .controller("ToDoController", function ($scope, $ionicPopup, $ionicLoading, $ionicPlatform, $ionicActionSheet, $cordovaKeyboard, $cordovaVibration, $cordovaCamera, $cordovaDevice, $cordovaFile, $cordovaContacts, $timeout, ImageService, ProfileService, ResultService, CommunicationService) {
 
+    $scope.socialShare = function(provider) {
+      CommunicationService.socialShare(provider);
+    }
+
     $scope.getStars = function (rating) {
       // Get the value
       var val = parseFloat(rating);
@@ -1497,7 +1501,7 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
         notificationOpenedCallback);
 
       // Show an alert box if a notification comes in when the user is in your app.
-      window.plugins.OneSignal.enableInAppAlertNotification(true);
+      window.plugins.OneSignal.enableInAppAlertNotification(false);
 
 
 
@@ -1779,7 +1783,7 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
     }
   })
 
-  .factory('CommunicationService', ['$http', '$auth', '$cordovaDialogs', '$cordovaGeolocation', '$timeout', 'ResultService', 'ProfileService', function ($http, $auth, $cordovaDialogs, $cordovaGeolocation, $timeout, ResultService, ProfileService) {
+  .factory('CommunicationService', ['$http', '$auth', '$cordovaDialogs', '$cordovaGeolocation', '$cordovaSocialSharing', '$timeout', 'ResultService', 'ProfileService', function ($http, $auth, $cordovaDialogs, $cordovaGeolocation, $cordovaSocialSharing, $timeout, ResultService, ProfileService) {
     HOST = "https://sb.pftclan.de";
     PORT = 546;
     //var HOST = "http://localhost";
@@ -1806,6 +1810,61 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       }
       return text;
     };
+
+    socialShare = function(provider) {
+      var message = "";
+      var image = "";
+      var link = "https://github.com/innovativeappsolutions/borrowit";
+      switch(provider) {
+        case "twitter":
+          $cordovaSocialSharing
+            .shareViaTwitter(message, image, link)
+            .then(function (result) {
+              // Success!
+            }, function (err) {
+              // An error occurred. Show a message to the user
+            });
+          break;
+        case "whatsapp":
+          $cordovaSocialSharing
+            .shareViaWhatsApp(message, image, link)
+            .then(function (result) {
+              // Success!
+            }, function (err) {
+              // An error occurred. Show a message to the user
+            });
+          break;
+        case "facebook":
+          $cordovaSocialSharing
+            .shareViaFacebook(message, image, link)
+            .then(function (result) {
+              // Success!
+            }, function (err) {
+              // An error occurred. Show a message to the user
+            });
+          break;
+        case "sms":
+          // access multiple numbers in a string like: '0612345678,0687654321'
+          $cordovaSocialSharing
+            .shareViaSMS(message, number)
+            .then(function (result) {
+              // Success!
+            }, function (err) {
+              // An error occurred. Show a message to the user
+            });
+          break;
+        case "mail":
+// toArr, ccArr and bccArr must be an array, file can be either null, string or array
+          $cordovaSocialSharing
+            .shareViaEmail(message, subject, toArr, ccArr, bccArr, file)
+            .then(function (result) {
+              // Success!
+            }, function (err) {
+              // An error occurred. Show a message to the user
+            });
+          break;
+      }
+    }
 
     var addAddress = function (address) {
       return $http({ method: "POST", url: URLBORROWIT + "profile/address/add", data: { street: address.street, streetnumber: address.streetnumber, zip: address.zip, city: address.city, country: address.country } })
@@ -2019,7 +2078,7 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       for (var i = 0; i < ProfileService.profile.addresses.length; i++) {
         if (ProfileService.profile.addresses[i].addressid === ProfileService.profile.currentAddress) {
           location = ProfileService.profile.addresses[i].street + " " + ProfileService.profile.addresses[i].streetnumber + ", " + ProfileService.profile.addresses[i].zip + " " + ProfileService.profile.addresses[i].city + ", " + ProfileService.profile.addresses[i].country;
-          return location
+          return location;
         }
       }
     }
@@ -2359,7 +2418,8 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       sendMessage: sendMessage,
       sendBorrowIt: sendBorrowIt,
       acceptBorrowIt: acceptBorrowIt,
-      sha512: sha512
+      sha512: sha512,
+      socialShare:socialShare
     }
   }])
 

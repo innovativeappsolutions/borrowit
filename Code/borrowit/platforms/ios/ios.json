@@ -65,10 +65,6 @@
                             "count": 1
                         },
                         {
-                            "xml": "<feature name=\"PushNotification\"><param name=\"ios-package\" value=\"PushPlugin\" /></feature>",
-                            "count": 1
-                        },
-                        {
                             "xml": "<feature name=\"SocialSharing\"><param name=\"ios-package\" value=\"SocialSharing\" /><param name=\"onload\" value=\"true\" /></feature>",
                             "count": 1
                         }
@@ -98,21 +94,11 @@
                     "UIBackgroundModes": [
                         {
                             "xml": "<array><string>remote-notification</string></array>",
-                            "count": 2
-                        }
-                    ],
-                    "GCM_SENDER_ID": [
-                        {
-                            "xml": "<string>40863005073</string>",
                             "count": 1
                         }
                     ],
-                    "IS_GCM_ENABLED": [
-                        {
-                            "xml": "<true />",
-                            "count": 1
-                        }
-                    ]
+                    "GCM_SENDER_ID": [],
+                    "IS_GCM_ENABLED": []
                 }
             }
         }
@@ -155,10 +141,6 @@
             "PACKAGE_NAME": "com.ionicframework.borrowit795688"
         },
         "onesignal-cordova-plugin": {
-            "PACKAGE_NAME": "com.ionicframework.borrowit795688"
-        },
-        "phonegap-plugin-push": {
-            "SENDER_ID": "40863005073",
             "PACKAGE_NAME": "com.ionicframework.borrowit795688"
         },
         "cordova-plugin-x-socialsharing": {
@@ -568,14 +550,6 @@
             ]
         },
         {
-            "file": "plugins/phonegap-plugin-push/www/push.js",
-            "id": "phonegap-plugin-push.PushNotification",
-            "pluginId": "phonegap-plugin-push",
-            "clobbers": [
-                "PushNotification"
-            ]
-        },
-        {
             "file": "plugins/cordova-plugin-x-socialsharing/www/SocialSharing.js",
             "id": "cordova-plugin-x-socialsharing.SocialSharing",
             "pluginId": "cordova-plugin-x-socialsharing",
@@ -598,7 +572,6 @@
         "cordova-plugin-calendar": "4.5.1",
         "cordova-plugin-geolocation": "2.2.0",
         "onesignal-cordova-plugin": "1.13.0",
-        "phonegap-plugin-push": "1.8.0",
         "cordova-plugin-x-socialsharing": "5.1.1"
     }
 }
