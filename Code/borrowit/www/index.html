@@ -83,7 +83,7 @@
   <script src="js/angular-moment.js"></script>
 </head>
 
-<body ng-app="starter" ng-controller="ToDoController">
+<body ng-app="starter" ng-controller="MainController">
   <div>
     <ion-nav-view animation="slide-left-right"></ion-nav-view>
   </div>
@@ -102,10 +102,10 @@
           <button class="button button-block button-borrowitgrau" ng-click="checkLogin()">
             Anmelden
           </button>
-          <button class="message-wrapper button button-block fb-bg" ng-click="facebookLogin()">
+          <!--<button class="message-wrapper button button-block fb-bg" ng-click="facebookLogin()">
             <span><img class="facebook-pic left" src="img/icons/facebook.png" width="80px"/></span>
             <span class="fb-bg">mit facebook anmelden</span>
-          </button>
+          </button>-->
           <a class="button button-block button-borrowitgrau" href="#/registrierung">Registrierung</a>
           <div class="button-bar">
             <!--<a class="button button-borrowitgrau button-block">Passwort vergessen</a>-->
@@ -238,7 +238,7 @@
             </div>
           </div>
           <label class = "item item-input item-select item-light">
-            <div class = "input-label col-60">
+            <div class = "input-label col-60 text-left">
               Sortieren nach
             </div>
             <select ng-model="values.chosenSortedBy">
@@ -249,7 +249,7 @@
             </select>
           </label>
           <ion-item class = "item item-input item-select item-light">
-            <ion-label class = "input-label col-60">
+            <ion-label class = "input-label col-60 text-left">
               Kategorie
             </ion-label>
             <select ng-model="values.chosenCategory">
@@ -522,7 +522,7 @@
             </div>
           </div>
           <label class="item item-input item-select">
-            <div class="input-label col-60">
+            <div class="input-label col-60 text-left">
               Kategorie
             </div>
             <select ng-model="textboxes.category">
@@ -776,9 +776,9 @@
           <button class="button button-block button-light icon icon-right ion-chevron-right" ng-click="changeProfile()">
             Profil bearbeiten
           </button>
-          <button class="button button-block button-light icon icon-right ion-chevron-right" ng-click="changePassword()">
+          <!--<button class="button button-block button-light icon icon-right ion-chevron-right" ng-click="changePassword()">
             Passwort ändern
-          </button>
+          </button>-->
           <div class="item item-divider">
             Adresse:
           </div>
@@ -806,12 +806,12 @@
                socialshare-text="BorrowIt!"
                socialshare-url="https://github.com/innovativeappsolutions/borrowit">
             </a>
-            <a class="button ion-social-whatsapp"
+            <!--<a class="button ion-social-whatsapp"
                socialshare
                socialshare-provider="whatsapp"
                socialshare-text="BorrowIt!"
                socialshare-url="https://github.com/innovativeappsolutions/borrowit">
-            </a>
+            </a>-->
             <a class="button ion-social-twitter"
                socialshare
                socialshare-provider="twitter"

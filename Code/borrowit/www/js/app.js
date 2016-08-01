@@ -1,159 +1,3 @@
-//angular.module('starter', ['ionic','ionic.service.core','starter.controllers','starter.services','ngCordova'])
-//
-//  .run(function($ionicPlatform) {
-//    $ionicPlatform.ready(function() {
-//      // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-//      // for form inputs)
-//      if(window.cordova && window.cordova.plugins.Keyboard) {
-//        cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-//      }
-//      if(window.StatusBar) {
-//        StatusBar.styleDefault();
-//      }
-//    });
-//  });
-//
-//angular.module('starter.controllers', [])
-//
-//  .controller('MainCtrl', function($scope, Events,$ionicPlatform,$cordovaCalendar,$timeout) {
-//
-//    $ionicPlatform.ready(function() {
-//      Events.get().then(function(events) {
-//        console.log("events", JSON.stringify(events));
-//        $scope.events = events;
-//      });
-//    });
-//
-//    $scope.addEvent = function(event,idx) {
-//      console.log("add ",event);
-//
-//      Events.add(event).then(function(result) {
-//        console.log("done adding event, result is "+result);
-//        if(result === 1) {
-//          //update the event
-//          $timeout(function() {
-//            $scope.events[idx].status = true;
-//            $scope.$apply();
-//          });
-//        } else {
-//          //For now... maybe just tell the user it didn't work?
-//        }
-//      });
-//
-//
-//    };
-//
-//  });
-//
-//angular.module('starter.services', [])
-//
-//  .factory('Events', function($q,$cordovaCalendar) {
-//
-//    //kind of a hack
-//    var incrementDate = function (date, amount) {
-//      var tmpDate = new Date(date);
-//      tmpDate.setDate(tmpDate.getDate() + amount);
-//      tmpDate.setHours(13);
-//      tmpDate.setMinutes(0);
-//      tmpDate.setSeconds(0);
-//      tmpDate.setMilliseconds(0);
-//      return tmpDate;
-//    };
-//
-//    var incrementHour = function(date, amount) {
-//      var tmpDate = new Date(date);
-//      tmpDate.setHours(tmpDate.getHours() + amount);
-//      return tmpDate;
-//    };
-//
-//    //create fake events, but make it dynamic so they are in the next week
-//    var fakeEvents = [];
-//    fakeEvents.push(
-//      {
-//        "title":"Meetup on Ionic",
-//        "description":"We'll talk about beer, not Ionic.",
-//        "date":incrementDate(new Date(), 1)
-//      }
-//    );
-//    fakeEvents.push(
-//      {
-//        "title":"Meetup on Beer",
-//        "description":"We'll talk about Ionic, not Beer.",
-//        "date":incrementDate(new Date(), 2)
-//      }
-//    );
-//    fakeEvents.push(
-//      {
-//        "title":"Ray's Birthday Bash",
-//        "description":"Celebrate the awesomeness of Ray",
-//        "date":incrementDate(new Date(), 4)
-//      }
-//    );
-//    fakeEvents.push(
-//      {
-//        "title":"Code Review",
-//        "description":"Let's tear apart Ray's code.",
-//        "date":incrementDate(new Date(), 5)
-//      }
-//    );
-//
-//    var getEvents = function() {
-//      var deferred = $q.defer();
-//
-//      /*
-//       Logic is:
-//       For each, see if it exists an event.
-//       */
-//      var promises = [];
-//      fakeEvents.forEach(function(ev) {
-//        //add enddate as 1 hour plus
-//        ev.enddate = incrementHour(ev.date, 1);
-//        console.log('try to find '+JSON.stringify(ev));
-//        promises.push($cordovaCalendar.findEvent({
-//          title:ev.title,
-//          startDate:ev.date
-//        }));
-//      });
-//
-//      $q.all(promises).then(function(results) {
-//        console.log("in the all done");
-//        //should be the same len as events
-//        for(var i=0;i<results.length;i++) {
-//          fakeEvents[i].status = results[i].length === 1;
-//        }
-//        deferred.resolve(fakeEvents);
-//      });
-//
-//      return deferred.promise;
-//    }
-//
-//    var addEvent = function(event) {
-//      var deferred = $q.defer();
-//
-//      $cordovaCalendar.createEvent({
-//        title: event.title,
-//        notes: event.description,
-//        startDate: event.date,
-//        endDate:event.enddate
-//      }).then(function (result) {
-//        console.log('success');console.dir(result);
-//        deferred.resolve(1);
-//      }, function (err) {
-//        console.log('error');console.dir(err);
-//        deferred.resolve(0);
-//      });
-//
-//      return deferred.promise;
-//
-//    }
-//
-//    return {
-//      get:getEvents,
-//      add:addEvent
-//    };
-//
-//  });
-
 // Ionic Starter App
 
 // angular.module is a global place for creating, registering and retrieving Angular modules
@@ -161,10 +5,16 @@
 // the 2nd parameter is an array of 'requires'
 var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast', 'ionic.service.core', 'ionic.service.push', 'ngCordova', 'ionic-rating-stars', 'ionic-ratings', 'angularMoment', 'satellizer', 'ngCookies'])
 
+  /**
+   * Set the Bearer if possible to start first requests to Backend
+   */
   .run(function ($ionicPlatform, CommunicationService) {
     CommunicationService.initiateConnection();
   })
 
+  /**
+   * Configurations that have to be done to make the app run. For example the routes to the different pages are defined
+   */
   .config(['$ionicConfigProvider', '$authProvider', '$stateProvider', '$urlRouterProvider', function ($ionicConfigProvider, $authProvider, $stateProvider, $urlRouterProvider) {
     $authProvider.facebook({
       clientId: '1577756505877617',
@@ -248,10 +98,8 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
         url: '/datenschutz',
         templateUrl: 'datenschutz.html'
       });
-    //profile = JSON.parse(window.localStorage.getItem("profile"));
     var profileexists = JSON.parse(window.localStorage.getItem("profile"));
-    if (profileexists && profileexists.access_token && profileexists.access_token != "") {//!= undefined && window.localStorage.getItem("password") != undefined)
-      //$http.defaults.headers.common['Authorization'] = "Bearer "+ profileexists.access_token;
+    if (profileexists && profileexists.access_token && profileexists.access_token != "") {  //check if already logged in
       $urlRouterProvider.otherwise('/');
     }
     else
@@ -261,10 +109,10 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
   .controller('UserMessagesCtrl',
   function ($scope, $rootScope, $state, $stateParams, $ionicActionSheet,
     $ionicPopup, $ionicScrollDelegate, $timeout, $interval, ProfileService, CommunicationService) {
-
-    // this could be on $rootScope rather than in $stateParams
-    //$scope.user = ProfileService;
-
+    /**
+     * send a message to the borrower and sets the offered-boolean to true
+     * @param request The request the user wants to answer
+       */
     $scope.borrowit = function (request) {
       message = {
         text: ProfileService.profile.username + " möchte dir bezüglich deiner Anfrage >>" + request.title + "<< helfen!",
@@ -293,6 +141,10 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       });
     }
 
+    /**
+     * The content of the textbox for a new message overwritten by data binding
+     * @type {{message: string}}
+       */
     $scope.input = {
       message: ''
     };
@@ -304,6 +156,9 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
     var scroller;
     var txtInput; // ^^^
 
+    /**
+     * method that runs, when a specific chat-page is open.
+     */
     $scope.$on('$ionicView.enter', function () {
       console.log('UserMessages $ionicView.enter');
 
@@ -319,10 +174,14 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       }, 0);
 
       messageCheckTimer = $interval(function () {
+        $scope.viewChat($scope.values.currentChat.roomid, true);
         // here you could check for new messages if your app doesn't use push notifications or user disabled them
       }, 20000);
     });
 
+    /**
+     * method that runs, when a specific chat-page is closed.
+     */
     $scope.$on('$ionicView.leave', function () {
       console.log('leaving UserMessages view, destroying interval');
       // Make sure that the interval is destroyed
@@ -332,28 +191,10 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       }
     });
 
-    $scope.$on('$ionicView.beforeLeave', function () {
-      if (!$scope.input.message || $scope.input.message === '') {
-      }
-    });
-
-    /*function getMessages() {
-      // the service is mock but you would probably pass the toUser's GUID here
-      MockService.getUserMessages({
-        toUserId: $scope.toUser.username
-      }).then(function(data) {
-        $scope.doneLoading = true;
-        $scope.messages = data.messages;
-
-        $timeout(function() {
-          viewScroll.scrollBottom();
-        }, 0);
-      });
-    }*/
-
-    $scope.$watch('input.message', function (newValue, oldValue) {
-    });
-
+    /**
+     * send a message to another user
+     * @param sendMessageForm: The content of the message
+       */
     $scope.sendMessage = function (sendMessageForm) {
       var message = {
         text: $scope.textboxes.message.replace(/(<([^>]+)>)/ig, ""),
@@ -371,27 +212,13 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       $scope.textboxes.message = "";
 
       CommunicationService.sendMessage($scope.values.currentChat.roomid, message);
-      $scope.values.currentChat.messages.push(message); //change to id
-      /*for (var i = 0; i < $scope.chats.length; i++) {
-        if ($scope.chats[i].roomid == $scope.values.currentChat.roomid) {
-          $scope.chats[i].messages.push(message);
-        }
-      }*/
+      $scope.values.currentChat.messages.push(message);
       window.localStorage.setItem("chats", JSON.stringify($scope.chats));
 
       $timeout(function () {
         keepKeyboardOpen();
         viewScroll.scrollBottom(true);
       }, 0);
-
-      /*$timeout(function() {
-        $scope.chats[$scope.values.currentChat].messages.push($scope.getRequestMessage()); //delete this one day
-        window.localStorage.setItem("chats", JSON.stringify($scope.chats));
-        keepKeyboardOpen();
-        viewScroll.scrollBottom(true);
-      }, 2000);*/
-
-      //});
     };
 
     // this keeps the keyboard open on a device only after sending a message, it is non obtrusive
@@ -400,49 +227,6 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       txtInput.one('blur', function () {
         console.log('textarea blur, focus back on it');
         txtInput[0].focus();
-      });
-    }
-
-    $scope.getRequestMessage = function () {
-      var a = "#/";//$scope.requests[$scope.values.chosenRequest].offered;
-      //var b = requests[chosenRequest].accepted;
-      return {
-        username: ProfileService.toUser.username,
-        date: new Date(),
-        text: ProfileService.toUser.username +
-        ' möchte dir etwas leihen!'
-      };
-    }
-
-    $scope.onMessageHold = function (e, itemIndex, message) {
-      console.log('onMessageHold');
-      console.log('message: ' + JSON.stringify(message, null, 2));
-      $ionicActionSheet.show({
-        buttons: [{
-          text: 'Copy Text',
-          type: 'button-borrowitblau'
-        }, {
-            text: 'Delete Message',
-            type: 'button-borrowitgrau'
-          }],
-        buttonClicked: function (index) {
-          switch (index) {
-            case 0: // Copy Text
-              //cordova.plugins.clipboard.copy(message.text);
-
-              break;
-            case 1: // Delete
-              // no server side secrets here :~)
-              $scope.messages.splice(itemIndex, 1);
-              $timeout(function () {
-                viewScroll.resize();
-              }, 0);
-
-              break;
-          }
-
-          return true;
-        }
       });
     };
 
@@ -471,6 +255,9 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
   })
 
   .controller('LoginCtrl', ['$scope', '$ionicPopup', 'ProfileService', 'ResultService', 'CommunicationService', function ($scope, $ionicPopup, ProfileService, ResultService, CommunicationService) {
+    /**
+     * Creates a new account with email address and password
+     */
     $scope.registerFirstPart = function () {
       if (($scope.textboxes.email != null &&
         $scope.textboxes.password != null && $scope.textboxes.password.length >= 8 &&
@@ -502,6 +289,9 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       }
     };
 
+    /**
+     * sets the profile to an account
+     */
     $scope.registerSecondPart = function () {
       if ($scope.textboxes.username != null && $scope.textboxes.username != "" &&
         $scope.textboxes.lastname != null && $scope.textboxes.lastname != "" &&
@@ -521,10 +311,9 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       }
     };
 
-    $scope.login = function (username, password) {
-      ProfileService.profile = JSON.parse(window.localStorage.getItem("profile"));
-    };
-
+    /**
+     * Log in with email address and password
+     */
     $scope.checkLogin = function () {
       if ($scope.textboxes.TextboxEmail && $scope.textboxes.TextboxPassword) {
         $scope.showLoading();
@@ -541,41 +330,19 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       }
     };
 
+    /**
+     * Log in with facebook account
+     */
     $scope.facebookLogin = function () {
       CommunicationService.authenticate("facebook");
     };
-
-    $scope.showLoginError = function (wrongPassword) {
-      $scope.popupData = {};
-      if (wrongPassword)
-        var showLoginErrorPopup = $ionicPopup.show({
-          template: 'Dein Benutzername und/oder dein Passwort ist falsch. Bitte versuche es erneut',
-          title: 'Fehler beim Anmelden',
-          scope: $scope,
-          buttons: [
-            {
-              text: 'OK',
-              type: 'button-borrowitblau'
-            }
-          ]
-        });
-      else
-        var showLoginErrorPopup = $ionicPopup.show({
-          template: 'Du hast keine Verbindung zum Server. Bitte überprüfe deine Verbindung zum Internet',
-          title: 'Fehler beim Anmelden',
-          scope: $scope,
-          buttons: [
-            {
-              text: 'OK',
-              type: 'button-borrowitblau'
-            }
-          ]
-        });
-    };
   }])
 
-  .controller("ToDoController", function ($scope, $ionicPopup, $ionicLoading, $ionicPlatform, $ionicActionSheet, $ionicHistory, $state, $cordovaKeyboard, $cordovaVibration, $cordovaCamera, $cordovaDevice, $cordovaFile, $cordovaContacts, $cordovaSocialSharing, $timeout, ImageService, ProfileService, ResultService, CommunicationService) {
+  .controller("MainController", function ($scope, $ionicPopup, $ionicLoading, $ionicPlatform, $ionicActionSheet, $ionicHistory, $state, $cordovaKeyboard, $cordovaVibration, $cordovaCamera, $cordovaDevice, $cordovaFile, $cordovaContacts, $cordovaSocialSharing, $timeout, ImageService, ProfileService, ResultService, CommunicationService) {
 
+    /**
+     * Share the app by any social media platform
+     */
     $scope.socialShare = function(provider) {
       CommunicationService.socialShare(provider);
     };
@@ -587,8 +354,11 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
     $scope.isWebView = function() {
       var web = ionic.Platform.isWebView();
       return web;
-    }
+    };
 
+    /**
+     * Fill the rating stars in frontend
+     */
     $scope.getStars = function (rating) {
       // Get the value
       var val = parseFloat(rating);
@@ -597,6 +367,9 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       return size + '%';
     };
 
+    /**
+     * Rate another person
+     */
     $scope.rate = function (request, borrower) {
       var ratedUsername, ratedUserid;
       if (!borrower) {
@@ -626,6 +399,9 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       })
     };
 
+    /**
+     * Show an animation while loading datas from backend
+     */
     $scope.showLoading = function () {
       $ionicLoading.show({
         content: 'Lädt',
@@ -645,11 +421,17 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       $ionicLoading.hide();
     };
 
+    /**
+     * Change the current address for working with the app without using the location
+     */
     $scope.currentAddressChanged = function () {
       CommunicationService.changeCurrentAddress(ProfileService.profile.currentAddress);
       window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
     };
 
+    /**
+     * Choose if the user wants to get push notifications when a new request is started
+     */
     $scope.pushToggleChange = function () {
       console.log('Push Notification Change', $scope.profile.push);
       ProfileService.profile.push = $scope.profle.push;
@@ -657,6 +439,9 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
     };
 
+    /**
+     * Choose if the user wants to use the current geolocation or his current address while using the app
+     */
     $scope.locationToggleChange = function () {
       if (ProfileService.profile.addresses && ProfileService.profile.addresses > 0) {
         console.log('Location', $scope.profile.location);
@@ -715,8 +500,11 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
         case "dec":
           return ".12.";
       }
-    }
+    };
 
+    /**
+     * gets the informations of a new reuest
+     */
     $scope.prepareStartRequest = function () {
       var newRequest = setRequestFields();
       if ($scope.profile.location && $scope.values.useLocationForRequest) {
@@ -724,7 +512,6 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
         var location = CommunicationService.getGeoLocation();
         location.then(function (result) {
           newRequest.location = result;
-          $scope.startRequest(newRequest);
         })
       }
       else {
@@ -735,11 +522,14 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
             break;
           }
         }
-        $scope.startRequest(newRequest);
       }
-    }
+      $scope.startRequest(newRequest);
+    };
 
-    $scope.updateRequestInformations = function (requestid) { //work with id
+    /**
+     * updates a request of the user
+     */
+    $scope.updateRequestInformations = function (requestid) {
       var requestToUpdate;
       for (var i = 0; i < $scope.profile.requests.length; i++) {
         if ($scope.profile.requests[i].requestid === requestid) {
@@ -769,8 +559,12 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
         }
       }
       $scope.emptyAllFields();
-    }
+    };
 
+    /**
+     * starts a new request
+     * @param request
+       */
     $scope.startRequest = function (request) {
       var newrequestid = CommunicationService.startRequest(request.title, request.description, request.location, request.startDate, request.endDate, request.category);
       newrequestid.then(function (result) {
@@ -788,8 +582,12 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       }, function (error) {
         $scope.hideLoading();
       });
-    }
+    };
 
+    /**
+     * sets the informations of a new or actualized request
+     * @returns {{}}
+       */
     var setRequestFields = function () {
       var newRequest = {};
       if ($scope.values.sofort) {
@@ -807,30 +605,34 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       newRequest.category = $scope.textboxes.category;
       newRequest.profile = { username: $scope.profile.username, picture: $scope.profile.picture, rating: $scope.profile.rating };
       return newRequest;
-    }
+    };
 
+    /**
+     * deletes the users profile
+     */
     $scope.deleteProfile = function () {
       window.localStorage.removeItem('profile');
       window.localStorage.removeItem('chats');
+      //send Delete to Backend
       $scope.emptyAllFields();
       window.location = "#/login";
-    }
+    };
 
+    /**
+     * adds a user as a contact
+     * @param person
+       */
     $scope.addContact = function (person) {
       ProfileService.profile.contacts.push(person);
       CommunicationService.addContact(person.uid);
       window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
-    }
+    };
 
     $scope.phoneContacts = [];
 
-    $scope.checkPhoneNumber = function (allNumbers, contactNumber) {
-      //for (var i = 0; i < allNumbers.length; i++)
-      //if (allNumbers[i].telephone === contactNumber)
-      //return true;
-      return false;
-    }
-
+    /**
+     * gets the contacts from the mobile device
+     */
     $scope.getDeviceContacts = function () {
       function onSuccess(contacts) {
         $scope.showLoading();
@@ -839,15 +641,10 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
           var contact = contacts[i];
           if (contact.phoneNumbers) {
             for (var j = 0; j < contact.phoneNumbers.length; j++) {
-              if (!$scope.checkPhoneNumber(allNumbers, contact.phoneNumbers[j].value.replace(" ", ""))) {
-                //var number = {}
-                //number.telephone = contact.phoneNumbers[j].value.replace(" ","");
-                allNumbers.push({ telephone: contact.phoneNumbers[j].value.replace(" ", "") });
-              }
+              allNumbers.push({ telephone: contact.phoneNumbers[j].value.replace(" ", "") });
             }
           }
         }
-        //var allNumbers = [{telephone: "017634670616"}]
         var loadedContacts = CommunicationService.getContactsFromDevice(allNumbers);
         loadedContacts.then(function (result) {
           $scope.phoneContacts = [];
@@ -870,32 +667,10 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       $cordovaContacts.find(options).then(onSuccess, onError);
     };
 
-    $scope.findContactsBySearchTerm = function (searchTerm) {
-      var opts = {
-        multiple: true
-      };
-
-      try {
-        $cordovaContacts.find(opts).then(function (contactsFound) {
-          $scope.deviceContacts = contactsFound;
-        });
-      }
-      catch (Exception) {
-
-      }
-    };
-
-    $scope.pickContactUsingNativeUI = function () {
-      $cordovaContacts.pickContact().then(function (contactPicked) {
-        $scope.deviceContact = contactPicked;
-      });
-    };
-
     $scope.logout = function () {
       window.localStorage.removeItem("profile");
       window.localStorage.removeItem('chats');
-      ProfileService.profile =
-        {
+      ProfileService.profile = {
           username: "",
           lastname: "",
           firstname: "",
@@ -911,13 +686,15 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
           requests: [],
           access_token: "",
           push: true,
-          location: true
-        }
+          location: true};
       $scope.profile = ProfileService.profile;
       $scope.emptyAllFields();
       window.location = "#/";
     };
 
+    /**
+     * sets all used variables to a standard value
+     */
     $scope.emptyAllFields = function () {
       $scope.values = {
         sofort: true,
@@ -956,6 +733,10 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
 
     $scope.emptyAllFields();
 
+    /**
+     * view a users profile
+     * @param contactid
+       */
     $scope.viewContact = function (contactid) {
       $scope.showLoading();
       var loadedContact = CommunicationService.getPerson(contactid);
@@ -972,6 +753,11 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       });
     };
 
+    /**
+     * returns if a user is already a contact
+     * @param person
+     * @returns {boolean}
+       */
     $scope.alreadyContact = function (person) {
       for (var i = 0; i < $scope.profile.contacts.length; i++) {
         if ($scope.profile.contacts[i].username === person.username) {
@@ -981,6 +767,10 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       return false;
     };
 
+    /**
+     * send a message to the borrower and sets the offered-boolean to true
+     * @param request
+       */
     $scope.borrowit = function (request) {
       message = {
         text: ProfileService.profile.username + " möchte dir bezüglich deiner Anfrage >>" + request.title + "<< helfen!",
@@ -1009,6 +799,10 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       });
     };
 
+    /**
+     * accept an offer and sets the accepted boolean to true. sends a message to vendor
+     * @param request
+       */
     $scope.acceptOffer = function (request) {
       message = {
         text: ProfileService.profile.username + " hat dein Angebot bezüglich seiner/ihrer Anfrage >>" + request.title + "<< angenommen!",
@@ -1034,6 +828,10 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       });
     };
 
+    /**
+     * declines an offer and sets the offered boolean to false. sends a message to vendor
+     * @param request
+     */
     $scope.declineOffer = function (request) {
       message = {
         text: ProfileService.profile.username + " hat dein Angebot bezüglich seiner/ihrer Anfrage >>" + request.title + "<< abgelehnt!",
@@ -1059,6 +857,9 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       });
     };
 
+    /**
+     * go to actualization page
+     */
     $scope.actualizeRequest = function () {
       var request = $scope.values.currentRequest
       $scope.textboxes.requestTitle = request.title;
@@ -1069,6 +870,10 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       $scope.values.actualizeRequest = true;
     };
 
+    /**
+     * start a chat from the request-page
+     * @param request
+       */
     $scope.viewChatByRequest = function (request) {
       var chat = $scope.chatExists(request)
       if (chat)
@@ -1077,6 +882,11 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
         $scope.viewChat(request.requestid, false);
     };
 
+    /**
+     * check whether the chat is already started
+     * @param request
+     * @returns {*}
+       */
     $scope.chatExists = function (request) {
       for (var i = 0; i < $scope.chats.length; i++) {
         if ($scope.chats[i].request[0].requestid == request.requestid)
@@ -1085,6 +895,11 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       return false;
     }
 
+    /**
+     * opens a chat
+     * @param roomid
+     * @param exists
+       */
     $scope.viewChat = function (roomid, exists) {
       $scope.showLoading();
       var loadedChat = getChatInformations(roomid, exists);
@@ -1096,6 +911,12 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       });
     };
 
+    /**
+     * gets the content of a chat
+     * @param roomid
+     * @param exists
+     * @returns {*}
+       */
     var getChatInformations = function (roomid, exists) {
       var loadedChat = CommunicationService.openChat(roomid, exists);
       return loadedChat.then(function (result) {
@@ -1114,6 +935,9 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
 
     $scope.persons = [];
 
+    /**
+     * get all users of the app
+     */
     $scope.loadContacts = function () {
       var loadedContacts = CommunicationService.getAllPersons();
       loadedContacts.then(function (result) {
@@ -1125,6 +949,10 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       });
     };
 
+    /**
+     * load the informations of a request to view
+     * @param requestid
+       */
     $scope.loadCurrentRequest = function (requestid) {
       $scope.showLoading();
       var loadedRequest = CommunicationService.getCurrentRequest(requestid);
@@ -1143,8 +971,10 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
 
     $scope.requests = [];
 
+    /**
+     * load all open requests
+     */
     $scope.loadRequests = function () {
-      //$scope.showLoading();
       try {
         $scope.showLoading();
         var loadedRequests = CommunicationService.getAllRequests();
@@ -1164,6 +994,9 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       }
     };
 
+    /**
+     * load all chats that are started
+     */
     $scope.loadChats = function () {
       var loadedChats = CommunicationService.getAllChats();
       loadedChats.then(function (result) {
@@ -1176,6 +1009,9 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
 
     $scope.profile = ProfileService.profile;
 
+    /**
+     * add a new address and set it to current address
+     */
     $scope.addAddress = function () {
       $scope.popupData = {
         newAddressStreet: "",
@@ -1254,6 +1090,10 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       });
     };
 
+    /**
+     * delete an address
+     * @param address
+       */
     $scope.removeAddress = function (address) //change to id
     {
       if (ProfileService.profile.addresses.length > 1) {
@@ -1274,7 +1114,7 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       }
     }
 
-    $scope.changeAddress = function (address) {
+    /*$scope.changeAddress = function (address) {
       $scope.popupData = {};
       chosenAddress = $scope.addresses[address].street
       var addAddressPopup = $ionicPopup.show({
@@ -1336,9 +1176,9 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
           },
         ]
       });
-    };
+    };*/
 
-    $scope.changePassword = function () {
+    /*$scope.changePassword = function () {
       $scope.popupData = {};
       var promptPopup = $ionicPopup.prompt({
         template:
@@ -1381,8 +1221,11 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
         console.log(res);
       });
 
-    };
+    };*/
 
+    /**
+     * change the main information about the user
+     */
     $scope.changeProfile = function () {
       $scope.popupData = {
         lastname: $scope.profile.lastname,
@@ -1436,6 +1279,9 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       });
     };
 
+    /**
+     * set some default information
+     */
     $ionicPlatform.ready(function () {
 
       var notificationOpenedCallback = function (jsonData) {
@@ -1467,21 +1313,21 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
 
 
       if (ProfileService.profile.access_token && ProfileService.profile.access_token != "") {
-        sendDeviceId();
-        //CommunicationService.sendLocationToServer();
+        CommunicationService.sendDeviceId();
+        CommunicationService.sendLocationToServer();
       }
 
       document.addEventListener("pause", function () {
         if (ProfileService.profile.access_token && ProfileService.profile.access_token != "") {
-          sendDeviceId();
-          //CommunicationService.sendLocationToServer();
+          CommunicationService.sendDeviceId();
+          CommunicationService.sendLocationToServer();
         }
       }, false);
       document.addEventListener("resume", function () {
         //code for action on resume
         if (ProfileService.profile.access_token && ProfileService.profile.access_token != "") {
-          sendDeviceId();
-          //CommunicationService.sendLocationToServer();
+          CommunicationService.sendDeviceId();
+          CommunicationService.sendLocationToServer();
         }
       }, false)
       if ($cordovaKeyboard) {
@@ -1545,6 +1391,9 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
     //  // bgGeo.stop()
     //}
 
+    /**
+     * add a new picture as profile picture
+     */
     $scope.addMedia = function () {
       $scope.hideSheet = $ionicActionSheet.show({
         buttons: [
@@ -1563,7 +1412,9 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
   })
 
   //factories
-
+  /**
+   * This factory gets a new picture
+   */
   .factory('ImageService', function ($cordovaCamera, ProfileService, $q, $cordovaFile) {
 
     addPicture = function (imageData) {
@@ -1631,6 +1482,9 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
     }
   })
 
+  /**
+   * in this factory the profile is maintained
+   */
   .factory('ProfileService', function () {
     var profile;
 
@@ -1664,6 +1518,9 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
     }
   })
 
+  /**
+   * this factory geves output to user
+   */
   .factory('ResultService', function (ionicToast) {
     showPush = function() {
       var content = "";
@@ -1789,7 +1646,7 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
           }
         ]
       });*/
-    }
+    };
 
     return {
       showResult: showResult,
@@ -1798,7 +1655,10 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
     }
   })
 
-  .factory('CommunicationService', ['$http', '$auth', '$cordovaDialogs', '$cordovaGeolocation', '$cordovaSocialSharing', '$timeout', 'ResultService', 'ProfileService', function ($http, $auth, $cordovaDialogs, $cordovaGeolocation, $cordovaSocialSharing, $timeout, ResultService, ProfileService) {
+  /**
+   * This factory is for the communication with the backend
+   */
+  .factory('CommunicationService', ['$http', '$auth', '$cordovaDialogs', '$cordovaGeolocation', '$cordovaSocialSharing', '$timeout', '$interval', 'ResultService', 'ProfileService', function ($http, $auth, $cordovaDialogs, $cordovaGeolocation, $cordovaSocialSharing, $timeout, $interval, ResultService, ProfileService) {
     var HOST = "https://sb.pftclan.de";
     var PORT = 546;
     //var HOST = "http://localhost";
@@ -2055,17 +1915,19 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
 
     sendLocationToServer = function (location) {
       //alle 15 Minuten
-      if (ProfileService.profile.location) {
-        $http({ method: "PUT", url: URLBORROWIT + "location", data: { location: location } })
-          .then(function (result) {
-            //man könnte ne Bestätigung zeigen
-            //var addressid = result.data[0];
-            //return addressid;
-          }, function (error) {
-            ResultService.showError(error);
-            // toSomething
-          });
-      }
+      $interval(function () {
+        if (ProfileService.profile.location) {
+          $http({ method: "PUT", url: URLBORROWIT + "location", data: { location: location } })
+            .then(function (result) {
+              //man könnte ne Bestätigung zeigen
+              //var addressid = result.data[0];
+              //return addressid;
+            }, function (error) {
+              ResultService.showError(error);
+              // toSomething
+            });
+        }
+      }, 15*60*1000);
     };
 
     var getGeoLocation = function () {
@@ -2349,7 +2211,7 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
         });
       }
       catch(error) {
-
+        var test = 0;
       }
     };
 
@@ -2434,10 +2296,14 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       sendBorrowIt: sendBorrowIt,
       acceptBorrowIt: acceptBorrowIt,
       sha512: sha512,
-      socialShare:socialShare
+      socialShare:socialShare,
+      sendDeviceId:sendDeviceId
     }
   }])
 
+  /**
+   * get answers to test functions
+   */
   .factory('MockService', ['$http', '$q',
     function ($http, $q) {
       var me = {};
@@ -2479,6 +2345,9 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
   ])
 
   // fitlers
+  /**
+   * if the text is to long, make a new line
+   */
   .filter('nl2br', ['$filter',
     function ($filter) {
       return function (data) {
@@ -2488,6 +2357,9 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
     }
   ])
 
+  /**
+   * filter items with search query
+   */
   .filter('searchContent', function () {
     return function (items, query) {
       var filtered = [];
@@ -2506,6 +2378,9 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
     };
   })
 
+  /**
+   * filter contacts with search query
+   */
   .filter('searchContact', function () {
     return function (items, query) {
       var filtered = [];
@@ -2524,6 +2399,9 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
     };
   })
 
+  /**
+   * filter requests by catedory
+   */
   .filter('filterRequests', function () {
     return function (items, category) {
       var filtered = [];
@@ -2544,6 +2422,9 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
     };
   })
 
+  /**
+   * return the right category image
+   */
   .filter('chooseCategoryImage', function () {
     return function (items, category) {
       var filtered = [];
