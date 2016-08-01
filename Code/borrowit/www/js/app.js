@@ -163,11 +163,6 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
 
   .run(function ($ionicPlatform, CommunicationService) {
     CommunicationService.initiateConnection();
-    $ionicPlatform.ready(function () {
-      // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-      // for form inputs)
-
-    });
   })
 
   .config(['$ionicConfigProvider', '$authProvider', '$stateProvider', '$urlRouterProvider', function ($ionicConfigProvider, $authProvider, $stateProvider, $urlRouterProvider) {
@@ -516,8 +511,6 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
         CommunicationService.createProfile();
         $scope.loadRequests();
         window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
-
-        window.location = '#/';
       }
     };
 
@@ -913,6 +906,7 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
           push: true,
           location: true
         }
+      $scope.profile = ProfileService.profile;
       $scope.emptyAllFields();
       window.location = "#/";
     };
@@ -1443,17 +1437,16 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
         // - type (chat | request) AND
         // - roomid (if type chat) OR roomid (if type request)
         //TODO hier die entsprechende Funktion aufrufen
+        ResultService.showPush(jsonData.type);
         switch(jsonData.type) {
           case "chat":
             if($state.current.name === "anfragenchat" && $scope.values.currentChat.roomid === jsonData.roomid) {
               $scope.viewChat(jsonData.roomid, true);
             }
-            else {
-              ResultService.showPush(jsonData.type);
-            }
             break;
-          case "request":
+          default:
             ResultService.showPush(jsonData.type);
+            break;
         }
       };
 
@@ -1491,8 +1484,59 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       if (window.StatusBar) {
         StatusBar.styleDefault();
       }
-      $scope.$apply();
+      //$scope.sendGeoLocationInBackground();
     });
+
+    //$scope.sendGeoLocationInBackground = function() {
+    //
+    //  var bgGeo = window.BackgroundGeolocation;
+    //
+    //  /**
+    //   * This would be your own callback for Ajax-requests after POSTing background geolocation to your server.
+    //   */
+    //  var yourAjaxCallback = function(response) {
+    //    bgGeo.finish();
+    //  };
+    //
+    //  /**
+    //   * This callback will be executed every time a geolocation is recorded in the background.
+    //   */
+    //  var callbackFn = function(location) {
+    //    console.log('[js] BackgroundGeoLocation callback:  ' + location.latitude + ',' + location.longitude);
+    //    CommunicationService.sendLocationToServer(location);
+    //    yourAjaxCallback.call(this);
+    //  };
+    //
+    //  var failureFn = function(error) {
+    //    console.log('BackgroundGeoLocation error');
+    //  }
+    //
+    //  // BackgroundGeoLocation is highly configurable.
+    //  bgGeo.configure(callbackFn, failureFn, {
+    //    url: 'http://only.for.android.com/update_location.json', // <-- Android ONLY:  your server url to send locations to
+    //    params: {
+    //      auth_token: 'user_secret_auth_token',    //  <-- Android ONLY:  HTTP POST params sent to your server when persisting locations.
+    //      foo: 'bar'                              //  <-- Android ONLY:  HTTP POST params sent to your server when persisting locations.
+    //    },
+    //    headers: {                                   // <-- Android ONLY:  Optional HTTP headers sent to your configured #url when persisting locations
+    //      "X-Foo": "BAR"
+    //    },
+    //    desiredAccuracy: 10,
+    //    stationaryRadius: 20,
+    //    distanceFilter: 30,
+    //    notificationTitle: 'Background tracking', // <-- android only, customize the title of the notification
+    //    notificationText: 'ENABLED', // <-- android only, customize the text of the notification
+    //    activityType: 'AutomotiveNavigation',
+    //    debug: true, // <-- enable this hear sounds for background-geolocation life-cycle.
+    //    stopOnTerminate: false // <-- enable this to clear background location settings when the app terminates
+    //  });
+    //
+    //  // Turn ON the background-geolocation system.  The user will be tracked whenever they suspend the app.
+    //  bgGeo.start();
+    //
+    //  // If you wish to turn OFF background-tracking, call the #stop method.
+    //  // bgGeo.stop()
+    //}
 
     $scope.addMedia = function () {
       $scope.hideSheet = $ionicActionSheet.show({
@@ -1718,12 +1762,12 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
           title = "Server nicht erreichbar";
           content = "Verbindung zum Server Fehlgeschlagen";
           break;
-        default:
-          title = "Unerwarteter Fehler";
-          content = "Ja die anderen Fehler erwarten wir ;)";
-          break;
+        //default:
+          //title = "Unerwarteter Fehler";
+          //content = "Ja die anderen Fehler erwarten wir ;)";
+          //break;
       }
-      ionicToast.show(error.status + title + ": " + content, 'bottom', false, 2500);
+      ionicToast.show(title + ": " + content, 'bottom', false, 2500);
       /*var showErrorPopup = $ionicPopup.show({
         template: content,
         title: title,
@@ -1746,8 +1790,8 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
   .factory('CommunicationService', ['$http', '$auth', '$cordovaDialogs', '$cordovaGeolocation', '$cordovaSocialSharing', '$timeout', 'ResultService', 'ProfileService', function ($http, $auth, $cordovaDialogs, $cordovaGeolocation, $cordovaSocialSharing, $timeout, ResultService, ProfileService) {
     var HOST = "https://sb.pftclan.de";
     var PORT = 546;
-    //var HOST = "http://localhost";
-    //var PORT = "3000"
+    var HOST = "http://localhost";
+    var PORT = "3000"
     var URLBACKEND = HOST + ":" + PORT + "/api/smartbackend/";
     var URLBORROWIT = HOST + ":" + PORT + "/api/borrowit/";
     var salt;
@@ -1998,26 +2042,18 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
         });
     };
 
-    sendLocationToServer = function () {
+    sendLocationToServer = function (location) {
       //alle 15 Minuten
-      while (true) {
-        $timeout(function () {
-          if (ProfileService.profile.location) {
-            var location = getGeoLocation();
-            location.then(function (result) {
-              var geolocation = result;
-              $http({ method: "PUT", url: URLBORROWIT + "location", data: { location: geolocation } })
-                .then(function (result) {
-                  //man könnte ne Bestätigung zeigen
-                  //var addressid = result.data[0];
-                  //return addressid;
-                }, function (error) {
-                  ResultService.showError(error);
-                  // toSomething
-                });
-            })
-          }
-        }, 900000)
+      if (ProfileService.profile.location) {
+        $http({ method: "PUT", url: URLBORROWIT + "location", data: { location: location } })
+          .then(function (result) {
+            //man könnte ne Bestätigung zeigen
+            //var addressid = result.data[0];
+            //return addressid;
+          }, function (error) {
+            ResultService.showError(error);
+            // toSomething
+          });
       }
     };
 
@@ -2236,11 +2272,12 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
         }
       }).then(function (result) {
         console.log("Juhu");
+        window.location = '#/';
         //ProfileService.profile.access_token = result.data.access_token;
         //$http.defaults.headers.common['Authorization'] = "Bearer "+ ProfileService.profile.access_token;
       }, function (error) {
         console.log("Mist");
-        ResultService.showError(error);
+        ResultService.showError(error, "register");
         // toSomething
       });
     };

@@ -1468,20 +1468,20 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
 
       if (ProfileService.profile.access_token && ProfileService.profile.access_token != "") {
         sendDeviceId();
-        CommunicationService.sendLocationToServer();
+        //CommunicationService.sendLocationToServer();
       }
 
       document.addEventListener("pause", function () {
         if (ProfileService.profile.access_token && ProfileService.profile.access_token != "") {
           sendDeviceId();
-          CommunicationService.sendLocationToServer();
+          //CommunicationService.sendLocationToServer();
         }
       }, false);
       document.addEventListener("resume", function () {
         //code for action on resume
         if (ProfileService.profile.access_token && ProfileService.profile.access_token != "") {
           sendDeviceId();
-          CommunicationService.sendLocationToServer();
+          //CommunicationService.sendLocationToServer();
         }
       }, false)
       if ($cordovaKeyboard) {
