@@ -43,6 +43,8 @@ Es kommen folgende gerätespezifische Funktionen zum Einsatz:
 
 * **Geolocation** zur Feststellung des eigenen Standorts (notwendig zur Berechnung des Abstands zwischen Usern und den Positionen, an denen Verleihobjekte benötigt werden)
 
+* **Kontakte** können aus dem Telefonbuch ausgelesen werden, sodass in der App eine Übersicht aller Smartphone-Kontakte, die einen BorrowIt!-Account haben, angezeigt werden können. Die entsprechenden Nutzer können dadurch einfach auch in BorrowIt! als Kontakt hinzugefügt werden.  
+
 ## Social Ranking
 
 Nach jeder Verleihaktivität erhalten beide Beteiligten die Möglichkeit, die jeweils andere Person mit 1 bis 5 Sternen zu bewerten.
@@ -69,7 +71,13 @@ Das Video ist auf YouTube und als Backup auf einem eigenen Server verfügbar:
 
 ## Dokumentation
 
-Die Dokumentationen für das Frontend sowie die Backend-REST-API für BorrowIt! liegen im Unterordner "Dokumentation".
+Die Dokumentation für das Frontend befindet sich nach Funktionen aufgegliedert im Code (Kommentare). Im Unterordner "Dokumentation" liegt eine Markdown-Datei, welche die Backend-REST-API für BorrowIt! dokumentiert.
+
+## Aufbau und Architektur
+
+Die App BorrowIt! (das Frontend) wurde mit Ionic, AngularJS und Cordova erstellt.
+
+Das Frontend kommuniziert mit dem global über das Internet verfügbaren Backend (node.js-Server auf https://sb.pftclan.de:546). Der node.js-Server greift mit SQL-Statements auf eine (ebenfalls global verfügbare) relationale Datenbank zu.
 
 ## Kontakt
 
