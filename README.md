@@ -1,8 +1,7 @@
-BorrowIt! Version 1.0 / 01.08.2016
+# BorrowIt!
+-----------
 
-
-# Allgemeine Nutzungshinweise
------------------------------
+## Allgemeine Nutzungshinweise
 
 * BorrowIt! ist für die Betriebssysteme Android und iOS verfügbar. Außerdem funktioniert BorrowIt! im Browser.
 
@@ -10,8 +9,7 @@ BorrowIt! Version 1.0 / 01.08.2016
 
 * Um BorrowIt! nutzen zu können, muss ein Account erstellt werden. Die Nutzer müssen sich dazu mit ihrer E-Mail-Adresse registrieren. Auch Accounts anderer Apps desselben Distributed Market Space können in BorrowIt! verwendet werden.
 
-# Funktionalität
-----------------
+## Funktionalität
   
 * Bei der Registrierung wird ein Nutzerprofil erstellt. Das Profil enthält unter anderem Angaben zum Namen, zur E-Mail-Adresse, zu der / den Adresse(n) und zu der erhaltenen Bewertung für die Verleihaktivitäten. Optional kann ein Profilbild hinzugefügt werden (siehe "Gerätespezifische Funktionen").
 
@@ -33,8 +31,7 @@ BorrowIt! Version 1.0 / 01.08.2016
 
 * Bei jeder Suchanfrage gibt es die Möglichkeit, mit dem suchenden Nutzer über einen Chat Kontakt aufzunehmen. Der Chat dient z. B. dazu, den Übergabeort zu spezifizieren oder Fragen zum Verleih zu klären.
 
-# Gerätespezifische Funktionen
-------------------------------
+## Gerätespezifische Funktionen
 
 Es kommen folgende gerätespezifische Funktionen zum Einsatz:
 
@@ -44,10 +41,9 @@ Es kommen folgende gerätespezifische Funktionen zum Einsatz:
 
 * Laden eines vorhandenen Bildes aus der **Galerie** als Profilbild
 
-* Geolocation zur Feststellung des eigenen Standorts (notwendig zur Berechnung des Abstands zwischen Usern und den Positionen, an denen Verleihobjekte benötigt werden)
+* **Geolocation** zur Feststellung des eigenen Standorts (notwendig zur Berechnung des Abstands zwischen Usern und den Positionen, an denen Verleihobjekte benötigt werden)
 
-# Social Ranking
-----------------
+## Social Ranking
 
 Nach jeder Verleihaktivität erhalten beide Beteiligten die Möglichkeit, die jeweils andere Person mit 1 bis 5 Sternen zu bewerten.
 
@@ -57,17 +53,33 @@ Das Ranking enthält dabei sowohl die Bewertungen der anderen Nutzer, die mit de
 
 Bei der Anzeige des eigenen Profils werden ausschließlich die Bewertungen der anderen Nutzer berücksichtigt.
 
-# Kontakt
----------
+## Präsentationen und Video
+
+Die Präsentationen liegen in diesem Repository in entsprechenden Unterordnern. Außerdem sind sie online verfügbar:
+
+[Präsentation Projektstart](https://www.benedikt-sondermann.de/borrowit/praesentationen/2016-01/index.html#/)
+
+[Präsentation Projektabschluss](https://www.benedikt-sondermann.de/borrowit/praesentationen/2016-07/index.html#/)
+
+Das Video ist auf YouTube und als Backup auf einem eigenen Server verfügbar:
+
+[Video auf YouTube](https://www.youtube.com/watch?v=QrXogcpK4C0)
+
+[Video auf eigenem Server](https://www.benedikt-sondermann.de/borrowit/praesentationen/2016-07/video/werbevideo.mp4)
+
+## Dokumentation
+
+Die Dokumentationen für das Frontend sowie die Backend-REST-API für BorrowIt! liegen im Unterordner "Dokumentation".
+
+## Kontakt
 
 **Innovative App Solutions**
 
+David Knippel / Tatjana Radic / Denis Raff / Jennifer Sailer / Marc Schatten / Benedikt Sondermann
+
 E-Mail: [innovativeappsolutions@web.de](mailto:innovativeappsolutions@web.de)
 
-YouTube: [https://www.youtube.com/watch?v=QrXogcpK4C0](https://www.youtube.com/watch?v=QrXogcpK4C0)
-
-# Creative-Commons-Lizenz
--------------------------
+## Creative-Commons-Lizenz
 
 Copyright (C) 2016, David Knippel / Tatjana Radic / Denis Raff / Jennifer Sailer / Marc Schatten / Benedikt Sondermann
 
