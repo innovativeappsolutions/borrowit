@@ -9,11 +9,31 @@
                 "parents": {
                     "/*": [
                         {
+                            "xml": "<feature name=\"Calendar\"><param name=\"android-package\" value=\"nl.xservices.plugins.Calendar\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Camera\"><param name=\"android-package\" value=\"org.apache.cordova.camera.CameraLauncher\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Contacts\"><param name=\"android-package\" value=\"org.apache.cordova.contacts.ContactManager\" /></feature>",
+                            "count": 1
+                        },
+                        {
                             "xml": "<feature name=\"Device\"><param name=\"android-package\" value=\"org.apache.cordova.device.Device\" /></feature>",
                             "count": 1
                         },
                         {
-                            "xml": "<feature name=\"Whitelist\"><param name=\"android-package\" value=\"org.apache.cordova.whitelist.WhitelistPlugin\" /><param name=\"onload\" value=\"true\" /></feature>",
+                            "xml": "<feature name=\"Notification\"><param name=\"android-package\" value=\"org.apache.cordova.dialogs.Notification\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"File\"><param name=\"android-package\" value=\"org.apache.cordova.file.FileUtils\" /><param name=\"onload\" value=\"true\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Geolocation\"><param name=\"android-package\" value=\"org.apache.cordova.geolocation.Geolocation\" /></feature>",
                             "count": 1
                         },
                         {
@@ -25,35 +45,15 @@
                             "count": 1
                         },
                         {
-                            "xml": "<feature name=\"Keyboard\"><param name=\"android-package\" value=\"io.ionic.keyboard.IonicKeyboard\" /><param name=\"onload\" value=\"true\" /></feature>",
-                            "count": 1
-                        },
-                        {
-                            "xml": "<feature name=\"Camera\"><param name=\"android-package\" value=\"org.apache.cordova.camera.CameraLauncher\" /></feature>",
-                            "count": 1
-                        },
-                        {
-                            "xml": "<feature name=\"File\"><param name=\"android-package\" value=\"org.apache.cordova.file.FileUtils\" /><param name=\"onload\" value=\"true\" /></feature>",
-                            "count": 1
-                        },
-                        {
-                            "xml": "<feature name=\"Contacts\"><param name=\"android-package\" value=\"org.apache.cordova.contacts.ContactManager\" /></feature>",
-                            "count": 1
-                        },
-                        {
-                            "xml": "<feature name=\"Calendar\"><param name=\"android-package\" value=\"nl.xservices.plugins.Calendar\" /></feature>",
-                            "count": 1
-                        },
-                        {
-                            "xml": "<feature name=\"Geolocation\"><param name=\"android-package\" value=\"org.apache.cordova.geolocation.Geolocation\" /></feature>",
-                            "count": 1
-                        },
-                        {
-                            "xml": "<feature name=\"OneSignalPush\"><param name=\"android-package\" value=\"com.plugin.gcm.OneSignalPush\" /></feature>",
+                            "xml": "<feature name=\"Whitelist\"><param name=\"android-package\" value=\"org.apache.cordova.whitelist.WhitelistPlugin\" /><param name=\"onload\" value=\"true\" /></feature>",
                             "count": 1
                         },
                         {
                             "xml": "<feature name=\"SocialSharing\"><param name=\"android-package\" value=\"nl.xservices.plugins.SocialSharing\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Keyboard\"><param name=\"android-package\" value=\"io.ionic.keyboard.IonicKeyboard\" /><param name=\"onload\" value=\"true\" /></feature>",
                             "count": 1
                         }
                     ]
@@ -61,6 +61,16 @@
             },
             "AndroidManifest.xml": {
                 "parents": {
+                    "/manifest": [
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.READ_CALENDAR\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.WRITE_CALENDAR\" />",
+                            "count": 1
+                        }
+                    ],
                     "/*": [
                         {
                             "xml": "<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" />",
@@ -86,114 +96,67 @@
                             "xml": "<uses-permission android:name=\"android.permission.ACCESS_FINE_LOCATION\" />",
                             "count": 1
                         }
-                    ],
-                    "/manifest": [
-                        {
-                            "xml": "<uses-permission android:name=\"android.permission.READ_CALENDAR\" />",
-                            "count": 1
-                        },
-                        {
-                            "xml": "<uses-permission android:name=\"android.permission.WRITE_CALENDAR\" />",
-                            "count": 1
-                        }
-                    ],
-                    "/manifest/application": [
-                        {
-                            "xml": "<amazon:enable-feature android:name=\"com.amazon.device.messaging\" android:required=\"false\" xmlns:amazon=\"http://schemas.amazon.com/apk/res/android\" />",
-                            "count": 1
-                        },
-                        {
-                            "xml": "<service android:exported=\"false\" android:name=\"com.onesignal.ADMMessageHandler\" />",
-                            "count": 1
-                        },
-                        {
-                            "xml": "<receiver android:name=\"com.onesignal.ADMMessageHandler$Receiver\" android:permission=\"com.amazon.device.messaging.permission.SEND\"><intent-filter><action android:name=\"com.amazon.device.messaging.intent.REGISTRATION\" /><action android:name=\"com.amazon.device.messaging.intent.RECEIVE\" /><category android:name=\"com.ionicframework.borrowit795688\" /></intent-filter></receiver>",
-                            "count": 1
-                        }
                     ]
-                }
-            },
-            "res/values/strings.xml": {
-                "parents": {
-                    "/resources": []
                 }
             }
         }
     },
     "installed_plugins": {
-        "cordova-plugin-device": {
-            "PACKAGE_NAME": "com.ionicframework.borrowit795688"
-        },
-        "cordova-plugin-console": {
-            "PACKAGE_NAME": "com.ionicframework.borrowit795688"
-        },
-        "cordova-plugin-whitelist": {
-            "PACKAGE_NAME": "com.ionicframework.borrowit795688"
-        },
-        "cordova-plugin-splashscreen": {
-            "PACKAGE_NAME": "com.ionicframework.borrowit795688"
-        },
-        "cordova-plugin-statusbar": {
-            "PACKAGE_NAME": "com.ionicframework.borrowit795688"
-        },
-        "ionic-plugin-keyboard": {
-            "PACKAGE_NAME": "com.ionicframework.borrowit795688"
-        },
         "cordova-plugin-compat": {
-            "PACKAGE_NAME": "com.ionicframework.borrowit795688"
-        },
-        "cordova-plugin-camera": {
-            "PACKAGE_NAME": "com.ionicframework.borrowit795688"
-        },
-        "cordova-plugin-file": {
-            "PACKAGE_NAME": "com.ionicframework.borrowit795688"
-        },
-        "cordova-plugin-contacts": {
-            "PACKAGE_NAME": "com.ionicframework.borrowit795688"
+            "PACKAGE_NAME": "de.dhbw.kanada16"
         },
         "cordova-plugin-calendar": {
-            "PACKAGE_NAME": "com.ionicframework.borrowit795688"
+            "PACKAGE_NAME": "de.dhbw.kanada16"
+        },
+        "cordova-plugin-camera": {
+            "PACKAGE_NAME": "de.dhbw.kanada16"
+        },
+        "cordova-plugin-console": {
+            "PACKAGE_NAME": "de.dhbw.kanada16"
+        },
+        "cordova-plugin-contacts": {
+            "PACKAGE_NAME": "de.dhbw.kanada16"
+        },
+        "cordova-plugin-device": {
+            "PACKAGE_NAME": "de.dhbw.kanada16"
+        },
+        "cordova-plugin-dialogs": {
+            "PACKAGE_NAME": "de.dhbw.kanada16"
+        },
+        "cordova-plugin-file": {
+            "PACKAGE_NAME": "de.dhbw.kanada16"
         },
         "cordova-plugin-geolocation": {
-            "PACKAGE_NAME": "com.ionicframework.borrowit795688"
+            "PACKAGE_NAME": "de.dhbw.kanada16"
         },
-        "onesignal-cordova-plugin": {
-            "PACKAGE_NAME": "com.ionicframework.borrowit795688"
+        "cordova-plugin-splashscreen": {
+            "PACKAGE_NAME": "de.dhbw.kanada16"
+        },
+        "cordova-plugin-statusbar": {
+            "PACKAGE_NAME": "de.dhbw.kanada16"
+        },
+        "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "de.dhbw.kanada16"
         },
         "cordova-plugin-x-socialsharing": {
+            "PACKAGE_NAME": "de.dhbw.kanada16"
+        },
+        "ionic-plugin-keyboard": {
             "PACKAGE_NAME": "de.dhbw.kanada16"
         }
     },
     "dependent_plugins": {},
     "modules": [
         {
-            "file": "plugins/cordova-plugin-device/www/device.js",
-            "id": "cordova-plugin-device.device",
+            "file": "plugins/cordova-plugin-calendar/www/Calendar.js",
+            "id": "cordova-plugin-calendar.Calendar",
             "clobbers": [
-                "device"
+                "Calendar"
             ]
         },
         {
-            "file": "plugins/cordova-plugin-splashscreen/www/splashscreen.js",
-            "id": "cordova-plugin-splashscreen.SplashScreen",
-            "clobbers": [
-                "navigator.splashscreen"
-            ]
-        },
-        {
-            "file": "plugins/cordova-plugin-statusbar/www/statusbar.js",
-            "id": "cordova-plugin-statusbar.statusbar",
-            "clobbers": [
-                "window.StatusBar"
-            ]
-        },
-        {
-            "file": "plugins/ionic-plugin-keyboard/www/android/keyboard.js",
-            "id": "ionic-plugin-keyboard.keyboard",
-            "clobbers": [
-                "cordova.plugins.Keyboard"
-            ],
-            "runs": true
+            "file": "plugins/cordova-plugin-calendar/test/tests.js",
+            "id": "cordova-plugin-calendar.tests"
         },
         {
             "file": "plugins/cordova-plugin-camera/www/CameraConstants.js",
@@ -221,6 +184,94 @@
             "id": "cordova-plugin-camera.CameraPopoverHandle",
             "clobbers": [
                 "CameraPopoverHandle"
+            ]
+        },
+        {
+            "file": "plugins/cordova-plugin-contacts/www/contacts.js",
+            "id": "cordova-plugin-contacts.contacts",
+            "clobbers": [
+                "navigator.contacts"
+            ]
+        },
+        {
+            "file": "plugins/cordova-plugin-contacts/www/Contact.js",
+            "id": "cordova-plugin-contacts.Contact",
+            "clobbers": [
+                "Contact"
+            ]
+        },
+        {
+            "file": "plugins/cordova-plugin-contacts/www/convertUtils.js",
+            "id": "cordova-plugin-contacts.convertUtils"
+        },
+        {
+            "file": "plugins/cordova-plugin-contacts/www/ContactAddress.js",
+            "id": "cordova-plugin-contacts.ContactAddress",
+            "clobbers": [
+                "ContactAddress"
+            ]
+        },
+        {
+            "file": "plugins/cordova-plugin-contacts/www/ContactError.js",
+            "id": "cordova-plugin-contacts.ContactError",
+            "clobbers": [
+                "ContactError"
+            ]
+        },
+        {
+            "file": "plugins/cordova-plugin-contacts/www/ContactField.js",
+            "id": "cordova-plugin-contacts.ContactField",
+            "clobbers": [
+                "ContactField"
+            ]
+        },
+        {
+            "file": "plugins/cordova-plugin-contacts/www/ContactFindOptions.js",
+            "id": "cordova-plugin-contacts.ContactFindOptions",
+            "clobbers": [
+                "ContactFindOptions"
+            ]
+        },
+        {
+            "file": "plugins/cordova-plugin-contacts/www/ContactName.js",
+            "id": "cordova-plugin-contacts.ContactName",
+            "clobbers": [
+                "ContactName"
+            ]
+        },
+        {
+            "file": "plugins/cordova-plugin-contacts/www/ContactOrganization.js",
+            "id": "cordova-plugin-contacts.ContactOrganization",
+            "clobbers": [
+                "ContactOrganization"
+            ]
+        },
+        {
+            "file": "plugins/cordova-plugin-contacts/www/ContactFieldType.js",
+            "id": "cordova-plugin-contacts.ContactFieldType",
+            "merges": [
+                ""
+            ]
+        },
+        {
+            "file": "plugins/cordova-plugin-device/www/device.js",
+            "id": "cordova-plugin-device.device",
+            "clobbers": [
+                "device"
+            ]
+        },
+        {
+            "file": "plugins/cordova-plugin-dialogs/www/notification.js",
+            "id": "cordova-plugin-dialogs.notification",
+            "merges": [
+                "navigator.notification"
+            ]
+        },
+        {
+            "file": "plugins/cordova-plugin-dialogs/www/android/notification.js",
+            "id": "cordova-plugin-dialogs.notification_android",
+            "merges": [
+                "navigator.notification"
             ]
         },
         {
@@ -375,84 +426,6 @@
             "runs": true
         },
         {
-            "file": "plugins/cordova-plugin-contacts/www/contacts.js",
-            "id": "cordova-plugin-contacts.contacts",
-            "clobbers": [
-                "navigator.contacts"
-            ]
-        },
-        {
-            "file": "plugins/cordova-plugin-contacts/www/Contact.js",
-            "id": "cordova-plugin-contacts.Contact",
-            "clobbers": [
-                "Contact"
-            ]
-        },
-        {
-            "file": "plugins/cordova-plugin-contacts/www/convertUtils.js",
-            "id": "cordova-plugin-contacts.convertUtils"
-        },
-        {
-            "file": "plugins/cordova-plugin-contacts/www/ContactAddress.js",
-            "id": "cordova-plugin-contacts.ContactAddress",
-            "clobbers": [
-                "ContactAddress"
-            ]
-        },
-        {
-            "file": "plugins/cordova-plugin-contacts/www/ContactError.js",
-            "id": "cordova-plugin-contacts.ContactError",
-            "clobbers": [
-                "ContactError"
-            ]
-        },
-        {
-            "file": "plugins/cordova-plugin-contacts/www/ContactField.js",
-            "id": "cordova-plugin-contacts.ContactField",
-            "clobbers": [
-                "ContactField"
-            ]
-        },
-        {
-            "file": "plugins/cordova-plugin-contacts/www/ContactFindOptions.js",
-            "id": "cordova-plugin-contacts.ContactFindOptions",
-            "clobbers": [
-                "ContactFindOptions"
-            ]
-        },
-        {
-            "file": "plugins/cordova-plugin-contacts/www/ContactName.js",
-            "id": "cordova-plugin-contacts.ContactName",
-            "clobbers": [
-                "ContactName"
-            ]
-        },
-        {
-            "file": "plugins/cordova-plugin-contacts/www/ContactOrganization.js",
-            "id": "cordova-plugin-contacts.ContactOrganization",
-            "clobbers": [
-                "ContactOrganization"
-            ]
-        },
-        {
-            "file": "plugins/cordova-plugin-contacts/www/ContactFieldType.js",
-            "id": "cordova-plugin-contacts.ContactFieldType",
-            "merges": [
-                ""
-            ]
-        },
-        {
-            "file": "plugins/cordova-plugin-calendar/www/Calendar.js",
-            "id": "cordova-plugin-calendar.Calendar",
-            "clobbers": [
-                "Calendar"
-            ]
-        },
-        {
-            "file": "plugins/cordova-plugin-calendar/test/tests.js",
-            "id": "cordova-plugin-calendar.tests"
-        },
-        {
             "file": "plugins/cordova-plugin-geolocation/www/android/geolocation.js",
             "id": "cordova-plugin-geolocation.geolocation",
             "clobbers": [
@@ -465,10 +438,17 @@
             "runs": true
         },
         {
-            "file": "plugins/onesignal-cordova-plugin/www/OneSignal.js",
-            "id": "onesignal-cordova-plugin.OneSignal",
+            "file": "plugins/cordova-plugin-splashscreen/www/splashscreen.js",
+            "id": "cordova-plugin-splashscreen.SplashScreen",
             "clobbers": [
-                "OneSignal"
+                "navigator.splashscreen"
+            ]
+        },
+        {
+            "file": "plugins/cordova-plugin-statusbar/www/statusbar.js",
+            "id": "cordova-plugin-statusbar.statusbar",
+            "clobbers": [
+                "window.StatusBar"
             ]
         },
         {
@@ -477,22 +457,30 @@
             "clobbers": [
                 "window.plugins.socialsharing"
             ]
+        },
+        {
+            "file": "plugins/ionic-plugin-keyboard/www/android/keyboard.js",
+            "id": "ionic-plugin-keyboard.keyboard",
+            "clobbers": [
+                "cordova.plugins.Keyboard"
+            ],
+            "runs": true
         }
     ],
     "plugin_metadata": {
-        "cordova-plugin-device": "1.1.2",
+        "cordova-plugin-compat": "1.0.0",
+        "cordova-plugin-calendar": "4.5.1",
+        "cordova-plugin-camera": "2.2.0",
         "cordova-plugin-console": "1.0.3",
-        "cordova-plugin-whitelist": "1.2.2",
+        "cordova-plugin-contacts": "2.1.0",
+        "cordova-plugin-device": "1.1.2",
+        "cordova-plugin-dialogs": "1.2.1",
+        "cordova-plugin-file": "4.2.0",
+        "cordova-plugin-geolocation": "2.2.0",
         "cordova-plugin-splashscreen": "3.2.2",
         "cordova-plugin-statusbar": "2.1.3",
-        "ionic-plugin-keyboard": "2.2.0",
-        "cordova-plugin-compat": "1.0.0",
-        "cordova-plugin-camera": "2.2.0",
-        "cordova-plugin-file": "4.2.0",
-        "cordova-plugin-contacts": "2.1.0",
-        "cordova-plugin-calendar": "4.5.1",
-        "cordova-plugin-geolocation": "2.2.0",
-        "onesignal-cordova-plugin": "1.13.0",
-        "cordova-plugin-x-socialsharing": "5.1.1"
+        "cordova-plugin-whitelist": "1.2.2",
+        "cordova-plugin-x-socialsharing": "5.1.1",
+        "ionic-plugin-keyboard": "2.2.0"
     }
 }

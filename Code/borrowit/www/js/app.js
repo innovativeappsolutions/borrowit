@@ -1801,8 +1801,8 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
   .factory('CommunicationService', ['$http', '$auth', '$cordovaDialogs', '$cordovaGeolocation', '$cordovaSocialSharing', '$timeout', 'ResultService', 'ProfileService', function ($http, $auth, $cordovaDialogs, $cordovaGeolocation, $cordovaSocialSharing, $timeout, ResultService, ProfileService) {
     var HOST = "https://sb.pftclan.de";
     var PORT = 546;
-    var HOST = "http://localhost";
-    var PORT = "3000"
+    //var HOST = "http://localhost";
+    //var PORT = "3000"
     var URLBACKEND = HOST + ":" + PORT + "/api/smartbackend/";
     var URLBORROWIT = HOST + ":" + PORT + "/api/borrowit/";
     var salt;
