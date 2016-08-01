@@ -489,8 +489,15 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
         })
       }
       else {
-        error = {};
-        error.status = 442;
+        var error = {};
+        if ($scope.textboxes.email == null ||
+          $scope.textboxes.password == null ||
+          $scope.textboxes.passwordrep == null)
+          error.status = 442;
+        if ($scope.textboxes.password.length < 8)
+          error.status = 445;
+        if ($scope.textboxes.password != $scope.textboxes.passwordrep)
+          error.status = 443;
         ResultService.showError(error);
       }
     };
@@ -1437,15 +1444,15 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
         // - type (chat | request) AND
         // - roomid (if type chat) OR roomid (if type request)
         //TODO hier die entsprechende Funktion aufrufen
-        ResultService.showPush(jsonData.type);
-        switch(jsonData.type) {
+        //ResultService.showPush(jsonData.data.type);
+        switch(jsonData.data.type) {
           case "chat":
-            if($state.current.name === "anfragenchat" && $scope.values.currentChat.roomid === jsonData.roomid) {
-              $scope.viewChat(jsonData.roomid, true);
+            if($state.current.name === "anfragenchat" && $scope.values.currentChat.roomid === jsonData.data.roomid) {
+              $scope.viewChat(jsonData.data.roomid, true);
             }
             break;
           default:
-            ResultService.showPush(jsonData.type);
+            ResultService.showPush(jsonData.data.type);
             break;
         }
       };
@@ -1742,6 +1749,10 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
           title = "Fehler bei der Eingabe";
           content = "Das Alte Passwort ist falsch";
           break; //Altes Passwort falsch
+        case 445:
+          title = "Falsche Eingabe";
+          content = "Das eingegebene Passwort ist zu kurz";
+          break; //zu kurzes Passwort
         case 500:
           title = "Interner Fehler";
           content = "Wir kümmern uns um das Problem!";
