@@ -229,7 +229,7 @@
   </script>
 
   <script id="home.html" type="text/ng-template">
-    <ion-view ng-init="loadRequests();loadChats();">
+    <ion-view  view-title="Home" ng-init="loadRequests();loadChats();">
       <ion-content has-bouncing="true" class="borrowit-blau has-footer">
         <div class="list text-center">
           <div class="row">
@@ -724,7 +724,7 @@
       <ion-content class="borrowit-blau has-footer has-header">
         <div class="list">
           <div class="item text-center">
-            <img class="bigprofile-pic" ng-click="addMedia()" ng-src="{{profile.picture}}">
+            <button ng-click="addMedia()"><img class="bigprofile-pic" id="fileToUpload" ng-src="{{profile.picture}}"></button>
             <div class="item text-center">
               <div class="stars aligncenter">
                 <div ng-style="{ 'width': getStars(profile.rating) }"></div>
@@ -735,12 +735,12 @@
             Aktivitäten:
           </div>
           <div class="item" ng-repeat="request in profile.requests | orderBy:requestid:true track by $index">
-            <button class="item button-full item-icon-right" ng-show="request.profile.username != profile.username" ng-click="loadCurrentRequest(request.requestid)">
+            <button class="item button-full item-icon-right" ng-show="request.username != profile.username" ng-click="loadCurrentRequest(request.requestid)">
               {{request.title}}
               <i class="ion-chevron-right"></i>
               <i class="ion-chevron-right"></i>
             </button>
-            <button class="item button-full item-icon-left" ng-show="request.profile.username == profile.username" ng-click="loadCurrentRequest(request.requestid)">
+            <button class="item button-full item-icon-left" ng-show="request.username == profile.username" ng-click="loadCurrentRequest(request.requestid)">
               <i class="ion-chevron-left"></i>
               <i class="ion-chevron-left"></i>
               {{request.title}}
@@ -843,7 +843,6 @@
           </ion-toggle>
           <a class="button button-full item button-light icon icon-right ion-chevron-right" href="#/datenschutz">
             Datenschutz
-            <i class="ion-chevron-right"></i>
           </a>
           <a class="button button-full item button-light icon icon-right ion-chevron-right" href="#/agb">
             AGB

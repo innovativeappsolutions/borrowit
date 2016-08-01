@@ -542,10 +542,7 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
     };
 
     $scope.facebookLogin = function () {
-      var authenticated = CommunicationService.authenticate("facebook");
-      authenticated.then(function (result) {
-        window.location = "#/registrierung2"
-      });
+      CommunicationService.authenticate("facebook");
     };
 
     $scope.showLoginError = function (wrongPassword) {
@@ -577,7 +574,7 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
     };
   }])
 
-  .controller("ToDoController", function ($scope, $ionicPopup, $ionicLoading, $ionicPlatform, $ionicActionSheet, $cordovaKeyboard, $cordovaVibration, $cordovaCamera, $cordovaDevice, $cordovaFile, $cordovaContacts, $cordovaSocialSharing, $timeout, ImageService, ProfileService, ResultService, CommunicationService) {
+  .controller("ToDoController", function ($scope, $ionicPopup, $ionicLoading, $ionicPlatform, $ionicActionSheet, $ionicHistory, $state, $cordovaKeyboard, $cordovaVibration, $cordovaCamera, $cordovaDevice, $cordovaFile, $cordovaContacts, $cordovaSocialSharing, $timeout, ImageService, ProfileService, ResultService, CommunicationService) {
 
     $scope.socialShare = function(provider) {
       CommunicationService.socialShare(provider);
@@ -1132,7 +1129,10 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       var loadedRequest = CommunicationService.getCurrentRequest(requestid);
       loadedRequest.then(function (result) {
         $scope.values.currentRequest = result;
-        $scope.values.currentRequest.distance = ($scope.values.currentRequest.distance / 1000).toString().replace(".", ",")
+        if ($scope.values.currentRequest.distance == 40000000)
+          $scope.values.currentRequest.shownDistance = "Nicht in Reichweite";
+        else
+          $scope.values.currentRequest.shownDistance = ($scope.values.currentRequest.distance / 1000).toString().replace(".", ",") + " km";
         window.location = "#/anfrage_einsehen";
         $scope.hideLoading();
       }, function (error) {
@@ -1443,6 +1443,18 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
         // - type (chat | request) AND
         // - roomid (if type chat) OR roomid (if type request)
         //TODO hier die entsprechende Funktion aufrufen
+        switch(jsonData.type) {
+          case "chat":
+            if($state.current.name === "anfragenchat" && $scope.values.currentChat.roomid === jsonData.roomid) {
+              $scope.viewChat(jsonData.roomid, true);
+            }
+            else {
+              ResultService.showPush(jsonData.type);
+            }
+            break;
+          case "request":
+            ResultService.showPush(jsonData.type);
+        }
       };
 
       window.plugins.OneSignal.init("c9607961-b043-486d-9449-0587764bb739",
@@ -1482,32 +1494,6 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       $scope.$apply();
     });
 
-    $scope.urlForImage = function (imageName) {
-      var trueOrigin = cordova.file.dataDirectory + imageName;
-      return trueOrigin;
-    }
-
-    $scope.addFile = function () {
-      if (ionic.Platform.isWebView()) {
-        var options = {
-          quality: 75,
-          destinationType: Camera.DestinationType.DATA_URL,
-          sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
-          allowEdit: true,
-          encodingType: Camera.EncodingType.JPEG,
-          targetWidth: 300,
-          targetHeight: 300,
-          popoverOptions: CameraPopoverOptions,
-          saveToPhotoAlbum: false
-        };
-
-        $cordovaCamera.getPicture(options).then($scope.addPicture, $scope.errorPicture);
-      } else {
-        ionic.trigger('click', { target: document.getElementById('fileToUpload') });
-      }
-    }
-
-
     $scope.addMedia = function () {
       $scope.hideSheet = $ionicActionSheet.show({
         buttons: [
@@ -1517,29 +1503,22 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
         titleText: 'Add images',
         cancelText: 'Cancel',
         buttonClicked: function (index) {
-          $scope.addImage(index);
-          /*$scope.hideSheet();
-          ProfileService.profile.picture = "img/icons/grey_woman.png";
-          $scope.profile = ProfileService.profile;*/
+          $scope.hideSheet();
+          ImageService.handleMediaDialog(index);
           //$scope.$apply();
         }
       });
-    }
-
-    $scope.addImage = function (type) {
-      $scope.hideSheet();
-      ImageService.handleMediaDialog(type).then(function () {
-        $scope.profile = ProfileService.profile;
-        $scope.$apply();
-      });
-    }
+    };
   })
 
   //factories
 
   .factory('ImageService', function ($cordovaCamera, ProfileService, $q, $cordovaFile) {
-    //var image = 'http://ionicframework.com/img/docs/venkman.jpg';
-    //var IMAGE_STORAGE_KEY = 'image';
+
+    addPicture = function (imageData) {
+      ProfileService.profile.picture = "data:image/jpeg;base64," + imageData;
+    }
+
     makeid = function () {
       var text = '';
       var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -1561,15 +1540,17 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
           break;
       }
       return {
+        quality: 75,
         destinationType: Camera.DestinationType.DATA_URL,
         sourceType: source,
-        allowEdit: false,
+        allowEdit: true,
         encodingType: Camera.EncodingType.JPEG,
+        targetWidth: 300,
+        targetHeight: 300,
         popoverOptions: CameraPopoverOptions,
-        saveToPhotoAlbum: true,
-        correctOrientation: true
+        saveToPhotoAlbum: false
       };
-    }
+    };
 
     saveMedia = function (type) {
       return $q(function (resolve, reject) {
@@ -1577,7 +1558,9 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
         var options = optionsForType(type);
 
         $cordovaCamera.getPicture(options).then(function (imageUrl) {
-          //ProfileService.profile.picture = imageUrl;//cordova.file.dataDirectory + imageData;
+          ProfileService.profile.picture = "data:image/jpeg;base64," + imageUrl;
+          window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
+          /*ProfileService.profile.picture = imageUrl;//cordova.file.dataDirectory + imageData;
           var name = imageUrl.substr(imageUrl.lastIndexOf('/') + 1);
           var namePath = imageUrl.substr(0, imageUrl.lastIndexOf('/') + 1);
           var newName = makeid() + name;
@@ -1587,7 +1570,7 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
               resolve();
             }, function(e) {
               reject();
-            });
+            });*/
         });
       })
     }
@@ -1625,22 +1608,24 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
         }
     }
 
-    var image;
-    var IMAGE_STORAGE_KEY = 'image';
-
-    addImage = function (img) {
-      image = img;
-      profile.picture = image;
-      window.localStorage.setItem("profile", JSON.stringify(profile));
-    };
-
     return {
-      profile: profile,
-      storeImage: addImage
+      profile: profile
     }
   })
 
   .factory('ResultService', function (ionicToast) {
+    showPush = function() {
+      var content = "";
+      switch (result) {
+        case "chat":
+          content = "Du hast eine neue Chatnachricht erhalten";
+          break;
+        case "request":
+          content = "Es wurde eine neue Anfrage in deiner Umgebung veröffentlicht";
+          break;
+      }
+    }
+
     showResult = function (result) {
       var content = "";
       switch (result) {
@@ -1753,7 +1738,8 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
 
     return {
       showResult: showResult,
-      showError: showError
+      showError: showError,
+      showPush:showPush
     }
   })
 
@@ -2276,9 +2262,11 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
           ProfileService.profile.push = result.data[0].push;
           ProfileService.profile.location = result.data[0].location;
           window.localStorage.setItem("profile", JSON.stringify(ProfileService.profile));
+          window.location = '#/';
         }, function (error) {
           console.log("Mist");
           ResultService.showError(error);
+          window.location = "#/registrierung2"
         });
     };
 
@@ -2294,7 +2282,6 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
           $http.defaults.headers.common['Authorization'] = "Bearer " + ProfileService.profile.access_token;
           sendDeviceId();
           getProfile();
-          window.location = '#/';
         }, function (error) {
           ResultService.showError(error);
           console.log(error.data);
@@ -2318,26 +2305,28 @@ var app = angular.module('starter', ['ionic', '720kb.socialshare', 'ionic-toast'
       }
     };
 
-    var authenticate = function (provider) {
-      if (provider === "facebook") {
+    authenticate = function (provider) {
+
+        if (provider === "facebook") {
         $auth.removeToken();
         $auth.authenticate(provider).then(function (response) {
-          console.log($auth.getToken());
-          console.log($auth.getPayload());
-          var token = $auth.getToken();
-          return $http({ method: "GET", url: URLBACKEND + "auth/" + provider + "/", params: { id_token: token } }).then(
+          console.log(response.access_token);
+          //console.log($auth.getPayload());
+          var token = response.access_token;
+          $http({ method: "GET", url: URLBACKEND + "auth/" + provider + "/", params: { id_token: token } }).then(
             function (result) {
               console.log('yes im ok');
               ProfileService.profile.access_token = token;
+              window.location = "#/registrierung2"
 
             }, function (error) {
               console.log('Error: ' + error);
               ResultService.showError(error);
             }
           )
-            .catch(function (response) {
-              userService.SocialLoginFailed();
-            });
+          .catch(function (response) {
+            userService.SocialLoginFailed();
+          });
         })
       }
     };
